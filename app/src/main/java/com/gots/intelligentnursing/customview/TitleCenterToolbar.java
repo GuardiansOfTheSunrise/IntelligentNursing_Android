@@ -24,21 +24,20 @@ public class TitleCenterToolbar extends Toolbar {
 
     public TitleCenterToolbar(Context context) {
         super(context);
-        setTitle("");
         createTextView(context);
         addView(mTextView);
+        setTitle("");
     }
 
     public TitleCenterToolbar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setTitle("");
         createTextView(context);
         initTextViewFromAttrs(context, attrs);
+        setTitle("");
     }
 
     public TitleCenterToolbar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setTitle("");
         createTextView(context);
         initTextViewFromAttrs(context, attrs);
     }
@@ -47,6 +46,7 @@ public class TitleCenterToolbar extends Toolbar {
         mTextView = new TextView(context);
         mTextView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         addView(mTextView);
+        setTitle("");
     }
 
     private void initTextViewFromAttrs(Context context, AttributeSet attrs){
@@ -58,5 +58,17 @@ public class TitleCenterToolbar extends Toolbar {
         int textColor = ta.getColor(R.styleable.TitleCenterToolbar_textColor, Color.BLACK);
         mTextView.setTextColor(textColor);
         ta.recycle();
+    }
+
+    @Override
+    public void setTitle(int resId) {
+        super.setTitle("");
+        mTextView.setText(resId);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle("");
+        mTextView.setText(title);
     }
 }

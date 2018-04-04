@@ -18,6 +18,8 @@ import com.gots.intelligentnursing.view.IDeviceManagementView;
 
 public class DeviceManagementActivity extends BaseActivity<DeviceManagementPresenter> implements IDeviceManagementView{
 
+    private static final String TOOLBAR_TITLE = "设备管理";
+
     private void initView(){
         Button addDeviceButton = findViewById(R.id.bt_device_management_add);
         addDeviceButton.setOnClickListener(v -> mPresenter.onAddButtonClicked());
@@ -27,8 +29,7 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_management);
-
-        initToolbar();
+        setToolbarTitle(TOOLBAR_TITLE);
         initView();
     }
 

@@ -17,19 +17,19 @@ import com.gots.intelligentnursing.view.IMainView;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements IMainView {
 
+    private static final String TOOLBAR_TITLE = "智护";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initToolbar();
-
+        setToolbarTitle(TOOLBAR_TITLE);
         Button button = findViewById(R.id.bt_main_device_management);
         button.setOnClickListener(v -> startActivity(new Intent(this, DeviceManagementActivity.class)));
     }
 
     @Override
-    protected boolean displayBackButton() {
+    protected boolean isDisplayBackButton() {
         return false;
     }
 
