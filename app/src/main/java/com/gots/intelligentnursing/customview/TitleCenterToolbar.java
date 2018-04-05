@@ -25,7 +25,6 @@ public class TitleCenterToolbar extends Toolbar {
     public TitleCenterToolbar(Context context) {
         super(context);
         createTextView(context);
-        addView(mTextView);
         setTitle("");
     }
 
@@ -40,13 +39,14 @@ public class TitleCenterToolbar extends Toolbar {
         super(context, attrs, defStyleAttr);
         createTextView(context);
         initTextViewFromAttrs(context, attrs);
+        setTitle("");
     }
 
     private void createTextView(Context context){
         mTextView = new TextView(context);
-        mTextView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+        mTextView.setLayoutParams(layoutParams);
         addView(mTextView);
-        setTitle("");
     }
 
     private void initTextViewFromAttrs(Context context, AttributeSet attrs){
