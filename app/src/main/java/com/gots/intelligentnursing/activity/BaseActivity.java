@@ -1,6 +1,7 @@
 package com.gots.intelligentnursing.activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,21 +22,21 @@ import com.gots.intelligentnursing.presenter.BasePresenter;
  * @date 2018/3/30
  */
 
-public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity{
+public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity {
 
     private TitleCenterToolbar mToolbar;
 
     protected P mPresenter;
 
-    private void initToolbar(){
-        if(isDisplayToolbar()){
+    private void initToolbar() {
+        if(isDisplayToolbar()) {
             mToolbar = findViewById(R.id.toolbar);
             setSupportActionBar(mToolbar);
-            if(isDisplayBackButton()){
+            if(isDisplayBackButton()) {
                 ActionBar actionBar = getSupportActionBar();
-                if(actionBar != null){
+                if(actionBar != null) {
                     actionBar.setDisplayHomeAsUpEnabled(true);
-                    if(getHomeAsUpIndicator() != 0){
+                    if(getHomeAsUpIndicator() != 0) {
                         actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
                     }
                 }
@@ -45,7 +46,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     @Override
     public void setContentView(int layoutResID) {
-        if(isDisplayToolbar()){
+        if(isDisplayToolbar()) {
             super.setContentView(R.layout.activity_base_toolbar);
             initToolbar();
         } else {
@@ -78,11 +79,16 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     /**
      * 设置Toolbar的title
      * @param title 需要设置的title
      */
-    public void setToolbarTitle(String title){
+    public void setToolbarTitle(String title) {
         if(!isDisplayToolbar()){
             return;
         }
@@ -99,7 +105,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 子类Activity重写该方法可以设置是否显示Toolbar
      * @return 默认返回true表示显示Toolbar，如不需要Toolbar，则重写该方法返回false
      */
-    protected boolean isDisplayToolbar(){
+    protected boolean isDisplayToolbar() {
         return true;
     }
 
@@ -107,7 +113,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 子类Activity重写该方法可以设置是否显示Toolbar的返回按钮
      * @return 默认返回true表示显示返回按钮，如不需要返回按钮，则重写该方法返回false
      */
-    protected boolean isDisplayBackButton(){
+    protected boolean isDisplayBackButton() {
         return true;
     }
 
@@ -119,7 +125,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * 在子类Activity中需要重写onOptionsItemSelected()方法并拦截事件
      * BaseActivity默认处理是关闭当前Activity
      */
-    protected int getHomeAsUpIndicator(){
+    protected int getHomeAsUpIndicator() {
         return 0;
     }
 }

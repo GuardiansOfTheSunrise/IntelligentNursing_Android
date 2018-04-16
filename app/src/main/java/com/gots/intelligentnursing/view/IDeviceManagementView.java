@@ -5,17 +5,17 @@ package com.gots.intelligentnursing.view;
  * @date 2018/4/1
  */
 
-public interface IDeviceManagementView extends IView{
+public interface IDeviceManagementView extends IView {
 
     /**
-     * presenter对识别二维码结果解析失败后的回调
+     * presenter出现异常时的回调
      * @param msg 失败原因
      */
-    void onQrCodeParseError(String msg);
+    void onException(String msg);
 
     /**
-     * presenter对识别二维码结果解析成功后的回调
+     * presenter绑定设备成功回调
      * @param id 设备id
      */
-    void onQeCodeParseSuccess(String id);
+    void onBindSuccess(String id);
 }

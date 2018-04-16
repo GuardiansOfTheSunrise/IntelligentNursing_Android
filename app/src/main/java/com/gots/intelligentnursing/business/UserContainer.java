@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.tools;
+package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.User;
 
@@ -15,19 +15,15 @@ public class UserContainer {
 
     private UserContainer(){}
 
-    public User getUser() {
-        return mUser;
+    public static void setUser(User user) {
+        InstanceHolder.sInstance.mUser = user;
     }
 
-    public void setUser(User user) {
-        mUser = user;
+    public static User getUser() {
+        return InstanceHolder.sInstance.mUser;
     }
 
-    public static UserContainer getInstance(){
-        return InstanceHolder.sInstance;
-    }
-
-    private static class InstanceHolder{
+    private static class InstanceHolder {
         private static UserContainer sInstance = new UserContainer();
     }
 }

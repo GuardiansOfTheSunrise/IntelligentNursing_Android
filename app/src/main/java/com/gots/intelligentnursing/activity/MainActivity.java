@@ -25,7 +25,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         setContentView(R.layout.activity_main);
         setToolbarTitle(TOOLBAR_TITLE);
         Button button = findViewById(R.id.bt_main_device_management);
-        button.setOnClickListener(v -> startActivity(new Intent(this, DeviceManagementActivity.class)));
+        button.setOnClickListener(v -> mPresenter.onButtonClicked());
     }
 
     @Override
@@ -38,8 +38,4 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         return new MainPresenter(this);
     }
 
-    @Override
-    public Activity getActivity() {
-        return this;
-    }
 }

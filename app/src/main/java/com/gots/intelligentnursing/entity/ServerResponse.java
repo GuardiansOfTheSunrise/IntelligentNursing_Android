@@ -43,7 +43,7 @@ public class ServerResponse<T> {
     }
 
     public void checkCode() throws ServerException {
-        if(code != CODE_SUCCESS){
+        if(code != CODE_SUCCESS) {
             throw new ServerException(msg);
         }
     }

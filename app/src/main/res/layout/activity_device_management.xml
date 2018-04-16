@@ -13,4 +13,16 @@
         android:id="@+id/bt_device_management_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:text="连接设备"
+        android:id="@+id/bt_device_management_connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:text="删除设备"
+        android:id="@+id/bt_device_management_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

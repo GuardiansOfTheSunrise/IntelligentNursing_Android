@@ -1,5 +1,7 @@
 package com.gots.intelligentnursing.presenter;
 
+import android.app.Activity;
+
 import com.gots.intelligentnursing.view.IView;
 
 import java.lang.ref.Reference;
@@ -17,15 +19,19 @@ public abstract class BasePresenter<V extends IView> {
     protected Reference<V> mViewRef;
 
     public BasePresenter(V view){
-        mViewRef = new WeakReference<V>(view);
+        mViewRef = new WeakReference<>(view);
     }
 
-    protected V getView(){
+    protected V getView() {
         return mViewRef.get();
     }
 
-    public void detachView(){
+    public void detachView() {
         mViewRef.clear();
         mViewRef = null;
+    }
+
+    protected Activity getActivity(){
+        return getView().getActivity();
     }
 }

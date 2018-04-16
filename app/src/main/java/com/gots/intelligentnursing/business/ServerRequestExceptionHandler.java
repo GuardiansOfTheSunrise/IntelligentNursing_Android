@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.tools;
+package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.exception.ServerException;
 
@@ -17,12 +17,12 @@ public class ServerRequestExceptionHandler {
     private static final String HINT_UNKNOWN_ERROR = "未知错误";
 
 
-    public static String handle(Throwable throwable){
-        if (throwable instanceof ServerException){
+    public static String handle(Throwable throwable) {
+        if (throwable instanceof ServerException) {
             return throwable.getMessage();
-        } else if (throwable instanceof SocketException){
+        } else if (throwable instanceof SocketException) {
             return HINT_NETWORK_ERROR;
-        } else if (throwable instanceof HttpException){
+        } else if (throwable instanceof HttpException) {
             return HINT_SERVER_ERROR;
         } else {
             return HINT_UNKNOWN_ERROR;

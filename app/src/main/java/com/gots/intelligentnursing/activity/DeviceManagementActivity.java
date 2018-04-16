@@ -16,20 +16,26 @@ import com.gots.intelligentnursing.view.IDeviceManagementView;
  * @date 2018/4/1
  */
 
-public class DeviceManagementActivity extends BaseActivity<DeviceManagementPresenter> implements IDeviceManagementView{
+public class DeviceManagementActivity extends BaseActivity<DeviceManagementPresenter> implements IDeviceManagementView {
 
     private static final String TOOLBAR_TITLE = "设备管理";
 
-    private void initView(){
+    private void initView() {
+        setToolbarTitle(TOOLBAR_TITLE);
         Button addDeviceButton = findViewById(R.id.bt_device_management_add);
-        addDeviceButton.setOnClickListener(v -> mPresenter.onAddButtonClicked());
+        addDeviceButton.setOnClickListener(v -> mPresenter.onAddDeviceButtonClicked());
+
+        Button connectButton = findViewById(R.id.bt_device_management_connect);
+        connectButton.setOnClickListener(v ->mPresenter.onConnectButtonClicked());
+
+        Button deleteButton = findViewById(R.id.bt_device_management_delete);
+        deleteButton.setOnClickListener(v -> mPresenter.onDeleteButtonClicked());
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_management);
-        setToolbarTitle(TOOLBAR_TITLE);
         initView();
     }
 
@@ -45,21 +51,16 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     }
 
     @Override
-    public Activity getActivity() {
-        return this;
-    }
-
-    @Override
-    public void onQrCodeParseError(String msg) {
+    public void onException(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onQeCodeParseSuccess(String id) {
-        Toast.makeText(this, "id is " + id, Toast.LENGTH_SHORT).show();
+    public void onBindSuccess(String id) {
+
     }
 
-    public static void actionStart(Context context){
+    public static void actionStart(Context context) {
         Intent intent = new Intent(context, DeviceManagementActivity.class);
         context.startActivity(intent);
     }

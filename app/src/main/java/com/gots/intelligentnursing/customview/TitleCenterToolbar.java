@@ -49,7 +49,7 @@ public class TitleCenterToolbar extends Toolbar {
         addView(mTextView);
     }
 
-    private void initTextViewFromAttrs(Context context, AttributeSet attrs){
+    private void initTextViewFromAttrs(Context context, AttributeSet attrs) {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TitleCenterToolbar);
         String text = ta.getString(R.styleable.TitleCenterToolbar_text);
         mTextView.setText(text);
