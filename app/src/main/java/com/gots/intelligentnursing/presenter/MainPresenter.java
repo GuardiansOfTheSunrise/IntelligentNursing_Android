@@ -13,8 +13,4 @@ public class MainPresenter extends BasePresenter<IMainView> {
     public MainPresenter(IMainView view) {
         super(view);
     }
-
-    public void onButtonClicked() {
-        DeviceManagementActivity.actionStart(getView().getActivity());
-    }
 }
