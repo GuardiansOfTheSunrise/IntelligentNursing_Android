@@ -84,12 +84,10 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
             Flowable.just(event.getData())
                     .observeOn(Schedulers.io())
                     .map(BluetoothConnector::new)
+                    .doOnNext(connector -> mConnector = connector)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            connector -> {
-                                mConnector = connector;
-                                getView().onConnectSuccess();
-                            },
+                            connector -> getView().onConnectSuccess(),
                             throwable -> getView().onException(throwable.getMessage())
                     );
         } else if(event.getCode() == BluetoothReceiver.CODE_ERROR) {
