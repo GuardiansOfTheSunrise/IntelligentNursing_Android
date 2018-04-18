@@ -7,9 +7,10 @@ package com.gots.intelligentnursing.entity;
  */
 
 public class User {
+
     private String username;
-    private String email;
-    private String phone;
+    private String bindingDeviceId;
+    private String bindingDevicePassword;
 
     public String getUsername() {
         return username;
@@ -19,19 +20,19 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getBindingDeviceId() {
+        return bindingDeviceId;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setBindingDeviceId(String bindingDeviceId) {
+        this.bindingDeviceId = bindingDeviceId;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getBindingDevicePassword() {
+        return bindingDevicePassword;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setBindingDevicePassword(String bindingDevicePassword) {
+        this.bindingDevicePassword = bindingDevicePassword;
     }
 }

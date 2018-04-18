@@ -2,15 +2,23 @@ package com.gots.intelligentnursing.presenter;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 
 import com.gots.intelligentnursing.exception.BluetoothException;
 import com.gots.intelligentnursing.business.BluetoothConnector;
-import com.gots.intelligentnursing.tools.LogUtil;
+import com.gots.intelligentnursing.receiver.BluetoothReceiver;
+import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.view.IDeviceControlView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author zhqy
@@ -24,60 +32,28 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
     private static final int POSITION_SET_TIME = 0;
     private static final int POSITION_FIND_DEVICE = 1;
 
-    private static final String HINT_DEVICE_NOT_FOUND = "未发现手环\n请确保手环在设备的附近";
+    private boolean isDeviceFound = false;
 
-    private static final String BLUETOOTH_NAME = "";
+    private static final String HINT_DEVICE_NOT_FOUND = "未发现手环，请确保手环在设备的附近";
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothConnector mConnector;
 
-    private BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if(BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(device == null || device.getName() == null) {
-                    return;
-                }
-                String name = device.getName();
-                if(name != null && name.equals(BLUETOOTH_NAME)) {
-                    mBluetoothAdapter.cancelDiscovery();
-                    getActivity().unregisterReceiver(mBluetoothReceiver);
-                    try {
-                        mConnector = new BluetoothConnector(device);
-                        getView().onConnectSuccess();
-                    } catch (BluetoothException e) {
-                        e.printStackTrace();
-                        getView().onException(e.getMessage());
-                    }
-                }
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                LogUtil.i(TAG, "Bluetooth discovery finish, no matching device.");
-                mBluetoothAdapter.cancelDiscovery();
-                getView().onException(HINT_DEVICE_NOT_FOUND);
-                getActivity().unregisterReceiver(mBluetoothReceiver);
-            }
-        }
-    };
-
     public DeviceControlPresenter(IDeviceControlView view) {
         super(view);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        EventBus.getDefault().register(this);
     }
 
     public void connectDevice() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        getActivity().registerReceiver(mBluetoothReceiver, filter);
         mBluetoothAdapter.startDiscovery();
     }
 
-    public void disconnect() {
-        mConnector.close();
+    public void onDestroy() {
+        if(mConnector != null){
+            mConnector.close();
+        }
+        EventBus.getDefault().unregister(this);
     }
 
     public void onItemClicked(int position) {
@@ -99,6 +75,31 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
         } catch (BluetoothException e) {
             e.printStackTrace();
             getView().onException(e.getMessage());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void eventHandler(DataEvent<BluetoothDevice> event) {
+        if(event.getCode() == BluetoothReceiver.CODE_BOND_SUCCESS) {
+            Flowable.just(event.getData())
+                    .observeOn(Schedulers.io())
+                    .map(BluetoothConnector::new)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            connector -> mConnector = connector,
+                            throwable -> getView().onException(throwable.getMessage())
+                    );
+        } else if(event.getCode() == BluetoothReceiver.CODE_ERROR) {
+            getView().onException(event.getMsg());
+        } else if(event.getCode() == BluetoothReceiver.CODE_START) {
+            isDeviceFound = false;
+        } else if(event.getCode() == BluetoothReceiver.CODE_FOUND) {
+            isDeviceFound = true;
+        } else if (event.getCode() == BluetoothReceiver.CODE_FINISH) {
+            mBluetoothAdapter.cancelDiscovery();
+            if(!isDeviceFound) {
+                getView().onException(HINT_DEVICE_NOT_FOUND);
+            }
         }
     }
 }

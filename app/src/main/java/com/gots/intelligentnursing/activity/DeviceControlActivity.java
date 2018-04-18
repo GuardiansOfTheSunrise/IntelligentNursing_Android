@@ -60,7 +60,7 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPresenter.disconnect();
+        mPresenter.onDestroy();
     }
 
     @Override

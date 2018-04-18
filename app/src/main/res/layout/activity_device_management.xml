@@ -3,26 +3,63 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gots.intelligentnursing.activity.DeviceManagementActivity">
+    android:layout_margin="16dp"
+    android:orientation="vertical">
 
-    <Button
-        android:text="添加设备"
-        android:id="@+id/bt_device_management_add"
+    <RelativeLayout
+        android:id="@+id/layout_device_management_not_binding"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent">
 
-    <Button
-        android:text="连接设备"
-        android:id="@+id/bt_device_management_connect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
 
-    <Button
-        android:text="删除设备"
-        android:id="@+id/bt_device_management_delete"
+            <TextView
+                style="@style/style_tv_hint_normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="无已绑定设备\n点击下方按钮配对新设备"/>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_device_management_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="16dp"
+            android:src="@drawable/fab_add"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_device_management_is_binding"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_device_management_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/bt_device_management_connect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="连接设备"/>
+
+        <Button
+            android:id="@+id/bt_device_management_delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="删除设备"/>
+
+    </LinearLayout>
+
 </LinearLayout>

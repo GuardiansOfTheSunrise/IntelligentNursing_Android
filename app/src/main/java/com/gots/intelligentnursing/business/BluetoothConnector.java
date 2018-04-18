@@ -4,10 +4,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.gots.intelligentnursing.exception.BluetoothException;
+import com.gots.intelligentnursing.tools.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 /**
@@ -16,6 +20,8 @@ import java.util.UUID;
  */
 
 public class BluetoothConnector {
+
+    private static final String TAG = "BluetoothConnector";
 
     private static final String STR_BLUETOOTH_UUID = "00001101-0000-1000-8000-00805F9B34FB";
 

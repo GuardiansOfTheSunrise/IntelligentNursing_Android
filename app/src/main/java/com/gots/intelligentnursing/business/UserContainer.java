@@ -13,7 +13,12 @@ public class UserContainer {
 
     private User mUser;
 
-    private UserContainer(){}
+    private UserContainer(){
+        mUser = new User();
+        mUser.setUsername("admin");
+        mUser.setBindingDeviceId("6cb871e1231b");
+        mUser.setBindingDevicePassword("a64f");
+    }
 
     public static void setUser(User user) {
         InstanceHolder.sInstance.mUser = user;

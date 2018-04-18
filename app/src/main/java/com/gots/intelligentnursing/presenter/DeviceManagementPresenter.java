@@ -16,6 +16,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
@@ -30,8 +31,8 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
     private static final int REQUEST_CAPTURE = 0;
     private static final int REQUEST_OPEN_BLUETOOTH = 1;
 
-    private static final String HINT_BLUETOOTH_NOT_SUPPORT = "您的设备不支持蓝牙功能\n无法进行此操作";
-    private static final String HINT_DENY_GRANT = "您拒绝了授权";
+    private static final String HINT_BLUETOOTH_NOT_SUPPORT = "您的设备不支持蓝牙功能，无法进行此操作";
+    private static final String HINT_DENY_GRANT = "您拒绝了授权，该功能无法正常使用";
 
 
     public DeviceManagementPresenter(IDeviceManagementView view) {
@@ -45,16 +46,20 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                 .request(Manifest.permission.CAMERA)
                 .filter(granted -> granted)
                 .switchIfEmpty(observer -> getView().onException(HINT_DENY_GRANT))
-                .subscribe(granted -> {
-                    Intent intent = new Intent(getActivity(), CaptureActivity.class);
-                    getActivity().startActivityForResult(intent, REQUEST_CAPTURE);
-                });
+                .subscribe(granted -> getActivity().startActivityForResult(new Intent(getActivity(), CaptureActivity.class), REQUEST_CAPTURE));
+    }
+
+    private void startControlActivityWithRequestPermissions() {
+        // 6.0以上需要位置权限
+        new RxPermissions(getActivity())
+                .request(Manifest.permission.ACCESS_FINE_LOCATION)
+                .filter(granted -> granted)
+                .switchIfEmpty(observer -> getView().onException(HINT_DENY_GRANT))
+                .subscribe(granted -> DeviceControlActivity.actionStart(getActivity()));
     }
 
     public void onConnectButtonClicked() {
-
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-
         // 如果适配器为null时表示设备不支持蓝牙功能
         if(adapter == null) {
             getView().onException(HINT_BLUETOOTH_NOT_SUPPORT);
@@ -64,13 +69,25 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                 Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 getActivity().startActivityForResult(enabler, REQUEST_OPEN_BLUETOOTH);
             } else {
-                DeviceControlActivity.actionStart(getActivity());
+                startControlActivityWithRequestPermissions();
             }
         }
     }
 
     public void onDeleteButtonClicked() {
-
+        ServerConnector.getRetrofitInstance().create(ServerConnector.IDeviceOperate.class)
+                .unbind(UserContainer.getUser().getUsername(), UserContainer.getUser().getBindingDeviceId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(ServerResponse::checkCode)
+                .subscribe(
+                        r -> {
+                            getView().onUnbindSuccess();
+                            UserContainer.getUser().setBindingDeviceId(null);
+                            UserContainer.getUser().setBindingDevicePassword(null);
+                        },
+                        throwable -> getView().onException(ServerRequestExceptionHandler.handle(throwable))
+                );
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -86,7 +103,7 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                     }
                     break;
                 case REQUEST_OPEN_BLUETOOTH:
-                    DeviceControlActivity.actionStart(getActivity());
+                    startControlActivityWithRequestPermissions();
                     break;
                 default:
             }
@@ -100,7 +117,12 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)
                 .subscribe(
-                        r -> getView().onBindSuccess(id),
+                        r -> {
+                            getView().onBindSuccess(id);
+                            UserContainer.getUser().setBindingDeviceId(id);
+                            // TODO: 2018/4/17 解析服务器数据，获取蓝牙密码
+                            // UserContainer.getUser().setBindingDevicePassword();
+                        },
                         throwable -> getView().onException(ServerRequestExceptionHandler.handle(throwable))
                 );
     }

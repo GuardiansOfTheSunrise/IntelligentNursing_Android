@@ -44,8 +44,18 @@ public class ServerConnector {
          * @return 包含服务器返回结果的被观察者对象
          */
         @FormUrlEncoded
-        @POST
+        @POST("bind")
         Flowable<ServerResponse> bind(@Field("username") String username, @Field("id") String id);
+
+        /**
+         * 用户解除设备绑定接口
+         * @param username 用户名
+         * @param id 设备id
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("unbind")
+        Flowable<ServerResponse> unbind(@Field("username") String username, @Field("id") String id);
     }
 
     /**

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/view_device_control"
             android:gravity="center"
-            android:text="正在加载，请稍候"
+            android:text="正在连接设备，请稍候"
             android:textSize="16sp"/>
 
         <View

@@ -18,4 +18,9 @@ public interface IDeviceManagementView extends IView {
      * @param id 设备id
      */
     void onBindSuccess(String id);
+
+    /**
+     * presenter解除设备绑定成功回调
+     */
+    void onUnbindSuccess();
 }

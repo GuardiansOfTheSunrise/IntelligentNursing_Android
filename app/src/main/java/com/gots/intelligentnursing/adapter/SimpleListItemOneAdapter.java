@@ -1,7 +1,9 @@
 package com.gots.intelligentnursing.adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -38,6 +40,17 @@ public class SimpleListItemOneAdapter extends RecyclerView.Adapter<SimpleListIte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.mView.setOnTouchListener((v, event) -> {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                holder.mView.setBackgroundColor(Color.parseColor("#F2F2F2"));
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return true;
+            } else if(event.getAction() == MotionEvent.ACTION_UP) {
+                v.performClick();
+                holder.mView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            }
+            return false;
+        });
         holder.mTextView.setText(mList.get(position));
         holder.mTextView.setOnClickListener( view -> {
             if(mOnItemClickedListener != null) {
@@ -51,11 +64,13 @@ public class SimpleListItemOneAdapter extends RecyclerView.Adapter<SimpleListIte
         return mList.size();
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
+     static class ViewHolder extends RecyclerView.ViewHolder {
+        private View mView;
         private TextView mTextView;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
+            mView = itemView;
             mTextView = itemView.findViewById(android.R.id.text1);
         }
     }
