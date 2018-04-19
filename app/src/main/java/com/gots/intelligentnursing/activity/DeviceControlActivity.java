@@ -2,7 +2,6 @@ package com.gots.intelligentnursing.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +12,10 @@ import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.adapter.SimpleListItemOneAdapter;
-import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.presenter.DeviceControlPresenter;
 import com.gots.intelligentnursing.view.IDeviceControlView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author zhqy

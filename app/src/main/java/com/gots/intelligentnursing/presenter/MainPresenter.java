@@ -1,6 +1,5 @@
 package com.gots.intelligentnursing.presenter;
 
-import com.gots.intelligentnursing.activity.DeviceManagementActivity;
 import com.gots.intelligentnursing.view.IMainView;
 
 /**

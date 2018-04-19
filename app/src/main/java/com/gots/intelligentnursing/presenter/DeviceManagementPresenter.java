@@ -16,7 +16,6 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static android.app.Activity.RESULT_OK;
