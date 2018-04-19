@@ -38,6 +38,8 @@
         <activity android:name=".activity.DeviceControlActivity">
         </activity>
 
+        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote"/>
+
         <receiver
             android:name="com.gots.intelligentnursing.receiver.BluetoothReceiver"
             android:enabled="true"

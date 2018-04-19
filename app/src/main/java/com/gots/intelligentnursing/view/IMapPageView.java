@@ -6,4 +6,6 @@ package com.gots.intelligentnursing.view;
  */
 
 public interface IMapPageView extends IFragmentView {
+    void onException(String msg);
+    void onInitDataSuccess();
 }

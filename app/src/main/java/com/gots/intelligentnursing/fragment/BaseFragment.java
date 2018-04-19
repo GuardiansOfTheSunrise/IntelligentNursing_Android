@@ -1,7 +1,6 @@
 package com.gots.intelligentnursing.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -29,6 +28,7 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
 
     /**
      * 用于创建Activity所对应的Presenter，在onCreate()中会被调用
