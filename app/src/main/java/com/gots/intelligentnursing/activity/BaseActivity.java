@@ -31,14 +31,14 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     protected P mPresenter;
 
     private void initToolbar() {
-        if(isDisplayToolbar()) {
+        if (isDisplayToolbar()) {
             mToolbar = findViewById(R.id.toolbar);
             setSupportActionBar(mToolbar);
-            if(isDisplayBackButton()) {
+            if (isDisplayBackButton()) {
                 ActionBar actionBar = getSupportActionBar();
-                if(actionBar != null) {
+                if (actionBar != null) {
                     actionBar.setDisplayHomeAsUpEnabled(true);
-                    if(getHomeAsUpIndicator() != 0) {
+                    if (getHomeAsUpIndicator() != 0) {
                         actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
                     }
                 }
@@ -48,7 +48,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     @Override
     public void setContentView(int layoutResID) {
-        if(isDisplayToolbar()) {
+        if (isDisplayToolbar()) {
             super.setContentView(R.layout.activity_base_toolbar);
             initToolbar();
         } else {
@@ -61,7 +61,9 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // 设置沉浸式状态栏浅色图标
+            // 只适用于6.0以上系统
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         mPresenter = createPresenter();
@@ -75,7 +77,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -94,7 +96,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * @param title 需要设置的title
      */
     public void setToolbarTitle(String title) {
-        if(!isDisplayToolbar()){
+        if (!isDisplayToolbar()) {
             return;
         }
         mToolbar.setTitle(title);

@@ -31,8 +31,8 @@ public abstract class BaseFragment<P extends BasePresenter> extends Fragment {
 
 
     /**
-     * 用于创建Activity所对应的Presenter，在onCreate()中会被调用
-     * @return 返回该Activity所对应的Presenter
+     * 用于创建Fragment所对应的Presenter，在onCreate()中会被调用
+     * @return 返回该Fragment所对应的Presenter
      */
     protected abstract P createPresenter();
 }

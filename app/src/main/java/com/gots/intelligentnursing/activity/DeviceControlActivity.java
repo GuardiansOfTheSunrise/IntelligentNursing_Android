@@ -38,9 +38,7 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         controlListRecyclerView.setLayoutManager(linearLayoutManager);
         SimpleListItemOneAdapter adapter = new SimpleListItemOneAdapter(Arrays.asList(mControlStringArray));
-        adapter.setOnItemClickedListener(position -> {
-            mPresenter.onItemClicked(position);
-        });
+        adapter.setOnItemClickedListener(position -> mPresenter.onItemClicked(position));
         controlListRecyclerView.setAdapter(adapter);
     }
     

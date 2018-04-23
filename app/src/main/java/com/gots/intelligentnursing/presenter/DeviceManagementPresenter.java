@@ -60,10 +60,10 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
     public void onConnectButtonClicked() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         // 如果适配器为null时表示设备不支持蓝牙功能
-        if(adapter == null) {
+        if (adapter == null) {
             getView().onException(HINT_BLUETOOTH_NOT_SUPPORT);
         } else {
-            if(!adapter.isEnabled()){
+            if (!adapter.isEnabled()){
                 // 打开蓝牙
                 Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 getActivity().startActivityForResult(enabler, REQUEST_OPEN_BLUETOOTH);
@@ -90,8 +90,8 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            switch(requestCode){
+        if (resultCode == RESULT_OK) {
+            switch (requestCode){
                 case REQUEST_CAPTURE:
                     String result = data.getExtras().getString("result");
                     try {

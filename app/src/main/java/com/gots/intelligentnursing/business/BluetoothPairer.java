@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.tools;
+package com.gots.intelligentnursing.business;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -8,15 +8,17 @@ import android.bluetooth.BluetoothDevice;
 import android.util.Log;
 
 import com.gots.intelligentnursing.exception.BluetoothException;
+import com.gots.intelligentnursing.tools.LogUtil;
 
 /**
  * @author zhqy
  * @date 2018/4/17
+ * 通过反射用于蓝牙自动配对
  */
 
-public class BluetoothUtil {
+public class BluetoothPairer {
 
-    private static final String TAG = "BluetoothUtil";
+    private static final String TAG = "BluetoothPairer";
 
     private static final String HINT_NO_SUCH_METHOD_EXCEPTION = "蓝牙发生错误，错误码：0";
     private static final String HINT_ILLEGAL_ACCESS_EXCEPTION = "蓝牙发生错误，错误码：1";

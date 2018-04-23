@@ -18,7 +18,7 @@ public class QrCodeResultParser {
     private static final String ERROR_ID_NOT_FOUND = "二维码有误";
 
     public static String parse(String result) throws ParseException {
-        if(!result.startsWith(URL_PREFIX)) {
+        if (!result.startsWith(URL_PREFIX)) {
             throw new ParseException(ERROR_URL_NOT_SUPPORT);
         } else {
             String paramString = result.replace(URL_PREFIX, "");
@@ -33,7 +33,7 @@ public class QrCodeResultParser {
 
             // 对参数进行解析
             for(int i = 0;i < paramCharArray.length;i++) {
-                if(paramCharArray[i] == '=') {
+                if (paramCharArray[i] == '=') {
                     // 表示该参数的key结束
                     key = builder.toString();
                     builder.setLength(0);
@@ -48,14 +48,14 @@ public class QrCodeResultParser {
                     builder.append(paramCharArray[i]);
                 }
             }
-            if(key != null) {
+            if (key != null) {
                 // 最后一个value没有以&结尾，单独处理
                 value = builder.toString();
                 param.put(key, value);
             }
 
             String id = param.get(KEY_ID);
-            if(id != null) {
+            if (id != null) {
                 return id;
             } else {
                 throw new ParseException(ERROR_ID_NOT_FOUND);

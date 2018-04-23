@@ -49,7 +49,7 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     }
 
     private void setLayoutDisplay(boolean isBinding) {
-        if(isBinding) {
+        if (isBinding) {
             mIsBindingLayout.setVisibility(View.VISIBLE);
             mNotBindingLayout.setVisibility(View.GONE);
             mDeviceIdTextView.setText(UserContainer.getUser().getBindingDeviceId());

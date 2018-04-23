@@ -17,6 +17,7 @@ import java.util.UUID;
 /**
  * @author zhqy
  * @date 2018/4/15
+ * 用于蓝牙建立连接通信
  */
 
 public class BluetoothConnector {
@@ -57,7 +58,7 @@ public class BluetoothConnector {
     }
 
     public void write(String str) throws BluetoothException {
-        if(mOutputStream == null){
+        if (mOutputStream == null){
             throw new BluetoothException(HINT_SOCKET_NOT_ESTABLISH);
         }
         try {

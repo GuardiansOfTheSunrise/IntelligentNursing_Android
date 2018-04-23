@@ -47,14 +47,14 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
     }
 
     public void onDestroy() {
-        if(mConnector != null){
+        if (mConnector != null){
             mConnector.close();
         }
         EventBus.getDefault().unregister(this);
     }
 
     public void onItemClicked(int position) {
-        switch(position) {
+        switch (position) {
             case POSITION_SET_TIME:
                 // TODO: 2018/4/16 通过对话框设置时间
                 sendInstruction("$00#230415%");
@@ -77,7 +77,7 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void eventHandler(DataEvent<BluetoothDevice> event) {
-        if(event.getCode() == BluetoothReceiver.CODE_BOND_SUCCESS) {
+        if (event.getCode() == BluetoothReceiver.CODE_BOND_SUCCESS) {
             Flowable.just(event.getData())
                     .observeOn(Schedulers.io())
                     .map(BluetoothConnector::new)

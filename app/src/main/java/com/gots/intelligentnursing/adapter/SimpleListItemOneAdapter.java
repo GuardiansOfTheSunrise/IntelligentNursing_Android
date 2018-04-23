@@ -41,7 +41,7 @@ public class SimpleListItemOneAdapter extends RecyclerView.Adapter<SimpleListIte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mView.setOnTouchListener((v, event) -> {
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 holder.mView.setBackgroundColor(Color.parseColor("#F2F2F2"));
                 v.getParent().requestDisallowInterceptTouchEvent(true);
                 return true;
@@ -53,7 +53,7 @@ public class SimpleListItemOneAdapter extends RecyclerView.Adapter<SimpleListIte
         });
         holder.mTextView.setText(mList.get(position));
         holder.mTextView.setOnClickListener( view -> {
-            if(mOnItemClickedListener != null) {
+            if (mOnItemClickedListener != null) {
                 mOnItemClickedListener.onItemClicked(position);
             }
         });

@@ -20,31 +20,31 @@ public class LogUtil {
     public static int level = LEVEL_VERBOSE;
 
     public static void v(String tag, String msg) {
-        if(level <= LEVEL_VERBOSE) {
+        if (level <= LEVEL_VERBOSE) {
             Log.v(tag, msg);
         }
     }
 
     public static void d(String tag, String msg) {
-        if(level <= LEVEL_DEBUG) {
+        if (level <= LEVEL_DEBUG) {
             Log.d(tag, msg);
         }
     }
 
     public static void i(String tag, String msg) {
-        if(level <= LEVEL_INFO) {
+        if (level <= LEVEL_INFO) {
             Log.i(tag, msg);
         }
     }
 
     public static void w(String tag, String msg) {
-        if(level <= LEVEL_WARN) {
+        if (level <= LEVEL_WARN) {
             Log.w(tag, msg);
         }
     }
 
     public static void e(String tag, String msg) {
-        if(level <= LEVEL_ERROR) {
+        if (level <= LEVEL_ERROR) {
             Log.e(tag, msg);
         }
     }
