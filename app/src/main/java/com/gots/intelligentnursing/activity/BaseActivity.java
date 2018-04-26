@@ -124,7 +124,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     /**
      * 子类Activity重写该方法可以设置是否显示返回按钮样式
-     * @return 默认返回0表示使用默认样式
+     * @return 默认返回使用灰色箭头样式
      * 如需改变样式，则重写该方法返回图片资源id，如R.drawable.menu
      * 注意，当需要改变样式并做出非默认响应时
      * 在子类Activity中需要重写onOptionsItemSelected()方法并拦截事件
