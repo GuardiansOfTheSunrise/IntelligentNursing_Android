@@ -38,6 +38,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setDisplayHomeAsUpEnabled(true);
+                    actionBar.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
                     if (getHomeAsUpIndicator() != 0) {
                         actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
                     }
