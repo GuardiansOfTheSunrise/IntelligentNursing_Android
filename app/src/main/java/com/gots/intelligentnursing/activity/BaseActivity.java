@@ -131,6 +131,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * BaseActivity默认处理是关闭当前Activity
      */
     protected int getHomeAsUpIndicator() {
-        return R.drawable.fab_add;
+        return R.drawable.ic_arrow_back;
     }
 }
