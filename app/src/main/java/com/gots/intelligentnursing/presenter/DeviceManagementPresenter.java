@@ -44,7 +44,7 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
         new RxPermissions(getActivity())
                 .request(Manifest.permission.CAMERA)
                 .filter(granted -> granted)
-                .switchIfEmpty(observer -> getView().onException(HINT_DENY_GRANT))
+                .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
                 .subscribe(granted -> getActivity().startActivityForResult(new Intent(getActivity(), CaptureActivity.class), REQUEST_CAPTURE));
     }
 
@@ -53,7 +53,7 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
         new RxPermissions(getActivity())
                 .request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .filter(granted -> granted)
-                .switchIfEmpty(observer -> getView().onException(HINT_DENY_GRANT))
+                .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
                 .subscribe(granted -> DeviceControlActivity.actionStart(getActivity()));
     }
 
@@ -61,9 +61,9 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         // 如果适配器为null时表示设备不支持蓝牙功能
         if (adapter == null) {
-            getView().onException(HINT_BLUETOOTH_NOT_SUPPORT);
+            onException(HINT_BLUETOOTH_NOT_SUPPORT);
         } else {
-            if (!adapter.isEnabled()){
+            if (!adapter.isEnabled()) {
                 // 打开蓝牙
                 Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 getActivity().startActivityForResult(enabler, REQUEST_OPEN_BLUETOOTH);
@@ -81,24 +81,24 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                 .doOnNext(ServerResponse::checkCode)
                 .subscribe(
                         r -> {
-                            getView().onUnbindSuccess();
+                            onUnbindSuccess();
                             UserContainer.getUser().setBindingDeviceId(null);
                             UserContainer.getUser().setBindingDevicePassword(null);
                         },
-                        throwable -> getView().onException(ServerRequestExceptionHandler.handle(throwable))
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
                 );
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            switch (requestCode){
+            switch (requestCode) {
                 case REQUEST_CAPTURE:
                     String result = data.getExtras().getString("result");
                     try {
                         String id = QrCodeResultParser.parse(result);
                         bindDevice(id);
                     } catch (ParseException e) {
-                        getView().onException(e.getMessage());
+                        onException(e.getMessage());
                     }
                     break;
                 case REQUEST_OPEN_BLUETOOTH:
@@ -117,13 +117,32 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
                 .doOnNext(ServerResponse::checkCode)
                 .subscribe(
                         r -> {
-                            getView().onBindSuccess(id);
+                            onBindSuccess(id);
                             UserContainer.getUser().setBindingDeviceId(id);
                             // TODO: 2018/4/17 解析服务器数据，获取蓝牙密码
                             // UserContainer.getUser().setBindingDevicePassword();
                         },
-                        throwable -> getView().onException(ServerRequestExceptionHandler.handle(throwable))
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
                 );
     }
+
+    private void onException(String msg) {
+        if (getView() != null) {
+            getView().onException(msg);
+        }
+    }
+
+    private void onBindSuccess(String id) {
+        if (getView() != null) {
+            getView().onBindSuccess(id);
+        }
+    }
+
+    private void onUnbindSuccess() {
+        if (getView() != null) {
+            getView().onUnbindSuccess();
+        }
+    }
+
 
 }

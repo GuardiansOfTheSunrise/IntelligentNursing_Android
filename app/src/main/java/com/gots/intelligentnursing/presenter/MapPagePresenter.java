@@ -39,7 +39,7 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE};
         new RxPermissions(getActivity()).request(permissions)
                 .filter(granted -> granted)
-                .switchIfEmpty(observer -> getView().onException(HINT_DENY_GRANT))
+                .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
                 .subscribe(granted -> getLocationData());
     }
 
@@ -48,7 +48,7 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
         // TODO: 2018/4/20 连接服务器获取设备位置数据
         double latitude = 36.070257;
         double longitude = 120.317581;
-        getView().onGetDeviceLocationSuccess(new LocationData(latitude, longitude));
+        onGetDeviceLocationSuccess(new LocationData(latitude, longitude));
     }
 
     private void initLocationClient() {
@@ -84,7 +84,7 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
         option.SetIgnoreCacheException(false);
 
         // 如果设置了该接口，首次启动定位时，会先判断当前WiFi是否超出有效期，若超出有效期，会先重新扫描WiFi，然后定位
-        option.setWifiCacheTimeOut(5*60*1000);
+        option.setWifiCacheTimeOut(5 * 60 * 1000);
 
         // 可选，设置是否需要过滤GPS仿真结果，默认需要，即参数为false
         option.setEnableSimulateGps(true);
@@ -99,8 +99,8 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
                         .map(location -> new LocationData(location.getLatitude(), location.getLongitude()))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                data -> getView().onLocationSuccess(data),
-                                throwable -> getView().onException(throwable.getMessage())
+                                data -> onLocationSuccess(data),
+                                throwable -> onException(throwable.getMessage())
                         );
             }
         };
@@ -112,6 +112,24 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
         if (type != BDLocation.TypeGpsLocation && type != BDLocation.TypeOffLineLocation &&
                 type != BDLocation.TypeNetWorkLocation) {
             throw new Exception(HINT_LOCATION_ERROR + location.getLocType());
+        }
+    }
+
+    private void onException(String msg) {
+        if (getView() != null) {
+            getView().onException(msg);
+        }
+    }
+
+    private void onLocationSuccess(LocationData data) {
+        if (getView() != null) {
+            getView().onLocationSuccess(data);
+        }
+    }
+
+    private void onGetDeviceLocationSuccess(LocationData data) {
+        if (getView() != null) {
+            getView().onGetDeviceLocationSuccess(data);
         }
     }
 }

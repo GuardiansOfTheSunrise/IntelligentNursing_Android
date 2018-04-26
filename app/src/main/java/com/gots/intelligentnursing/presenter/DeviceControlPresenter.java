@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -47,7 +48,7 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
     }
 
     public void onDestroy() {
-        if (mConnector != null){
+        if (mConnector != null) {
             mConnector.close();
         }
         EventBus.getDefault().unregister(this);
@@ -71,7 +72,7 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
             mConnector.write(instruction);
         } catch (BluetoothException e) {
             e.printStackTrace();
-            getView().onException(e.getMessage());
+            onException(e.getMessage());
         }
     }
 
@@ -84,20 +85,32 @@ public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
                     .doOnNext(connector -> mConnector = connector)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            connector -> getView().onConnectSuccess(),
-                            throwable -> getView().onException(throwable.getMessage())
+                            connector -> onConnectSuccess(),
+                            throwable -> onException(throwable.getMessage())
                     );
-        } else if(event.getCode() == BluetoothReceiver.CODE_ERROR) {
-            getView().onException(event.getMsg());
-        } else if(event.getCode() == BluetoothReceiver.CODE_START) {
+        } else if (event.getCode() == BluetoothReceiver.CODE_ERROR) {
+            onException(event.getMsg());
+        } else if (event.getCode() == BluetoothReceiver.CODE_START) {
             isDeviceFound = false;
-        } else if(event.getCode() == BluetoothReceiver.CODE_FOUND) {
+        } else if (event.getCode() == BluetoothReceiver.CODE_FOUND) {
             isDeviceFound = true;
         } else if (event.getCode() == BluetoothReceiver.CODE_FINISH) {
             mBluetoothAdapter.cancelDiscovery();
-            if(!isDeviceFound) {
-                getView().onException(HINT_DEVICE_NOT_FOUND);
+            if (!isDeviceFound) {
+                onException(HINT_DEVICE_NOT_FOUND);
             }
+        }
+    }
+
+    private void onConnectSuccess() {
+        if (getView() != null) {
+            getView().onConnectSuccess();
+        }
+    }
+
+    private void onException(String msg) {
+        if (getView() != null) {
+            getView().onException(msg);
         }
     }
 }

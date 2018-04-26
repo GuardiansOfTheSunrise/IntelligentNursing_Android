@@ -19,7 +19,6 @@ import com.gots.intelligentnursing.view.IMainView;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * @author zhqy
  * @date 2018/4/1
@@ -145,5 +144,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
     protected MainPresenter createPresenter() {
         return new MainPresenter(this);
     }
+
 
 }
