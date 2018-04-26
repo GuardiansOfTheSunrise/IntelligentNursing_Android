@@ -5,12 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txt_content"
+    <Button
+        android:id="@+id/bt_page_nursing_fence_setting"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Nursing"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content"
+        android:text="围栏设置"/>
 
 </LinearLayout>

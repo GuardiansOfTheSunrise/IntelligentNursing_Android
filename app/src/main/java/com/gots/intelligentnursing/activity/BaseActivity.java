@@ -38,9 +38,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
                 ActionBar actionBar = getSupportActionBar();
                 if (actionBar != null) {
                     actionBar.setDisplayHomeAsUpEnabled(true);
-                    if (getHomeAsUpIndicator() != 0) {
-                        actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
-                    }
+                    actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
                 }
             }
         }
@@ -133,6 +131,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      * BaseActivity默认处理是关闭当前Activity
      */
     protected int getHomeAsUpIndicator() {
-        return 0;
+        return R.drawable.fab_add;
     }
 }
