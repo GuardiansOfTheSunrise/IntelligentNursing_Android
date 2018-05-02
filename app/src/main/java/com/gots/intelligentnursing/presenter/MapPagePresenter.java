@@ -44,7 +44,10 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
     }
 
     private void getLocationData() {
+        // 获取手机定位数据
         mLocationClient.start();
+
+        // 从服务器获取绑定设备的定位数据
         // TODO: 2018/4/20 连接服务器获取设备位置数据
         double latitude = 36.070257;
         double longitude = 120.317581;
@@ -100,7 +103,7 @@ public class MapPagePresenter extends BasePresenter<IMapPageView> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 data -> onLocationSuccess(data),
-                                throwable -> onException(throwable.getMessage())
+                                throwable -> getView().onException(throwable.getMessage())
                         );
             }
         };

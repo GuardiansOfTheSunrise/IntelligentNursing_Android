@@ -21,7 +21,7 @@ import com.gots.intelligentnursing.tools.UnitUtil;
  * 内部有一个FAB用于控制滑动的锁定状态
  */
 
-public class SlidingLockMapView extends RelativeLayout{
+public class SlidingLockMapView extends RelativeLayout {
 
     private static final int MARGIN_RIGHT_DP = 16;
     private static final int MARGIN_TOP_DP = 16;
@@ -52,7 +52,7 @@ public class SlidingLockMapView extends RelativeLayout{
         mFloatingActionButton.setLayoutParams(lm);
 
         mLockDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_fab_lock);
-        mUnlockDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_fab_lock);
+        mUnlockDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_fab_unlock);
 
         mFloatingActionButton.setImageDrawable(mLockDrawable);
 

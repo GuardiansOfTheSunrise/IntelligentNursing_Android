@@ -20,7 +20,7 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_nursing, container, false);
-        Button fenceSettingButton = getActivity().findViewById(R.id.bt_page_nursing_fence_setting);
+        Button fenceSettingButton = view.findViewById(R.id.bt_page_nursing_fence_setting);
         fenceSettingButton.setOnClickListener(v -> mPresenter.onFenceSettingButtonClicked());
         return view;
     }

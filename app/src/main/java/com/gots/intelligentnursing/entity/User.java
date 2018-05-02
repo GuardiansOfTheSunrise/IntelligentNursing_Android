@@ -1,5 +1,8 @@
 package com.gots.intelligentnursing.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 用户信息类
  * @author zhqy
@@ -8,31 +11,40 @@ package com.gots.intelligentnursing.entity;
 
 public class User {
 
-    private String username;
-    private String bindingDeviceId;
-    private String bindingDevicePassword;
+    private String mUsername;
+    private String mBindingDeviceId;
+    private String mBindingDevicePassword;
+    private List<LocationData> mFencePointDataList;
 
     public String getUsername() {
-        return username;
+        return mUsername;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        mUsername = username;
     }
 
     public String getBindingDeviceId() {
-        return bindingDeviceId;
+        return mBindingDeviceId;
     }
 
     public void setBindingDeviceId(String bindingDeviceId) {
-        this.bindingDeviceId = bindingDeviceId;
+        mBindingDeviceId = bindingDeviceId;
     }
 
     public String getBindingDevicePassword() {
-        return bindingDevicePassword;
+        return mBindingDevicePassword;
     }
 
     public void setBindingDevicePassword(String bindingDevicePassword) {
-        this.bindingDevicePassword = bindingDevicePassword;
+        mBindingDevicePassword = bindingDevicePassword;
+    }
+
+    public List<LocationData> getFencePointDataList() {
+        return mFencePointDataList;
+    }
+
+    public void setFencePointDataList(List<LocationData> fencePointDataList) {
+        mFencePointDataList = fencePointDataList;
     }
 }

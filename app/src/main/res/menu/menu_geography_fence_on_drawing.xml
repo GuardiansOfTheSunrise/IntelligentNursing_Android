@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_geography_fence_undo"
+        android:title="撤销"
+        android:icon="@drawable/ic_menu_undo"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_geography_fence_complete"
+        android:title="保存设置"
+        android:icon="@drawable/ic_menu_complete"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_geography_fence_cancel"
+        android:title="放弃绘制"
+        android:icon="@drawable/ic_menu_cancel"
+        app:showAsAction="ifRoom"/>
+</menu>

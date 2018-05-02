@@ -33,7 +33,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_margin="16dp"
-            android:src="@drawable/fab_add"/>
+            android:src="@drawable/ic_fab_add"/>
     </RelativeLayout>
 
     <LinearLayout
