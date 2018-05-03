@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -20,7 +21,9 @@ import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.tools.LogUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhqy
@@ -31,11 +34,36 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     private static final String TAG = "GeofenceDrawMapView";
 
+    /**
+     * 两次转换点之间间隔的阈值
+     */
+    private static final long THRESHOLD_INTERVAL_BETWEEN_POINT_MS = 1000;
+
     private static final String HINT_ON_CONVERT_FAILURE = "生成围栏失败，请尝试重新绘制";
     private static final String HINT_ON_POINT_LESS = "至少需要绘制两条路径哦";
 
     private MapView mMapView;
     private CanvasView mCanvasView;
+
+
+    /**
+     * 绘制过程的围栏位置数据
+     */
+    private List<LocationData> mDrawingLocationDataList = new ArrayList<>();
+
+    /**
+     * 有效的围栏位置数据
+     * 当绘制成功后mDrawingLocationDataList会添加到mValidLocationDataList中
+     * mDrawingLocationDataList被清空
+     */
+    private List<LocationData> mValidLocationDataList;
+
+    /**
+     * 高速触摸下防止丢失点
+     * 对坐标点作缓存不转换
+     * 其中的点在完成时才逐一转换
+     */
+    private SparseArray<PointF> mOverflowPointCache = new SparseArray<>();
 
     /**
      * 绘制状态
@@ -52,68 +80,53 @@ public class GeofenceDrawMapView extends RelativeLayout {
     private PointF mLastDownPoint = null;
 
     /**
-     * Map点击回调中用于标识是否第一个点
-     * 如果是第一个点则插入到列表起始位置
+     * 用于标识是否是转换缓存点
+     * 如果是缓存点则把经纬度插入到mPointPosition指定的位置
      */
-    private boolean mIsFirstPoint = false;
+    private boolean mIsCachetPoint = false;
 
     /**
-     * 围栏点经纬度数据列表
+     * 在缓存点转换时
+     * 用于标识该缓存点在点序列中的位置
+     * 并把转换的经纬度插入到列表指定位置中
      */
-    private List<LocationData> mDrawingLocationDataList = new ArrayList<>();
-
-    private List<LocationData> mValidLocationDataList;
+    private int mPointPosition;
 
     /**
-     * 第一个点的坐标
-     * 最后再转换第一个点的经纬度
+     * 用于标识一个缓存点转换是否结束
+     * 当一个点转换结束时
+     * 才开始下一个点的转换
+     * 多线程环境加volatile避免取值错误
      */
-    private PointF mFirstCoordinatePoint = null;
+    private volatile boolean mIsConvertFinish;
+
+    /**
+     * 上一个转换点的时间
+     * 当新到来点的时间与上一个转换点的时间差小于阈值时
+     * 把点添加到缓存中不做转换防止高频下点丢失
+     */
+    private long mLastConvertPointTimeMills;
 
     /**
      * 围栏点的数量
      */
-    private int mPointCount = 0;
+    private int mPointCount;
 
+    /**
+     * 围栏绘制结果回调接口
+     */
     private DrawResultListener mDrawResultListener;
 
     /**
-     * 将位置信息添加到列表
-     * 如果是转换起点且长度正确
-     * 则在地图上绘制区域并回调
-     * @param latLng 位置信息
+     * 将位置信息添加到位置列表
+     * 如果是缓存点，则插入到列表指定位置
      */
     private void getLocationOnMapClicked(LatLng latLng) {
         // 转换第一个点
         // 当执行完成绘制后，才开始转换第一个点
-        if (mIsFirstPoint) {
-            mIsFirstPoint = false;
-            mDrawingLocationDataList.add(0, new LocationData(latLng.latitude, latLng.longitude));
-            if (mDrawingLocationDataList.size() == mPointCount) {
-                LogUtil.i(TAG, "Covert success.");
-                LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
-                LogUtil.i(TAG, "The amount of point is " + mPointCount + ".");
-                // 清空旧的围栏位置数据
-                mValidLocationDataList.clear();
-                // 将围栏位置数据添加到有效列表中
-                mValidLocationDataList.addAll(mDrawingLocationDataList);
-                // 清空绘制位置列表数据，此时数据在有效位置列表中
-                mDrawingLocationDataList.clear();
-
-                // 在地图上绘制区域
-                drawFenceRegionInMap();
-
-                if (mDrawResultListener != null) {
-                    mDrawResultListener.onSuccess(mValidLocationDataList);
-                }
-            } else {
-                if (mDrawResultListener != null) {
-                    LogUtil.i(TAG, "Covert failure.");
-                    LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
-                    LogUtil.i(TAG, "The amount of point is " + mPointCount + ".");
-                    mDrawResultListener.onFailure(HINT_ON_CONVERT_FAILURE);
-                }
-            }
+        if (mIsCachetPoint) {
+            mDrawingLocationDataList.add(mPointPosition, new LocationData(latLng.latitude, latLng.longitude));
+            mIsConvertFinish = true;
         } else {
             mDrawingLocationDataList.add(new LocationData(latLng.latitude, latLng.longitude));
         }
@@ -208,6 +221,10 @@ public class GeofenceDrawMapView extends RelativeLayout {
         mDrawResultListener = drawResultListener;
     }
 
+    /**
+     * 用于在地图上绘制围栏区域
+     * @param locationDataList 用户的围栏数据列表
+     */
     public void setLocationDataList(List<LocationData> locationDataList) {
         mValidLocationDataList = locationDataList;
         drawFenceRegionInMap();
@@ -215,16 +232,14 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 开始绘制
-     * 清除CanvasView所有已绘制的路径并设置CanvasView绘制状态
-     * 关闭MapView的手势操作，避免影响绘制
      */
     public void startDrawing() {
         mDrawingState = true;
-        mIsFirstPoint = false;
+        mIsCachetPoint = false;
         mCanvasView.clearAllPath();
-        mFirstCoordinatePoint = null;
         mPointCount = 0;
         mDrawingLocationDataList.clear();
+        mOverflowPointCache.clear();
         mCanvasView.setDrawingState(true);
         mMapView.getMap().clear();
         mMapView.getMap().getUiSettings().setAllGesturesEnabled(false);
@@ -232,22 +247,30 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 撤销上一条路径的绘制
+     * 清除CanvasView中的上一条路径
+     * 并在list或cache中清除路径的相关点
      */
     public void undoDrawing() {
         mCanvasView.deleteLastPath();
-        if (mDrawingLocationDataList.size() > 1) {
+        // 起点一定在cache中
+        // 第2个点一定在list中
+        if (mOverflowPointCache.keyAt(mOverflowPointCache.size() - 1) == mPointCount - 1) {
+            // 如果在cache中，则一定在末尾，且末尾的元素的key应等于点的数量减一
+            mOverflowPointCache.removeAt(mOverflowPointCache.size() - 1);
+        } else {
+            // 如果在list中，也一定在末尾
             mDrawingLocationDataList.remove(mDrawingLocationDataList.size() - 1);
+        }
+        mPointCount--;
+        if (mPointCount == 1) {
+            mOverflowPointCache.clear();
             mPointCount--;
-        } else if (mDrawingLocationDataList.size() == 1) {
-            mDrawingLocationDataList.remove(0);
-            mFirstCoordinatePoint = null;
-            mPointCount -= 2;
         }
     }
 
     /**
      * 完成绘制
-     * 关闭CanvasView绘制状态并转换成回环路径
+     * 如果成功则在地图上转换成围栏区域
      * @return 完成结果，false表示未完成
      */
     public boolean completeDrawing() {
@@ -259,19 +282,17 @@ public class GeofenceDrawMapView extends RelativeLayout {
         mDrawingState = false;
         mCanvasView.setDrawingState(false);
         mCanvasView.clearAllPath();
-        convertFirstPoint();
+        convertCachePoint();
         mMapView.getMap().getUiSettings().setAllGesturesEnabled(true);
         return true;
     }
 
     /**
      *  取消绘制
-     *  关闭CanvasView绘制状态并清除CanvasView所有已绘制的路径
-     *  开启MapView的手势操作
      */
     public void cancelDrawing() {
         mDrawingState = false;
-        mFirstCoordinatePoint = null;
+        mOverflowPointCache.clear();
         mCanvasView.setDrawingState(false);
         mCanvasView.clearAllPath();
         drawFenceRegionInMap();
@@ -280,27 +301,74 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 执行完成绘制时调用
-     * 根据位置列表长度判断是否丢失点
-     * 若为丢失则转换起点
+     * 根据位置位置列表及缓存列表的长度判断是否丢失点
+     * 若未丢失则转换cache中的点
      */
-    private void convertFirstPoint() {
+    private void convertCachePoint() {
         // 正常情况下，只有起点没有转换成位置
-        if (mDrawingLocationDataList.size() == mPointCount - 1) {
-            LogUtil.i(TAG, "The size of location list is one smaller than the size of coordinate list.");
+        if (mDrawingLocationDataList.size() + mOverflowPointCache.size() == mPointCount) {
+            LogUtil.i(TAG, "The size of location list add the size of cache list is equal to point count.");
             // 如果相等，表明没有丢失点，将起点进行转换
             // 设置标志位，用于在点击回调中将起始点插入到起始位置
-            mIsFirstPoint = true;
+            mIsCachetPoint = true;
+            new Thread(() -> {
+                for (int i = 0;i <mOverflowPointCache.size();i++) {
+                    mIsConvertFinish = false;
 
-            MotionEvent downEvent = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
-                    MotionEvent.ACTION_DOWN, mFirstCoordinatePoint.x, mFirstCoordinatePoint.y, 0);
-            mMapView.dispatchTouchEvent(downEvent);
-            MotionEvent upEvent = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
-                    MotionEvent.ACTION_UP, mFirstCoordinatePoint.x, mFirstCoordinatePoint.y, 0);
-            mMapView.dispatchTouchEvent(upEvent);
+                    mPointPosition = mOverflowPointCache.keyAt(i);
+                    PointF point = mOverflowPointCache.valueAt(i);
+                    MotionEvent downEvent = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+                            MotionEvent.ACTION_DOWN, point.x, point.y, 0);
+                    MotionEvent upEvent = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(),
+                            MotionEvent.ACTION_UP, point.x, point.y, 0);
+                    mMapView.post(() -> {
+                        mMapView.dispatchTouchEvent(downEvent);
+                        mMapView.dispatchTouchEvent(upEvent);
+                    });
+                    while (!mIsConvertFinish) {}
+                    downEvent.recycle();
+                    upEvent.recycle();
+                }
+                mOverflowPointCache.clear();
+                post(() -> {
+                    if (mDrawingLocationDataList.size() == mPointCount) {
+                        LogUtil.i(TAG, "Covert success.");
+                        LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
+                        LogUtil.i(TAG, "The amount of point is " + mPointCount + ".");
+                        // 清空旧的围栏位置数据
+                        mValidLocationDataList.clear();
+                        // 将围栏位置数据添加到有效列表中
+                        mValidLocationDataList.addAll(mDrawingLocationDataList);
+                        // 清空绘制位置列表数据，此时数据在有效位置列表中
+                        mDrawingLocationDataList.clear();
+
+                        // 在地图上绘制区域
+                        drawFenceRegionInMap();
+
+                        if (mDrawResultListener != null) {
+                            mDrawResultListener.onSuccess(mValidLocationDataList);
+                        }
+                    } else {
+                        LogUtil.i(TAG, "Covert failure.");
+                        LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
+                        LogUtil.i(TAG, "The count of point is " + mPointCount + ".");
+                        LogUtil.i(TAG, "The size of cache is " + mOverflowPointCache.size() + ".");
+                        // 将原围栏重新绘制与地图上
+                        drawFenceRegionInMap();
+                        if (mDrawResultListener != null) {
+                            mDrawResultListener.onFailure(HINT_ON_CONVERT_FAILURE);
+                        }
+                    }
+                });
+            }).start();
         } else {
-            LogUtil.i(TAG, "There are points loss while converting coordinate to location.");
+            LogUtil.i(TAG, "Covert failure.");
             LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
-            LogUtil.i(TAG, "The amount of point is " + mPointCount + ".");
+            LogUtil.i(TAG, "The count of point is " + mPointCount + ".");
+            LogUtil.i(TAG, "The size of cache is " + mOverflowPointCache.size() + ".");
+
+            // 将原围栏重新绘制与地图上
+            drawFenceRegionInMap();
             // 如果不相等，转换时丢失点
             if (mDrawResultListener != null) {
                 LogUtil.i(TAG, "Covert failure.");
@@ -321,20 +389,28 @@ public class GeofenceDrawMapView extends RelativeLayout {
                     // 如果DOWN事件与UP事件同一个位置，代表未绘制路径
                     if (ev.getX() != mLastDownPoint.x || ev.getY() != mLastDownPoint.y) {
                         if (mPointCount == 0) {
-                            // 第一条路径，需要获取起点坐标
-
-                            // 过高频率的点击事件会无法处理而导致丢失点
-                            // 起点只记录坐标不做转换
-                            mFirstCoordinatePoint = mLastDownPoint;
+                            // 第一条路径，需要获取起点和终点
+                            // 同时转换频率过高会丢失点，所以把起点缓存，只转换终点
+                            mOverflowPointCache.put(mPointCount, mLastDownPoint);
                             mPointCount++;
                         }
+                        long currentTimeMills = System.currentTimeMillis();
+                        // 判断上一个转换点与当前的时间差，大于阈值则转换，小于阈值则添加到缓存
+                        // 防止高频触摸导致点丢失
+                        if (currentTimeMills - mLastConvertPointTimeMills > THRESHOLD_INTERVAL_BETWEEN_POINT_MS) {
+                            // 大于阈值进行转换
+                            // 生成模拟的DOWN事件，与UP事件结合实现点击效果，触发Map的点击回调
+                            ev.setAction(MotionEvent.ACTION_DOWN);
+                            mMapView.dispatchTouchEvent(ev);
+                            ev.setAction(MotionEvent.ACTION_UP);
+                            mMapView.dispatchTouchEvent(ev);
+                            // 记录下时间
+                            mLastConvertPointTimeMills = currentTimeMills;
+                        } else {
+                            // 小于阈值添加到缓存，等到完成时再逐一转换
+                            mOverflowPointCache.put(mPointCount, new PointF(ev.getX(), ev.getY()));
+                        }
                         mPointCount++;
-
-                        // 生成模拟的DOWN事件，与UP事件结合实现点击效果，触发Map的点击回调
-                        ev.setAction(MotionEvent.ACTION_DOWN);
-                        mMapView.dispatchTouchEvent(ev);
-                        ev.setAction(MotionEvent.ACTION_UP);
-                        mMapView.dispatchTouchEvent(ev);
                     }
                     mLastDownPoint = null;
                 }
