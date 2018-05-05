@@ -34,17 +34,19 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     private static final String TAG = "GeofenceDrawMapView";
 
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_DRAWING = 1;
+    private static final int STATE_WAIT_RESULT = 2;
+
     /**
      * 两次转换点之间间隔的阈值
      */
     private static final long THRESHOLD_INTERVAL_BETWEEN_POINT_MS = 1000;
 
-    private static final String HINT_ON_CONVERT_FAILURE = "生成围栏失败，请尝试重新绘制";
     private static final String HINT_ON_POINT_LESS = "至少需要绘制两条路径哦";
 
     private MapView mMapView;
     private CanvasView mCanvasView;
-
 
     /**
      * 绘制过程的围栏位置数据
@@ -67,10 +69,8 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 绘制状态
-     * 为true时表示正在绘制
-     * 为false时表示尚未开始绘制
      */
-    private boolean mDrawingState = false;
+    private int mDrawingState = STATE_NORMAL;
 
     /**
      * 上一次Down事件的坐标
@@ -91,6 +91,11 @@ public class GeofenceDrawMapView extends RelativeLayout {
      * 并把转换的经纬度插入到列表指定位置中
      */
     private int mPointPosition;
+
+    /**
+     * 绘制完成时等待确认标志位
+     */
+    private boolean mWaitConfirm;
 
     /**
      * 用于标识一个缓存点转换是否结束
@@ -234,8 +239,9 @@ public class GeofenceDrawMapView extends RelativeLayout {
      * 开始绘制
      */
     public void startDrawing() {
-        mDrawingState = true;
+        mDrawingState = STATE_DRAWING;
         mIsCachetPoint = false;
+        mWaitConfirm = false;
         mCanvasView.clearAllPath();
         mPointCount = 0;
         mDrawingLocationDataList.clear();
@@ -279,11 +285,10 @@ public class GeofenceDrawMapView extends RelativeLayout {
             Toast.makeText(getContext(), HINT_ON_POINT_LESS, Toast.LENGTH_SHORT).show();
             return false;
         }
-        mDrawingState = false;
+        mDrawingState = STATE_WAIT_RESULT;
         mCanvasView.setDrawingState(false);
         mCanvasView.clearAllPath();
         convertCachePoint();
-        mMapView.getMap().getUiSettings().setAllGesturesEnabled(true);
         return true;
     }
 
@@ -291,12 +296,52 @@ public class GeofenceDrawMapView extends RelativeLayout {
      *  取消绘制
      */
     public void cancelDrawing() {
-        mDrawingState = false;
+        mDrawingState = STATE_NORMAL;
         mOverflowPointCache.clear();
         mCanvasView.setDrawingState(false);
         mCanvasView.clearAllPath();
         drawFenceRegionInMap();
         mMapView.getMap().getUiSettings().setAllGesturesEnabled(true);
+    }
+
+    /**
+     * 确认更新围栏数据
+     * 当围栏绘制成功后会置标志位，此时地图尚未更新
+     * 等待用户确认是否更新，如果确认则更新围栏
+     * 否则不更新数据并重新绘制旧区域
+     * 如果未绘制完成调用该方法不起作用
+     * 作用和giveUpUpdateFenceData()相反
+     * 设置这组方法的目的为了解决网络问题时新围栏未上传至服务器
+     * 而旧围栏失效的问题
+     */
+    public void confirmUpdateFenceData() {
+        if (mWaitConfirm) {
+            mWaitConfirm = false;
+
+            // 清空旧的围栏位置数据
+            mValidLocationDataList.clear();
+            // 将围栏位置数据添加到有效列表中
+            mValidLocationDataList.addAll(mDrawingLocationDataList);
+            // 清空绘制位置列表数据，此时数据在有效位置列表中
+            mDrawingLocationDataList.clear();
+            // 将新围栏绘制于地图上
+            drawFenceRegionInMap();
+        }
+    }
+
+    /**
+     * 放弃更新围栏数据
+     * 描述参照confirmUpdateFenceData()
+     */
+    public void giveUpUpdateFenceData() {
+        if (mWaitConfirm) {
+            mWaitConfirm = false;
+
+            // 清除新绘的围栏数据
+            mDrawingLocationDataList.clear();
+            // 将原围栏绘制于地图上
+            drawFenceRegionInMap();
+        }
     }
 
     /**
@@ -311,6 +356,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
             // 如果相等，表明没有丢失点，将起点进行转换
             // 设置标志位，用于在点击回调中将起始点插入到起始位置
             mIsCachetPoint = true;
+            mDrawResultListener.onStart();
             new Thread(() -> {
                 for (int i = 0;i <mOverflowPointCache.size();i++) {
                     mIsConvertFinish = false;
@@ -325,25 +371,21 @@ public class GeofenceDrawMapView extends RelativeLayout {
                         mMapView.dispatchTouchEvent(downEvent);
                         mMapView.dispatchTouchEvent(upEvent);
                     });
+                    // 等待转换结束标志
                     while (!mIsConvertFinish) {}
                     downEvent.recycle();
                     upEvent.recycle();
                 }
                 mOverflowPointCache.clear();
                 post(() -> {
+                    mDrawingState = STATE_NORMAL;
+                    mMapView.getMap().getUiSettings().setAllGesturesEnabled(true);
                     if (mDrawingLocationDataList.size() == mPointCount) {
                         LogUtil.i(TAG, "Covert success.");
                         LogUtil.i(TAG, "The size of location list is " + mDrawingLocationDataList.size() + ".");
                         LogUtil.i(TAG, "The amount of point is " + mPointCount + ".");
-                        // 清空旧的围栏位置数据
-                        mValidLocationDataList.clear();
-                        // 将围栏位置数据添加到有效列表中
-                        mValidLocationDataList.addAll(mDrawingLocationDataList);
-                        // 清空绘制位置列表数据，此时数据在有效位置列表中
-                        mDrawingLocationDataList.clear();
 
-                        // 在地图上绘制区域
-                        drawFenceRegionInMap();
+                        mWaitConfirm = true;
 
                         if (mDrawResultListener != null) {
                             mDrawResultListener.onSuccess(mValidLocationDataList);
@@ -356,7 +398,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
                         // 将原围栏重新绘制与地图上
                         drawFenceRegionInMap();
                         if (mDrawResultListener != null) {
-                            mDrawResultListener.onFailure(HINT_ON_CONVERT_FAILURE);
+                            mDrawResultListener.onFailure();
                         }
                     }
                 });
@@ -369,10 +411,11 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
             // 将原围栏重新绘制与地图上
             drawFenceRegionInMap();
+            mMapView.getMap().getUiSettings().setAllGesturesEnabled(true);
             // 如果不相等，转换时丢失点
             if (mDrawResultListener != null) {
                 LogUtil.i(TAG, "Covert failure.");
-                mDrawResultListener.onFailure(HINT_ON_CONVERT_FAILURE);
+                mDrawResultListener.onFailure();
             }
         }
     }
@@ -380,7 +423,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         boolean result = super.dispatchTouchEvent(ev);
-        if (mDrawingState) {
+        if (mDrawingState == STATE_DRAWING) {
             if (ev.getAction() == MotionEvent.ACTION_DOWN) {
                 // 记录下DOWN事件位置，用于与UP事件比较
                 mLastDownPoint = new PointF(ev.getX(), ev.getY());
@@ -419,10 +462,22 @@ public class GeofenceDrawMapView extends RelativeLayout {
         return result;
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return mDrawingState == STATE_WAIT_RESULT || super.onInterceptTouchEvent(ev);
+    }
+
     /**
      * 绘制结果监听器
      */
     public interface DrawResultListener {
+        /**
+         * 开始转换回调
+         * 大量点转换时是耗时操作，可以创建进度栏提示
+         * 同步回调
+         */
+        void onStart();
+
         /**
          * 围栏设置成功回调
          * 同步回调
@@ -433,8 +488,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
         /**
          * 围栏设置失败回调
          * 同步回调
-         * @param msg 失败原因
          */
-        void onFailure(String msg);
+        void onFailure();
     }
 }

@@ -11,10 +11,19 @@ import java.util.List;
 
 public class User {
 
+    private int mId;
     private String mUsername;
     private String mBindingDeviceId;
     private String mBindingDevicePassword;
     private List<LocationData> mFencePointDataList;
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
 
     public String getUsername() {
         return mUsername;

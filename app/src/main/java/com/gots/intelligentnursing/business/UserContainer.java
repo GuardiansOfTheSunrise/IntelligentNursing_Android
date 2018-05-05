@@ -19,6 +19,7 @@ public class UserContainer {
 
     private UserContainer(){
         mUser = new User();
+        mUser.setId(1);
         mUser.setUsername("admin");
         mUser.setBindingDeviceId("6cb871e1231b");
         mUser.setBindingDevicePassword("a64f");

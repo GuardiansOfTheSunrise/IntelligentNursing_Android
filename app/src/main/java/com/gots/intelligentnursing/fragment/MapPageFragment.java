@@ -63,7 +63,6 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
 
         //构建MarkerOption，用于在地图上添加Marker
         OverlayOptions option = new MarkerOptions()
-
                 .position(point)
                 .icon(bitmap);
 
