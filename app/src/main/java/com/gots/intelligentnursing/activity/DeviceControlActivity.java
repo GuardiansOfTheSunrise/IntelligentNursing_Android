@@ -25,13 +25,15 @@ import java.util.Arrays;
 public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> implements IDeviceControlView {
 
     private static final String TOOLBAR_TITLE = "设备控制";
+
+    private static final String HINT_ON_CONNECTING = "正在连接设备，请稍后...";
+
     private String[] mControlStringArray = {"设置时间", "寻找手环"};
 
-    private RelativeLayout mHintLayout;
     private LinearLayout mContentLayout;
 
     private void initView() {
-        mHintLayout = findViewById(R.id.layout_device_control_hint);
+        showProgressBar();
         mContentLayout = findViewById(R.id.layout_device_control_content);
 
         RecyclerView controlListRecyclerView = findViewById(R.id.recycler_view_device_control_operate);
@@ -63,8 +65,13 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
     }
 
     @Override
+    protected String getProgressBarHintText() {
+        return HINT_ON_CONNECTING;
+    }
+
+    @Override
     public void onConnectSuccess() {
-        mHintLayout.setVisibility(View.GONE);
+        dismissProgressBar();
         mContentLayout.setVisibility(View.VISIBLE);
     }
 

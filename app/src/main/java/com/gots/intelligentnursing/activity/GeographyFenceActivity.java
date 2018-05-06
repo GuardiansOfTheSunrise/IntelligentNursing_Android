@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
@@ -35,6 +36,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
     private static final int STATE_DRAWING = 1;
     private static final int STATE_WAIT_RESULT = 2;
 
+    private static final String HINT_ON_CONVERTING = "正在生成围栏，请稍候...";
     private static final String HINT_ON_DRAW_SUCCESS = "设置成功";
     private static final String HINT_ON_DRAW_FAILURE = "生成围栏失败，请尝试重新绘制";
     private static final String HINT_ON_COMPLETE_BUTTON_CLICKED = "您确定保存当前围栏设置吗？";
@@ -53,12 +55,13 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
         mMapView.setDrawResultListener(new GeofenceDrawMapView.DrawResultListener() {
             @Override
             public void onStart() {
-
+                showProgressBar();
             }
 
             @Override
             public void onSuccess(List<LocationData> locationDataList) {
                 mPresenter.onFenceDrawSuccess(locationDataList);
+                dismissProgressBar();
                 mDrawingState = STATE_NORMAL;
                 invalidateOptionsMenu();
             }
@@ -66,6 +69,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
             @Override
             public void onFailure() {
                 Toast.makeText(GeographyFenceActivity.this, HINT_ON_DRAW_FAILURE, Toast.LENGTH_SHORT).show();
+                showProgressBar();
                 mDrawingState = STATE_NORMAL;
                 invalidateOptionsMenu();
             }
@@ -172,6 +176,11 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
     @Override
     protected GeographyFencePresenter createPresenter() {
         return new GeographyFencePresenter(this);
+    }
+
+    @Override
+    protected String getProgressBarHintText() {
+        return HINT_ON_CONVERTING;
     }
 
     public static void actionStart(Context context) {
