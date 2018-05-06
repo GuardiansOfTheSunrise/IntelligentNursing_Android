@@ -69,6 +69,9 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 绘制状态
+     * STATE_NORMAL：未绘制，此时事件交由MapView处理
+     * STATE_DRAWING：正在绘制，事件由CanvasView处理，并获取坐标点在MapView上模拟点击
+     * STATE_WAIT_RESULT：已绘制完正在转换，拦截事件
      */
     private int mDrawingState = STATE_NORMAL;
 

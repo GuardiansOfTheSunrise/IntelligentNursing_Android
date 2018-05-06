@@ -11,7 +11,11 @@ import com.gots.intelligentnursing.customview.TitleCenterToolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 
 import com.gots.intelligentnursing.R;
@@ -19,7 +23,6 @@ import com.gots.intelligentnursing.presenter.BasePresenter;
 
 /**
  * Activity的基类
- * 泛型P为Activity对应的Presenter且必须为BasePresenter的子类
  * @author zhqy
  * @date 2018/3/30
  */
@@ -30,30 +33,63 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     protected P mPresenter;
 
-    private void initToolbar() {
-        if (isDisplayToolbar()) {
-            mToolbar = findViewById(R.id.toolbar);
-            setSupportActionBar(mToolbar);
-            if (isDisplayBackButton()) {
-                ActionBar actionBar = getSupportActionBar();
-                if (actionBar != null) {
-                    actionBar.setDisplayHomeAsUpEnabled(true);
-                    actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
-                }
+    private RelativeLayout mTopLayout;
+
+    private View mProgressBarView;
+
+    private void initToolbarView() {
+        mToolbar = findViewById(R.id.toolbar_base);
+        setSupportActionBar(mToolbar);
+        if (isDisplayBackButton()) {
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
             }
         }
+    }
+
+    private void initContentViewWithToolbar(int layoutResID) {
+        mTopLayout = findViewById(R.id.layout_relative_base);
+        View contentView = LayoutInflater.from(this).inflate(layoutResID, mTopLayout, false);
+        ViewGroup.LayoutParams viewGroupLayoutParams = contentView.getLayoutParams();
+        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(viewGroupLayoutParams);
+        relativeLayoutParams.addRule(RelativeLayout.BELOW, R.id.toolbar_base);
+        contentView.setLayoutParams(relativeLayoutParams);
+        mTopLayout.addView(contentView);
+    }
+
+    private void initContentViewWithoutToolbar(int layoutResID) {
+        mTopLayout = findViewById(R.id.layout_relative_base);
+        LayoutInflater.from(this).inflate(layoutResID, mTopLayout, true);
+    }
+
+    private void initProgressBarView() {
+        mProgressBarView = LayoutInflater.from(this)
+                .inflate(R.layout.view_base_progress_bar, mTopLayout, false);
+        ViewGroup.LayoutParams viewGroupLayoutParams = mProgressBarView.getLayoutParams();
+        RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(viewGroupLayoutParams);
+        relativeLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+        mProgressBarView.setLayoutParams(relativeLayoutParams);
+        mTopLayout.addView(mProgressBarView);
+        TextView hintTextView = findViewById(R.id.tv_base_progress_bar_hint);
+        hintTextView.setText(getProgressBarHintText());
+        mProgressBarView.setVisibility(View.GONE);
     }
 
     @Override
     public void setContentView(int layoutResID) {
         if (isDisplayToolbar()) {
             super.setContentView(R.layout.activity_base_toolbar);
-            initToolbar();
+            initToolbarView();
+            initContentViewWithToolbar(layoutResID);
         } else {
             super.setContentView(R.layout.activity_base_no_toolbar);
+            initContentViewWithoutToolbar(layoutResID);
         }
-        LinearLayout linearLayout = findViewById(R.id.layout_linear_base);
-        LayoutInflater.from(this).inflate(layoutResID, linearLayout, true);
+        if (getProgressBarHintText() != null) {
+            initProgressBarView();
+        }
     }
 
     @Override
@@ -96,6 +132,28 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     }
 
     /**
+     * 子类重写getProgressBarHintText()方法后
+     * 调用该方法显示ProgressBar
+     * 不重写getProgressBarHintText()该方法不起作用
+     */
+    public void showProgressBar() {
+        if (mProgressBarView != null) {
+            mProgressBarView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 子类重写getProgressBarHintText()方法后
+     * 调用该方法取消显示ProgressBar
+     * 不重写getProgressBarHintText()该方法不起作用
+     */
+    public void dismissProgressBar() {
+        if (mProgressBarView != null) {
+            mProgressBarView.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * 用于创建Activity所对应的Presenter，在onCreate()中会被调用
      * @return 返回该Activity所对应的Presenter
      */
@@ -127,5 +185,16 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
      */
     protected int getHomeAsUpIndicator() {
         return R.drawable.ic_arrow_back;
+    }
+
+    /**
+     * 子类Activity重写该方法可以实例化居中的ProgressBar提示框
+     * 通过mProgressBarView.setVisibility(View.VISIBLE)来显示
+     * 默认返回null，此时不实例化ProgressBar，不可调用mProgressBarView
+     * 重写该方法返回提示语，如无需提示语则返回""即可
+     * @return ProgressBar的提示语
+     */
+    protected String getProgressBarHintText() {
+        return null;
     }
 }

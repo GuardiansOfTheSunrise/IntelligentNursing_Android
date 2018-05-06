@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout_linear_base"
+    android:id="@+id/layout_relative_base"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.gots.intelligentnursing.customview.TitleCenterToolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbar_base"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
@@ -18,4 +18,5 @@
         app:textColor="@color/text_gray"
         app:textSize="20sp"/>
 
-</LinearLayout>
+
+</RelativeLayout>
