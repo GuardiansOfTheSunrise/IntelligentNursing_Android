@@ -6,21 +6,17 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.model.LatLng;
 import com.gots.intelligentnursing.R;
-import com.gots.intelligentnursing.business.ServerConnector;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.GeofenceDrawMapView;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.presenter.GeographyFencePresenter;
-import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.IGeographyFenceView;
 
 import java.util.List;

@@ -21,9 +21,7 @@ import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.tools.LogUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author zhqy
@@ -359,7 +357,9 @@ public class GeofenceDrawMapView extends RelativeLayout {
             // 如果相等，表明没有丢失点，将起点进行转换
             // 设置标志位，用于在点击回调中将起始点插入到起始位置
             mIsCachetPoint = true;
-            mDrawResultListener.onStart();
+            if (mDrawResultListener != null) {
+                mDrawResultListener.onStart();
+            }
             new Thread(() -> {
                 for (int i = 0;i <mOverflowPointCache.size();i++) {
                     mIsConvertFinish = false;
