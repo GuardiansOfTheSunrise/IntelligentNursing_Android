@@ -6,31 +6,34 @@ package com.gots.intelligentnursing.entity;
  */
 
 public class DataEvent<T> {
+
     private int code;
     private String msg;
     private T data;
+    private String action;
 
-    public DataEvent() {
-    }
-
-    public DataEvent(int code) {
+    public DataEvent(int code, String action) {
         this.code = code;
+        this.action = action;
     }
 
-    public DataEvent(int code, String msg) {
-        this.code = code;
-        this.msg = msg;
-    }
-
-    public DataEvent(int code, T data) {
-        this.code = code;
-        this.data = data;
-    }
-
-    public DataEvent(int code, String msg, T data) {
+    public DataEvent(int code, String msg, String action) {
         this.code = code;
         this.msg = msg;
+        this.action = action;
+    }
+
+    public DataEvent(int code, T data, String action) {
+        this.code = code;
         this.data = data;
+        this.action = action;
+    }
+
+    public DataEvent(int code, String msg, T data, String action) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+        this.action = action;
     }
 
     public int getCode() {
@@ -55,5 +58,13 @@ public class DataEvent<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }
