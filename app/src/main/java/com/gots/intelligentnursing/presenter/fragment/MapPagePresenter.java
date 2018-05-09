@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.fragment;
 
 import android.Manifest;
 
@@ -7,10 +7,9 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.gots.intelligentnursing.entity.LocationData;
-import com.gots.intelligentnursing.view.IMapPageView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.fragment.IMapPageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import java.util.Arrays;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

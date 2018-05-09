@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.activity;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -11,7 +11,8 @@ import com.gots.intelligentnursing.exception.ParseException;
 import com.gots.intelligentnursing.business.ServerConnector;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.view.IDeviceManagementView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.activity.IDeviceManagementView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
 

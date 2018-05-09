@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.gots.intelligentnursing.R;
-import com.gots.intelligentnursing.presenter.NursingPagePresenter;
-import com.gots.intelligentnursing.view.INursingPageView;
+import com.gots.intelligentnursing.presenter.fragment.NursingPagePresenter;
+import com.gots.intelligentnursing.view.fragment.INursingPageView;
 
 /**
  * @author Accumulei

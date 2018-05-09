@@ -9,12 +9,12 @@ import android.widget.RadioGroup;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.adapter.MainFragmentPagerAdapter;
 
-import com.gots.intelligentnursing.fragment.MainPageFragment;
+import com.gots.intelligentnursing.fragment.HomePageFragment;
 import com.gots.intelligentnursing.fragment.MapPageFragment;
 import com.gots.intelligentnursing.fragment.MinePageFragment;
 import com.gots.intelligentnursing.fragment.NursingPageFragment;
-import com.gots.intelligentnursing.presenter.MainPresenter;
-import com.gots.intelligentnursing.view.IMainView;
+import com.gots.intelligentnursing.presenter.activity.MainPresenter;
+import com.gots.intelligentnursing.view.activity.IMainView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements IMainView {
 
-    private static final String TOOLBAR_MAIN = "智护";
+    private static final String TOOLBAR_HOME = "智护";
     private static final String TOOLBAR_NURSING = "我的看护";
     private static final String TOOLBAR_MAP = "地图";
     private static final String TOOLBAR_MINE = "我的";
@@ -40,41 +40,41 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
 
     private List<Fragment> mFragmentList;
 
-    private RadioButton mMainRadioButton;
+    private RadioButton mHomeRadioButton;
     private RadioButton mNursingRadioButton;
     private RadioButton mMapRadioButton;
     private RadioButton mMineRadioButton;
 
     private void initFragment() {
         mFragmentList = new ArrayList<>();
-        mFragmentList.add(new MainPageFragment());
+        mFragmentList.add(new HomePageFragment());
         mFragmentList.add(new NursingPageFragment());
         mFragmentList.add(new MapPageFragment());
         mFragmentList.add(new MinePageFragment());
     }
 
     private void initRadioView() {
-        mMainRadioButton = findViewById(R.id.rb_main);
-        mNursingRadioButton = findViewById(R.id.rb_nursing);
-        mMapRadioButton = findViewById(R.id.rb_map);
-        mMineRadioButton = findViewById(R.id.rb_mine);
+        mHomeRadioButton = findViewById(R.id.rb_main_home);
+        mNursingRadioButton = findViewById(R.id.rb_main_nursing);
+        mMapRadioButton = findViewById(R.id.rb_main_map);
+        mMineRadioButton = findViewById(R.id.rb_main_mine);
 
-        RadioGroup radioGroup = findViewById(R.id.rg_tab_bar);
+        RadioGroup radioGroup = findViewById(R.id.rg_main_tab_bar);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             switch (checkedId) {
-                case R.id.rb_main:
+                case R.id.rb_main_home:
                     mViewPager.setCurrentItem(PAGE_ONE);
-                    setToolbarTitle(TOOLBAR_MAIN);
+                    setToolbarTitle(TOOLBAR_HOME);
                     break;
-                case R.id.rb_nursing:
+                case R.id.rb_main_nursing:
                     mViewPager.setCurrentItem(PAGE_TWO);
                     setToolbarTitle(TOOLBAR_NURSING);
                     break;
-                case R.id.rb_map:
+                case R.id.rb_main_map:
                     mViewPager.setCurrentItem(PAGE_THREE);
                     setToolbarTitle(TOOLBAR_MAP);
                     break;
-                case R.id.rb_mine:
+                case R.id.rb_main_mine:
                     mViewPager.setCurrentItem(PAGE_FOUR);
                     setToolbarTitle(TOOLBAR_MINE);
                     break;
@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
     }
 
     private void initViewPager() {
-        mViewPager = findViewById(R.id.activity_main_pager);
+        mViewPager = findViewById(R.id.vp_main);
 
         MainFragmentPagerAdapter adapter = new MainFragmentPagerAdapter(getSupportFragmentManager(), mFragmentList);
         mViewPager.setAdapter(adapter);
@@ -105,7 +105,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
                 if (state == ViewPager.SCROLL_STATE_SETTLING) {
                     switch (mViewPager.getCurrentItem()) {
                         case PAGE_ONE:
-                            mMainRadioButton.setChecked(true);
+                            mHomeRadioButton.setChecked(true);
                             break;
                         case PAGE_TWO:
                             mNursingRadioButton.setChecked(true);
@@ -128,11 +128,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setToolbarTitle(TOOLBAR_MAIN);
+        setToolbarTitle(TOOLBAR_HOME);
         initFragment();
         initRadioView();
         initViewPager();
-        mMainRadioButton.setChecked(true);
+        mHomeRadioButton.setChecked(true);
     }
 
     @Override

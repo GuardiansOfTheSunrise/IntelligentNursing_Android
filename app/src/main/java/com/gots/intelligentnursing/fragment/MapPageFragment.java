@@ -13,7 +13,6 @@ import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
@@ -21,8 +20,8 @@ import com.baidu.mapapi.model.LatLng;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.customview.SlidingLockMapView;
 import com.gots.intelligentnursing.entity.LocationData;
-import com.gots.intelligentnursing.presenter.MapPagePresenter;
-import com.gots.intelligentnursing.view.IMapPageView;
+import com.gots.intelligentnursing.presenter.fragment.MapPagePresenter;
+import com.gots.intelligentnursing.view.fragment.IMapPageView;
 
 /**
  * @author Accumulei

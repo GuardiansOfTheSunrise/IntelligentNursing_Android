@@ -16,8 +16,8 @@ import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.GeofenceDrawMapView;
 import com.gots.intelligentnursing.entity.LocationData;
-import com.gots.intelligentnursing.presenter.GeographyFencePresenter;
-import com.gots.intelligentnursing.view.IGeographyFenceView;
+import com.gots.intelligentnursing.presenter.activity.GeographyFencePresenter;
+import com.gots.intelligentnursing.view.activity.IGeographyFenceView;
 
 import java.util.List;
 

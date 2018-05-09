@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.adapter.SimpleListItemOneAdapter;
-import com.gots.intelligentnursing.presenter.DeviceControlPresenter;
-import com.gots.intelligentnursing.view.IDeviceControlView;
+import com.gots.intelligentnursing.presenter.activity.DeviceControlPresenter;
+import com.gots.intelligentnursing.view.activity.IDeviceControlView;
 
 import java.util.Arrays;
 
@@ -33,9 +33,9 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
 
     private void initView() {
         showProgressBar();
-        mContentLayout = findViewById(R.id.layout_device_control_content);
+        mContentLayout = findViewById(R.id.ll_device_control_content);
 
-        RecyclerView controlListRecyclerView = findViewById(R.id.recycler_view_device_control_operate);
+        RecyclerView controlListRecyclerView = findViewById(R.id.rv_device_control_operate);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         controlListRecyclerView.setLayoutManager(linearLayoutManager);
         SimpleListItemOneAdapter adapter = new SimpleListItemOneAdapter(Arrays.asList(mControlStringArray));

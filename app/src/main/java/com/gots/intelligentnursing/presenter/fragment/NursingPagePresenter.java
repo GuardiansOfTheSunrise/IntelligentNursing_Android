@@ -1,7 +1,8 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.fragment;
 
 import com.gots.intelligentnursing.activity.GeographyFenceActivity;
-import com.gots.intelligentnursing.view.INursingPageView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.fragment.INursingPageView;
 
 /**
  * @author zhqy

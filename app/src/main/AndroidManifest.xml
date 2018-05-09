@@ -57,6 +57,8 @@
 
         <activity android:name=".activity.GeographyFenceActivity">
         </activity>
+        <activity android:name=".activity.LoginActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.view;
+package com.gots.intelligentnursing.view.activity;
 
 /**
  * @author zhqy

@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.activity;
 
 import com.baidu.mapapi.model.LatLng;
 import com.google.gson.Gson;
@@ -7,7 +7,8 @@ import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.ServerResponse;
-import com.gots.intelligentnursing.view.IGeographyFenceView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.activity.IGeographyFenceView;
 
 import java.util.HashMap;
 import java.util.List;

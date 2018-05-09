@@ -1,7 +1,9 @@
-package com.gots.intelligentnursing.view;
+package com.gots.intelligentnursing.view.fragment;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+
+import com.gots.intelligentnursing.view.activity.IView;
 
 /**
  * @author zhqy

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RadioGroup
-        android:id="@+id/rg_tab_bar"
+        android:id="@+id/rg_main_tab_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
@@ -14,25 +13,25 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/rb_main"
+            android:id="@+id/rb_main_home"
             style="@style/style_rb_main_pager"
             android:drawableTop="@drawable/tab_menu_channel"
             android:text="首页" />
 
         <RadioButton
-            android:id="@+id/rb_nursing"
+            android:id="@+id/rb_main_nursing"
             style="@style/style_rb_main_pager"
             android:drawableTop="@drawable/tab_menu_message"
             android:text="看护" />
 
         <RadioButton
-            android:id="@+id/rb_map"
+            android:id="@+id/rb_main_map"
             style="@style/style_rb_main_pager"
             android:drawableTop="@drawable/tab_menu_better"
             android:text="地图" />
 
         <RadioButton
-            android:id="@+id/rb_mine"
+            android:id="@+id/rb_main_mine"
             style="@style/style_rb_main_pager"
             android:drawableTop="@drawable/tab_menu_setting"
             android:text="我的" />
@@ -40,16 +39,16 @@
     </RadioGroup>
 
     <View
-        android:id="@+id/div_tab_bar"
+        android:id="@+id/view_main_divide"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_above="@id/rg_tab_bar"
+        android:layout_above="@id/rg_main_tab_bar"
         android:background="@color/div_white" />
 
     <android.support.v4.view.ViewPager
+        android:id="@+id/vp_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/activity_main_pager"
-        android:layout_above="@id/div_tab_bar"/>
+        android:layout_above="@id/view_main_divide"/>
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.activity;
 
-import com.gots.intelligentnursing.view.IMainView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.activity.IMainView;
 
 /**
  * @author zhqy

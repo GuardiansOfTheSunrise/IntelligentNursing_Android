@@ -1,7 +1,8 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.fragment;
 
 import com.gots.intelligentnursing.activity.DeviceManagementActivity;
-import com.gots.intelligentnursing.view.IMinePageView;
+import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.view.fragment.IMinePageView;
 
 /**
  * @author zhqy

@@ -50,7 +50,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     }
 
     private void initContentViewWithToolbar(int layoutResID) {
-        mTopLayout = findViewById(R.id.layout_relative_base);
+        mTopLayout = findViewById(R.id.rl_relative_base);
         View contentView = LayoutInflater.from(this).inflate(layoutResID, mTopLayout, false);
         ViewGroup.LayoutParams viewGroupLayoutParams = contentView.getLayoutParams();
         RelativeLayout.LayoutParams relativeLayoutParams = new RelativeLayout.LayoutParams(viewGroupLayoutParams);
@@ -60,7 +60,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     }
 
     private void initContentViewWithoutToolbar(int layoutResID) {
-        mTopLayout = findViewById(R.id.layout_relative_base);
+        mTopLayout = findViewById(R.id.rl_relative_base);
         LayoutInflater.from(this).inflate(layoutResID, mTopLayout, true);
     }
 

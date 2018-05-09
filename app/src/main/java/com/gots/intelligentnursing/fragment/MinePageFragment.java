@@ -1,6 +1,5 @@
 package com.gots.intelligentnursing.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -9,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.gots.intelligentnursing.R;
-import com.gots.intelligentnursing.activity.DeviceManagementActivity;
-import com.gots.intelligentnursing.presenter.MinePagePresenter;
-import com.gots.intelligentnursing.view.IMinePageView;
+import com.gots.intelligentnursing.presenter.fragment.MinePagePresenter;
+import com.gots.intelligentnursing.view.fragment.IMinePageView;
 
 /**
  * @author Accumulei

@@ -2,7 +2,7 @@ package com.gots.intelligentnursing.presenter;
 
 import android.app.Activity;
 
-import com.gots.intelligentnursing.view.IView;
+import com.gots.intelligentnursing.view.activity.IView;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;

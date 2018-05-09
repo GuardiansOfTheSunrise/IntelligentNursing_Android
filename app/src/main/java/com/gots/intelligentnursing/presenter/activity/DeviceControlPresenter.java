@@ -1,13 +1,14 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.activity;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
 import com.gots.intelligentnursing.exception.BluetoothException;
 import com.gots.intelligentnursing.business.BluetoothConnector;
+import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.receiver.BluetoothReceiver;
 import com.gots.intelligentnursing.entity.DataEvent;
-import com.gots.intelligentnursing.view.IDeviceControlView;
+import com.gots.intelligentnursing.view.activity.IDeviceControlView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -15,7 +16,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 /**

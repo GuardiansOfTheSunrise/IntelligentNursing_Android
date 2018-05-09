@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.presenter.DeviceManagementPresenter;
-import com.gots.intelligentnursing.view.IDeviceManagementView;
+import com.gots.intelligentnursing.presenter.activity.DeviceManagementPresenter;
+import com.gots.intelligentnursing.view.activity.IDeviceManagementView;
 
 /**
  * @author zhqy
@@ -32,8 +32,8 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     private void initView() {
         setToolbarTitle(TOOLBAR_TITLE);
 
-        mNotBindingLayout = findViewById(R.id.layout_device_management_not_binding);
-        mIsBindingLayout = findViewById(R.id.layout_device_management_is_binding);
+        mNotBindingLayout = findViewById(R.id.rl_device_management_not_binding);
+        mIsBindingLayout = findViewById(R.id.ll_device_management_is_binding);
         mDeviceIdTextView = findViewById(R.id.tv_device_management_id);
 
         FloatingActionButton addDeviceButton = findViewById(R.id.fab_device_management_add);
