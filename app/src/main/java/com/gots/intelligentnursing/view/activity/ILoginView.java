@@ -5,5 +5,5 @@ package com.gots.intelligentnursing.view.activity;
  * @date 2018/5/9
  */
 
-public interface ILoginView extends IView {
+public interface ILoginView extends IActivityView {
 }

@@ -26,11 +26,6 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     protected NursingPagePresenter createPresenter() {
         return new NursingPagePresenter(this);
     }

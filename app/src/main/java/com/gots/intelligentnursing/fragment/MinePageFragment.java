@@ -25,10 +25,6 @@ public class MinePageFragment extends BaseFragment<MinePagePresenter> implements
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 
     @Override
     protected MinePagePresenter createPresenter() {

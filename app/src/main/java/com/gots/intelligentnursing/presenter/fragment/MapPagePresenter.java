@@ -7,7 +7,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.gots.intelligentnursing.entity.LocationData;
-import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -19,7 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * @date 2018/4/19
  */
 
-public class MapPagePresenter extends BasePresenter<IMapPageView> {
+public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
 
     private static final String HINT_DENY_GRANT = "您拒绝了授权，该功能无法正常使用";
     private static final String HINT_LOCATION_ERROR = "定位错误，错误码:";

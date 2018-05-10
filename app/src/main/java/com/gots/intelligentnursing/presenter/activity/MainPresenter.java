@@ -1,6 +1,5 @@
 package com.gots.intelligentnursing.presenter.activity;
 
-import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.view.activity.IMainView;
 
 /**
@@ -8,7 +7,7 @@ import com.gots.intelligentnursing.view.activity.IMainView;
  * @date 2018/4/3
  */
 
-public class MainPresenter extends BasePresenter<IMainView> {
+public class MainPresenter extends BaseActivityPresenter<IMainView> {
 
     public MainPresenter(IMainView view) {
         super(view);

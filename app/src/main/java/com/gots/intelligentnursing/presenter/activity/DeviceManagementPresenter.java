@@ -6,14 +6,14 @@ import android.content.Intent;
 
 import com.gots.intelligentnursing.activity.DeviceControlActivity;
 import com.gots.intelligentnursing.business.QrCodeResultParser;
+import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.exception.ParseException;
-import com.gots.intelligentnursing.business.ServerConnector;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.view.activity.IDeviceManagementView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -26,7 +26,7 @@ import static android.app.Activity.RESULT_OK;
  * @date 2018/4/1
  */
 
-public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementView> {
+public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceManagementView> {
 
     private static final int REQUEST_CAPTURE = 0;
     private static final int REQUEST_OPEN_BLUETOOTH = 1;
@@ -75,8 +75,9 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
     }
 
     public void onDeleteButtonClicked() {
-        ServerConnector.getRetrofitInstance().create(ServerConnector.IDeviceOperate.class)
+        RetrofitHelper.getInstance().device()
                 .unbind(UserContainer.getUser().getUsername(), UserContainer.getUser().getBindingDeviceId())
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)
@@ -111,8 +112,9 @@ public class DeviceManagementPresenter extends BasePresenter<IDeviceManagementVi
     }
 
     private void bindDevice(String id) {
-        ServerConnector.getRetrofitInstance().create(ServerConnector.IDeviceOperate.class)
+        RetrofitHelper.getInstance().device()
                 .bind(UserContainer.getUser().getUsername(), id)
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)

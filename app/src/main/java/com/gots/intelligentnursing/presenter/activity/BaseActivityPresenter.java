@@ -1,8 +1,7 @@
-package com.gots.intelligentnursing.presenter;
+package com.gots.intelligentnursing.presenter.activity;
 
-import android.app.Activity;
-
-import com.gots.intelligentnursing.view.activity.IView;
+import com.gots.intelligentnursing.view.activity.IActivityView;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
@@ -14,11 +13,11 @@ import java.lang.ref.WeakReference;
  * @date 2018/3/30
  */
 
-public abstract class BasePresenter<V extends IView> {
+public abstract class BaseActivityPresenter<V extends IActivityView> {
 
     protected Reference<V> mViewRef;
 
-    public BasePresenter(V view){
+    public BaseActivityPresenter(V view){
         mViewRef = new WeakReference<>(view);
     }
 
@@ -31,7 +30,7 @@ public abstract class BasePresenter<V extends IView> {
         mViewRef = null;
     }
 
-    protected Activity getActivity(){
-        return getView().getActivity();
+    protected RxAppCompatActivity getActivity() {
+        return (RxAppCompatActivity) getView();
     }
 }

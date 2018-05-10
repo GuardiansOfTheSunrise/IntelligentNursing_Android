@@ -2,13 +2,13 @@ package com.gots.intelligentnursing.presenter.activity;
 
 import com.baidu.mapapi.model.LatLng;
 import com.google.gson.Gson;
-import com.gots.intelligentnursing.business.ServerConnector;
+import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.ServerResponse;
-import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.view.activity.IGeographyFenceView;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +24,7 @@ import okhttp3.RequestBody;
  * @date 2018/4/26
  */
 
-public class GeographyFencePresenter extends BasePresenter<IGeographyFenceView> {
+public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFenceView> {
 
     public GeographyFencePresenter(IGeographyFenceView view) {
         super(view);
@@ -60,8 +60,9 @@ public class GeographyFencePresenter extends BasePresenter<IGeographyFenceView> 
         map.put("uid", UserContainer.getUser().getId());
         map.put("points", fenceLocationDataList);
         String json = gson.toJson(map);
-        ServerConnector.getRetrofitInstance().create(ServerConnector.IUserOperate.class)
+        RetrofitHelper.getInstance().user()
                 .fenceDrawing(RequestBody.create(MediaType.parse("application/json;charset=UTF-8"),json))
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)

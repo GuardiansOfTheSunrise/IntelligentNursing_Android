@@ -1,6 +1,6 @@
 package com.gots.intelligentnursing.presenter.fragment;
 
-import com.gots.intelligentnursing.presenter.BasePresenter;
+import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
 import com.gots.intelligentnursing.view.fragment.IHomePageView;
 
 /**
@@ -8,7 +8,7 @@ import com.gots.intelligentnursing.view.fragment.IHomePageView;
  * @date 2018/4/19
  */
 
-public class HomePagePresenter extends BasePresenter<IHomePageView> {
+public class HomePagePresenter extends BaseFragmentPresenter<IHomePageView> {
     public HomePagePresenter(IHomePageView view) {
         super(view);
     }

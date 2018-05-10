@@ -1,0 +1,67 @@
+package com.gots.intelligentnursing.business;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import com.gots.intelligentnursing.business.IServerConnection.*;
+import com.gots.intelligentnursing.tools.LogUtil;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+/**
+ * @author zhqy
+ * @date 2018/5/9
+ */
+
+public class RetrofitHelper {
+
+    private static final String TAG = "RetrofitHelper";
+
+    private static final String BASE_URL = "http://120.78.149.248:8080/";
+
+    private Retrofit mRetrofit;
+
+    private OkHttpClient initOkHttpClient() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
+            try {
+                LogUtil.i(TAG, URLDecoder.decode(message, "utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                LogUtil.i(TAG, message);
+            }
+        });
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        return new OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .build();
+    }
+
+    private RetrofitHelper() {
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .client(initOkHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+    }
+
+    public IUserOperate user() {
+        return mRetrofit.create(IUserOperate.class);
+    }
+
+    public IDeviceOperate device() {
+        return mRetrofit.create(IDeviceOperate.class);
+    }
+
+    public static RetrofitHelper getInstance() {
+        return InstanceHolder.INSTANCE;
+    }
+
+    private static class InstanceHolder {
+        private static final RetrofitHelper INSTANCE = new RetrofitHelper();
+    }
+}

@@ -33,11 +33,6 @@ public class HomePageFragment extends BaseFragment<HomePagePresenter> implements
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
     protected HomePagePresenter createPresenter() {
         return new HomePagePresenter(this);
     }

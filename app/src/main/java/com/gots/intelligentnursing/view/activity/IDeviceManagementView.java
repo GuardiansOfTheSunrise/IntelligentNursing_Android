@@ -5,7 +5,7 @@ package com.gots.intelligentnursing.view.activity;
  * @date 2018/4/1
  */
 
-public interface IDeviceManagementView extends IView {
+public interface IDeviceManagementView extends IActivityView {
 
     /**
      * presenter出现异常时的回调

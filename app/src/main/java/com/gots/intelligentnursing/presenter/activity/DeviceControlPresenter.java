@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 
 import com.gots.intelligentnursing.exception.BluetoothException;
 import com.gots.intelligentnursing.business.BluetoothConnector;
-import com.gots.intelligentnursing.presenter.BasePresenter;
 import com.gots.intelligentnursing.receiver.BluetoothReceiver;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.view.activity.IDeviceControlView;
@@ -23,7 +22,7 @@ import io.reactivex.schedulers.Schedulers;
  * @date 2018/4/15
  */
 
-public class DeviceControlPresenter extends BasePresenter<IDeviceControlView> {
+public class DeviceControlPresenter extends BaseActivityPresenter<IDeviceControlView> {
 
     private static final String TAG = "DeviceControlPresenter";
 

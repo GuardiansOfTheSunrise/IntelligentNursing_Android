@@ -1,9 +1,12 @@
 package com.gots.intelligentnursing.view.activity;
 
+
+
 /**
  * @author zhqy
- * @date 2018/4/1
+ * @date 2018/4/3
  */
 
-public interface IMainView extends IActivityView {
+public interface IActivityView {
+
 }
