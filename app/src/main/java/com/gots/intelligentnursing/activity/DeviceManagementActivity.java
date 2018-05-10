@@ -45,14 +45,14 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
         Button deleteButton = findViewById(R.id.bt_device_management_delete);
         deleteButton.setOnClickListener(v -> mPresenter.onDeleteButtonClicked());
 
-        setLayoutDisplay(UserContainer.getUser().getBindingDeviceId() != null);
+        setLayoutDisplay(UserContainer.getUser().getUserInfo().getDeviceInfo() != null);
     }
 
     private void setLayoutDisplay(boolean isBinding) {
         if (isBinding) {
             mIsBindingLayout.setVisibility(View.VISIBLE);
             mNotBindingLayout.setVisibility(View.GONE);
-            mDeviceIdTextView.setText(UserContainer.getUser().getBindingDeviceId());
+            mDeviceIdTextView.setText(UserContainer.getUser().getUserInfo().getDeviceInfo().getId());
         } else {
             mIsBindingLayout.setVisibility(View.GONE);
             mNotBindingLayout.setVisibility(View.VISIBLE);

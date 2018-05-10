@@ -48,6 +48,7 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_control);
         setToolbarTitle(TOOLBAR_TITLE);
+        setProgressBarHint(HINT_ON_CONNECTING);
         initView();
         mPresenter.connectDevice();
     }
@@ -64,8 +65,8 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
     }
 
     @Override
-    protected String getProgressBarHintText() {
-        return HINT_ON_CONNECTING;
+    protected boolean isDisplayProgressBar() {
+        return true;
     }
 
     @Override

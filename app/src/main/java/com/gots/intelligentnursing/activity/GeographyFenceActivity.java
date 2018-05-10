@@ -47,7 +47,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
 
     private void initMapView() {
         mMapView = findViewById(R.id.geofence_draw_map_view_geography_fence);
-        mMapView.setLocationDataList(UserContainer.getUser().getFencePointDataList());
+        mMapView.setLocationDataList(UserContainer.getUser().getUserInfo().getFencePointDataList());
         mMapView.setDrawResultListener(new GeofenceDrawMapView.DrawResultListener() {
             @Override
             public void onStart() {
@@ -94,6 +94,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
         super.onCreate(savedInstanceState);
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_geography_fence);
+        setProgressBarHint(HINT_ON_CONVERTING);
         setToolbarTitle(TOOLBAR_TITLE);
         initMapView();
 
@@ -175,8 +176,8 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
     }
 
     @Override
-    protected String getProgressBarHintText() {
-        return HINT_ON_CONVERTING;
+    protected boolean isDisplayProgressBar() {
+        return true;
     }
 
     public static void actionStart(Context context) {

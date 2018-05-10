@@ -59,7 +59,8 @@ public class BluetoothReceiver extends BroadcastReceiver {
                 try {
                     BluetoothPairer.setPairingConfirmation(device.getClass(), device, true);
                     abortBroadcast();
-                    BluetoothPairer.setPin(device.getClass(), device, UserContainer.getUser().getBindingDevicePassword());
+                    BluetoothPairer.setPin(device.getClass(), device,
+                            UserContainer.getUser().getUserInfo().getDeviceInfo().getBluetoothPassword());
                     EventBus.getDefault().post(
                             new DataEvent<>(CODE_BOND_SUCCESS, device, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
                 } catch (BluetoothException e) {
