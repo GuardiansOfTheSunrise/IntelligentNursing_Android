@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/bt_mine_device_management"
+        android:id="@+id/bt_page_mine_device_management"
         android:text="设备管理"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

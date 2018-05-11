@@ -4,7 +4,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
-import com.gots.intelligentnursing.activity.DeviceControlActivity;
+import com.gots.intelligentnursing.activity.logined.DeviceControlActivity;
 import com.gots.intelligentnursing.business.QrCodeResultParser;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.entity.DeviceInfo;

@@ -21,6 +21,9 @@ import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Activity的基类
  * @author zhqy
@@ -28,6 +31,8 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
  */
 
 public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAppCompatActivity {
+
+    private static final Pattern PATTERN_LOGINED_ACTIVITY = Pattern.compile("com.gots.intelligentnursing.activity.logined.*");
 
     private TitleCenterToolbar mToolbar;
 
@@ -96,12 +101,6 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (needToLogin()) {
-            if (UserContainer.getUser().getUserInfo() == null) {
-                finish();
-                LoginActivity.actionStart(this, this.getClass());
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 设置沉浸式状态栏浅色图标
             // 只适用于6.0以上系统
@@ -112,6 +111,14 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     @Override
     public void startActivity(Intent intent) {
+        String activityClassName = intent.getComponent().getClassName();
+        Matcher matcher = PATTERN_LOGINED_ACTIVITY.matcher(activityClassName);
+        if (matcher.matches()) {
+            if (UserContainer.getUser().getUserInfo() == null) {
+                LoginActivity.actionStart(this, activityClassName);
+                return;
+            }
+        }
         super.startActivity(intent);
     }
 
@@ -182,15 +189,6 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      */
     protected abstract P createPresenter();
 
-    /**
-     * 子类Activity重写该方法来表示该Activity是否需要登录访问
-     * 默认返回false，表示不需要登录访问
-     * 如果Activity需要登录后访问，则重写该方法返回true
-     * @return 是否需要登录后访问
-     */
-    protected boolean needToLogin() {
-        return false;
-    }
 
     /**
      * 子类Activity重写该方法可以设置是否显示Toolbar

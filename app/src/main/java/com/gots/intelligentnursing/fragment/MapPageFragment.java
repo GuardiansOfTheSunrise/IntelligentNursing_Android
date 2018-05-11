@@ -84,7 +84,6 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         SDKInitializer.initialize(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.fragment_page_map, container, false);
         initMapView(view);
-        mPresenter.initData();
         return view;
     }
 
@@ -93,6 +92,14 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         super.onDestroy();
         mMapView.onDestroy();
         mBaiduMap.setMyLocationEnabled(false);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            mPresenter.initData();
+        }
     }
 
     @Override

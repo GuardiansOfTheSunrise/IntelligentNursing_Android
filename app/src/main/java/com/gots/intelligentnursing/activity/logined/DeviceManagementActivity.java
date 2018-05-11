@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.activity;
+package com.gots.intelligentnursing.activity.logined;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.activity.BaseActivity;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.presenter.activity.DeviceManagementPresenter;
 import com.gots.intelligentnursing.view.activity.IDeviceManagementView;
@@ -70,11 +71,6 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mPresenter.onActivityResult(requestCode, resultCode,data);
-    }
-
-    @Override
-    protected boolean needToLogin() {
-        return true;
     }
 
     @Override

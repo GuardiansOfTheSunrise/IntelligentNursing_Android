@@ -22,7 +22,7 @@ import com.gots.intelligentnursing.view.activity.ILoginView;
 
 public class LoginActivity extends BaseActivity<LoginPresenter> implements ILoginView {
 
-    private Class<? extends Activity> mActivityClass;
+    private String mActionActivityName;
 
     private static final String HINT_ON_LOGINING = "登录中，请稍候...";
 
@@ -53,7 +53,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
         setContentView(R.layout.activity_login);
         setProgressBarHint(HINT_ON_LOGINING);
 
-        mActivityClass = (Class<? extends Activity>) getIntent().getSerializableExtra(KEY_FROM_ACTIVITY);
+        mActionActivityName = getIntent().getStringExtra(KEY_FROM_ACTIVITY);
 
         initEditText();
         initLoginButton();
@@ -65,8 +65,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
         Gson gson = new Gson();
         LogUtil.i("LoginActivity", gson.toJson(UserContainer.getUser()));
         finish();
-        if (mActivityClass != null) {
-            Intent intent = new Intent(this, mActivityClass);
+        if (mActionActivityName != null) {
+            Intent intent = new Intent();
+            intent.setClassName(this, mActionActivityName);
             startActivity(intent);
         }
     }
@@ -92,9 +93,9 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
         return true;
     }
 
-    public static void actionStart(Context context, Class<? extends Activity> fromActivity) {
+    public static void actionStart(Context context, String toActivity) {
         Intent intent = new Intent(context, LoginActivity.class);
-        intent.putExtra(KEY_FROM_ACTIVITY, fromActivity);
+        intent.putExtra(KEY_FROM_ACTIVITY, toActivity);
         context.startActivity(intent);
     }
 }

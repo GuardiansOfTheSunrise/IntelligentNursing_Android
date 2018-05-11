@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.activity;
+package com.gots.intelligentnursing.activity.logined;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.model.LatLng;
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.activity.BaseActivity;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.GeofenceDrawMapView;
 import com.gots.intelligentnursing.entity.LocationData;
