@@ -73,6 +73,11 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
     }
 
     @Override
+    protected boolean needToLogin() {
+        return true;
+    }
+
+    @Override
     protected DeviceManagementPresenter createPresenter() {
         return new DeviceManagementPresenter(this);
     }

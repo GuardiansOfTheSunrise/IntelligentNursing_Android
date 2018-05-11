@@ -1,7 +1,6 @@
 package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.ServerResponse;
-import com.gots.intelligentnursing.entity.User;
 import com.gots.intelligentnursing.entity.UserInfo;
 
 import io.reactivex.Flowable;

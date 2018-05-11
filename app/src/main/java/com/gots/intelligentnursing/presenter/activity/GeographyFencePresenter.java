@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
+import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.User;
@@ -36,7 +37,10 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
      * @return 重心经纬度
      */
     public LatLng getCenterOfFence() {
-        List<LocationData> fenceLocationDataList = UserContainer.getUser().getUserInfo().getFencePointDataList();
+        List<LocationData> fenceLocationDataList = UserContainer.getUser().getUserInfo().getFenceInfo().getFencePointDataList();
+        if (fenceLocationDataList.size() == 0) {
+            return null;
+        }
         LocationData vertex = fenceLocationDataList.get(0);
         double sumOfLatitude = 0;
         double sumOfLongitude = 0;

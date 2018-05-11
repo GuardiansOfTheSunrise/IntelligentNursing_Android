@@ -18,12 +18,7 @@ public class MinePagePresenter extends BaseFragmentPresenter<IMinePageView> {
     }
 
     public void onDeviceManagementButtonClicked() {
-        if (UserContainer.getUser().getUserInfo() != null) {
-            DeviceManagementActivity.actionStart(getActivity());
-        } else {
-            LoginActivity.actionStart(getActivity());
-        }
-
+        DeviceManagementActivity.actionStart(getActivity());
     }
 
 }

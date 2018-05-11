@@ -12,6 +12,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.model.LatLng;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.GeofenceDrawMapView;
@@ -47,7 +48,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
 
     private void initMapView() {
         mMapView = findViewById(R.id.geofence_draw_map_view_geography_fence);
-        mMapView.setLocationDataList(UserContainer.getUser().getUserInfo().getFencePointDataList());
+        mMapView.setLocationDataList(UserContainer.getUser().getUserInfo().getFenceInfo().getFencePointDataList());
         mMapView.setDrawResultListener(new GeofenceDrawMapView.DrawResultListener() {
             @Override
             public void onStart() {
@@ -73,8 +74,11 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
         mBaiduMap = mMapView.getMap();
 
         // 将地图移动至围栏区域的中心
-        MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(mPresenter.getCenterOfFence());
-        mBaiduMap.animateMapStatus(update);
+        LatLng centerPoint = mPresenter.getCenterOfFence();
+        if (centerPoint != null) {
+            MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(centerPoint);
+            mBaiduMap.animateMapStatus(update);
+        }
     }
 
     @Override

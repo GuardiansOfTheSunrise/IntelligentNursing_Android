@@ -1,9 +1,12 @@
 package com.gots.intelligentnursing.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+
+import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.TitleCenterToolbar;
 
 import android.view.LayoutInflater;
@@ -93,12 +96,23 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (needToLogin()) {
+            if (UserContainer.getUser().getUserInfo() == null) {
+                finish();
+                LoginActivity.actionStart(this, this.getClass());
+            }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 设置沉浸式状态栏浅色图标
             // 只适用于6.0以上系统
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         mPresenter = createPresenter();
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        super.startActivity(intent);
     }
 
     @Override
@@ -167,6 +181,16 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      * @return 返回该Activity所对应的Presenter
      */
     protected abstract P createPresenter();
+
+    /**
+     * 子类Activity重写该方法来表示该Activity是否需要登录访问
+     * 默认返回false，表示不需要登录访问
+     * 如果Activity需要登录后访问，则重写该方法返回true
+     * @return 是否需要登录后访问
+     */
+    protected boolean needToLogin() {
+        return false;
+    }
 
     /**
      * 子类Activity重写该方法可以设置是否显示Toolbar

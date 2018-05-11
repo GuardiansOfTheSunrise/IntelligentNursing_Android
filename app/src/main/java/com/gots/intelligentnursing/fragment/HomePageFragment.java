@@ -20,9 +20,6 @@ public class HomePageFragment extends BaseFragment<HomePagePresenter> implements
 
     private void initButton(View view) {
         Button loginButton = view.findViewById(R.id.bt_page_home_login);
-        loginButton.setOnClickListener(v -> {
-            LoginActivity.actionStart(getActivity());
-        });
     }
 
     @Override

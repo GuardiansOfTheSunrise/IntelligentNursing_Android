@@ -1,7 +1,9 @@
 package com.gots.intelligentnursing.business;
 
+import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.User;
+import com.gots.intelligentnursing.entity.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;

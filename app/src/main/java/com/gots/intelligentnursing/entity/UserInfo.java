@@ -32,8 +32,7 @@ public class UserInfo {
     @SerializedName("equipment")
     private DeviceInfo mDeviceInfo;
 
-    @SerializedName("fences")
-    private List<LocationData> mFencePointDataList;
+    private FenceInfo mFenceInfo;
 
     public int getId() {
         return mId;
@@ -91,11 +90,11 @@ public class UserInfo {
         mDeviceInfo = deviceInfo;
     }
 
-    public List<LocationData> getFencePointDataList() {
-        return mFencePointDataList;
+    public FenceInfo getFenceInfo() {
+        return mFenceInfo;
     }
 
-    public void setFencePointDataList(List<LocationData> fencePointDataList) {
-        mFencePointDataList = fencePointDataList;
+    public void setFenceInfo(FenceInfo fenceInfo) {
+        mFenceInfo = fenceInfo;
     }
 }
