@@ -8,8 +8,9 @@ package com.gots.intelligentnursing.view.activity;
 public interface ILoginView extends IActivityView {
     /**
      * 登录成功回调
+     * @param username 登录的用户名
      */
-    void onLoginSuccess();
+    void onLoginSuccess(String username);
 
     /**
      * 出现异常回调

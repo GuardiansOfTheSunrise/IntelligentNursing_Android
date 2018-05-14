@@ -45,7 +45,7 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
         double sumOfLatitude = 0;
         double sumOfLongitude = 0;
         double sumOfArea = 0;
-        for (int i = 0;i < fenceLocationDataList.size() - 2;i++) {
+        for (int i = 0; i < fenceLocationDataList.size() - 2; i++) {
             LocationData pointSecond = fenceLocationDataList.get(i + 1);
             LocationData pointThird = fenceLocationDataList.get(i + 2);
             double area = ((pointSecond.getLatitude() - vertex.getLatitude()) *

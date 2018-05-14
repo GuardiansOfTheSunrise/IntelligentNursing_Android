@@ -24,6 +24,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
 
     private String mActionActivityName;
 
+    private static final String HINT_ON_LOGIN_SUCCESS = "，欢迎您";
     private static final String HINT_ON_LOGINING = "登录中，请稍候...";
 
     private static final String KEY_FROM_ACTIVITY = "activity";
@@ -60,10 +61,12 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
     }
 
     @Override
-    public void onLoginSuccess() {
+    public void onLoginSuccess(String username) {
         dismissProgressBar();
+        // TODO: 2018/5/11 测试用代码
         Gson gson = new Gson();
         LogUtil.i("LoginActivity", gson.toJson(UserContainer.getUser()));
+        Toast.makeText(this, username + HINT_ON_LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
         finish();
         if (mActionActivityName != null) {
             Intent intent = new Intent();

@@ -32,25 +32,36 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         initLocationClient();
     }
 
-    public void initData() {
+    /**
+     * 刷新手机与设备的位置数据
+     */
+    public void refreshData() {
+        getDeviceLocation();
+
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE};
         new RxPermissions(getActivity()).request(permissions)
                 .filter(granted -> granted)
                 .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
-                .subscribe(granted -> getLocationData());
+                .subscribe(granted -> startLocation());
     }
 
-    private void getLocationData() {
-        // 获取手机定位数据
-        mLocationClient.start();
-
-        // 从服务器获取绑定设备的定位数据
+    /**
+     * 从服务器获取绑定设备的定位数据
+     */
+    private void getDeviceLocation() {
         // TODO: 2018/4/20 连接服务器获取设备位置数据
         double latitude = 36.070257;
         double longitude = 120.317581;
         onGetDeviceLocationSuccess(new LocationData(latitude, longitude));
+    }
+
+    /**
+     * 启动手机定位，重回调中获取定位数据
+     */
+    private void startLocation() {
+        mLocationClient.start();
     }
 
     private void initLocationClient() {

@@ -1,5 +1,6 @@
 package com.gots.intelligentnursing.presenter.activity;
 
+import com.gots.intelligentnursing.business.FileCacheManager;
 import com.gots.intelligentnursing.business.IServerConnection;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
@@ -35,16 +36,19 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
                 .observeOn(Schedulers.io())
                 .doOnNext(ServerResponse::checkCode)
                 .map(ServerResponse::getData)
-                .doOnNext(token -> UserContainer.getUser().setToken(token))
+                .doOnNext(token -> {
+                    UserContainer.getUser().setToken(token);
+                    FileCacheManager.getInstance(getActivity()).saveUsernameAndPassword(username, password);
+                })
                 .map(token -> UserContainer.getUser().getToken())
                 .flatMap(userOperate::getUserInfo)
                 .doOnNext(ServerResponse::checkCode)
                 .map(ServerResponse::getData)
-                .doOnNext(this::createListWhileFencesNull)
+                .doOnNext(this::createListWhileFencesNull) // TODO: 2018/5/11 根据服务器数据格式决定
                 .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        userInfo -> onLoginSuccess(),
+                        userInfo -> onLoginSuccess(userInfo.getUsername()),
                         throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
                 );
 
@@ -58,9 +62,9 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
         }
     }
 
-    private void onLoginSuccess() {
+    private void onLoginSuccess(String username) {
         if (getView() != null) {
-            getView().onLoginSuccess();
+            getView().onLoginSuccess(username);
         }
     }
 

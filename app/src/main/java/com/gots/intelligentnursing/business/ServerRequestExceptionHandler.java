@@ -19,7 +19,7 @@ public class ServerRequestExceptionHandler {
     private static final String THROWABLE_MSG_ON_AUTHORIZATION_ERROR = "HTTP 401 ";
 
     private static final String HINT_SERVER_ERROR = "服务器错误";
-    private static final String HINT_AUTHORIZATION_ERROR = "登录出错，请重新登录";
+    public static final String HINT_AUTHORIZATION_ERROR = "登录出错，请重新登录";
     private static final String HINT_NETWORK_ERROR = "网络异常";
     private static final String HINT_UNKNOWN_ERROR = "未知错误";
 
