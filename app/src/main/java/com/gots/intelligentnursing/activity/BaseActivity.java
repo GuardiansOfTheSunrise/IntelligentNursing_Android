@@ -51,12 +51,15 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     private TextView mProgressBarHintTextView;
 
+    private final String ACTION_UPUSH_GET_NOTIFICATION = "UmengMessageHandler.getNotification";
+
     private void initToolbarView() {
         mToolbar = findViewById(R.id.toolbar_base);
         setSupportActionBar(mToolbar);
         if (isDisplayBackButton()) {
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
+
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setHomeAsUpIndicator(getHomeAsUpIndicator());
             }
@@ -250,14 +253,14 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserEvent (DataEvent event) {
-        LogUtil.i("MyApplication","onUserEvent");
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Alert by EventBus");
-        builder.setMessage("Get U-Push Notification");
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", null);
-        builder.show();
+        if (event.getAction().equals(ACTION_UPUSH_GET_NOTIFICATION)) {
+            LogUtil.i("MyApplication", "onUserEvent");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Alert by EventBus");
+            builder.setMessage("Get U-Push Notification");
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", null);
+            builder.show();
+        }
     }
-
-
 }
