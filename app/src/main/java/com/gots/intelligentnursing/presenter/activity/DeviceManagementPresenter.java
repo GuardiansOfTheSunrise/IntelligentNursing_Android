@@ -4,10 +4,12 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 
-import com.gots.intelligentnursing.activity.DeviceControlActivity;
+import com.gots.intelligentnursing.activity.logined.DeviceControlActivity;
 import com.gots.intelligentnursing.business.QrCodeResultParser;
 import com.gots.intelligentnursing.business.RetrofitHelper;
+import com.gots.intelligentnursing.entity.DeviceInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.entity.User;
 import com.gots.intelligentnursing.exception.ParseException;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
@@ -75,18 +77,16 @@ public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceMana
     }
 
     public void onDeleteButtonClicked() {
+        User user = UserContainer.getUser();
         RetrofitHelper.getInstance().device()
-                .unbind(UserContainer.getUser().getUsername(), UserContainer.getUser().getBindingDeviceId())
+                .unbind(user.getToken(), user.getUserInfo().getId())
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)
+                .doOnNext(resp -> UserContainer.getUser().getUserInfo().setDeviceInfo(null))
                 .subscribe(
-                        r -> {
-                            onUnbindSuccess();
-                            UserContainer.getUser().setBindingDeviceId(null);
-                            UserContainer.getUser().setBindingDevicePassword(null);
-                        },
+                        r -> onUnbindSuccess(),
                         throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
                 );
     }
@@ -97,8 +97,8 @@ public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceMana
                 case REQUEST_CAPTURE:
                     String result = data.getExtras().getString("result");
                     try {
-                        String id = QrCodeResultParser.parse(result);
-                        bindDevice(id);
+                        String deviceId = QrCodeResultParser.parse(result);
+                        bindDevice(deviceId);
                     } catch (ParseException e) {
                         onException(e.getMessage());
                     }
@@ -111,20 +111,21 @@ public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceMana
         }
     }
 
-    private void bindDevice(String id) {
+    private void bindDevice(String deviceId) {
+        User user = UserContainer.getUser();
         RetrofitHelper.getInstance().device()
-                .bind(UserContainer.getUser().getUsername(), id)
+                .bind(user.getToken(), user.getUserInfo().getId(), deviceId)
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(ServerResponse::checkCode)
+                .map(ServerResponse::getData)
+                .doOnNext(pwd -> {
+                    DeviceInfo deviceInfo = new DeviceInfo(deviceId, pwd);
+                    UserContainer.getUser().getUserInfo().setDeviceInfo(deviceInfo);
+                })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        r -> {
-                            onBindSuccess(id);
-                            UserContainer.getUser().setBindingDeviceId(id);
-                            // TODO: 2018/4/17 解析服务器数据，获取蓝牙密码
-                            // UserContainer.getUser().setBindingDevicePassword();
-                        },
+                        pwd -> onBindSuccess(deviceId),
                         throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
                 );
     }

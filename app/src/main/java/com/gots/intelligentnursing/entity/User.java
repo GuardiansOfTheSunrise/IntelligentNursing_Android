@@ -1,5 +1,7 @@
 package com.gots.intelligentnursing.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,49 +13,22 @@ import java.util.List;
 
 public class User {
 
-    private int mId;
-    private String mUsername;
-    private String mBindingDeviceId;
-    private String mBindingDevicePassword;
-    private List<LocationData> mFencePointDataList;
+    private String token;
+    private UserInfo mUserInfo;
 
-    public int getId() {
-        return mId;
+    public String getToken() {
+        return token;
     }
 
-    public void setId(int id) {
-        mId = id;
+    public void setToken(String token) {
+        this.token = "Bearer " + token;
     }
 
-    public String getUsername() {
-        return mUsername;
+    public UserInfo getUserInfo() {
+        return mUserInfo;
     }
 
-    public void setUsername(String username) {
-        mUsername = username;
-    }
-
-    public String getBindingDeviceId() {
-        return mBindingDeviceId;
-    }
-
-    public void setBindingDeviceId(String bindingDeviceId) {
-        mBindingDeviceId = bindingDeviceId;
-    }
-
-    public String getBindingDevicePassword() {
-        return mBindingDevicePassword;
-    }
-
-    public void setBindingDevicePassword(String bindingDevicePassword) {
-        mBindingDevicePassword = bindingDevicePassword;
-    }
-
-    public List<LocationData> getFencePointDataList() {
-        return mFencePointDataList;
-    }
-
-    public void setFencePointDataList(List<LocationData> fencePointDataList) {
-        mFencePointDataList = fencePointDataList;
+    public void setUserInfo(UserInfo userInfo) {
+        mUserInfo = userInfo;
     }
 }

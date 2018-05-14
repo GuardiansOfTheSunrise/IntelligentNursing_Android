@@ -1,13 +1,15 @@
 package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.ServerResponse;
-import com.gots.intelligentnursing.entity.User;
+import com.gots.intelligentnursing.entity.UserInfo;
 
 import io.reactivex.Flowable;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
@@ -29,16 +31,25 @@ public interface IServerConnection {
          */
         @FormUrlEncoded
         @POST("auth2")
-        Flowable<ServerResponse<User>> login(@Field("uname") String username, @Field("pwd") String password);
+        Flowable<ServerResponse<String>> login(@Field("uname") String username, @Field("pwd") String password);
+
+        /**
+         * 用户登录后获取用户信息
+         * @param token 登录返回的token
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("user")
+        Flowable<ServerResponse<UserInfo>> getUserInfo(@Header("Authorization") String token);
 
         /**
          * 用户设置围栏接口
+         * @param token 登录返回的token
          * @param jsonBody json字符串构造的body
          * @return 包含服务器返回结果的被观察者对象
          */
         @Headers({"Content-type:application/json;charset=UTF-8"})
         @POST("fence/addfence")
-        Flowable<ServerResponse> fenceDrawing(@Body RequestBody jsonBody);
+        Flowable<ServerResponse> fenceDrawing(@Header("Authorization") String token, @Body RequestBody jsonBody);
     }
 
     /**
@@ -47,22 +58,24 @@ public interface IServerConnection {
     interface IDeviceOperate {
         /**
          * 用户绑定设备接口
+         * @param token 登录返回的token
          * @param userId 用户id
          * @param equipId 设备id
          * @return 包含服务器返回结果的被观察者对象
          */
         @FormUrlEncoded
         @POST("equipment/bind")
-        Flowable<ServerResponse> bind(@Field("uid") String userId, @Field("eid") String equipId);
+        Flowable<ServerResponse<String>> bind(@Header("Authorization") String token, @Field("uid") int userId, @Field("eid") String equipId);
 
         /**
          * 用户解除设备绑定接口
-         * @param username 用户名
-         * @param id 设备id
+         * @param token 登录返回的token
+         * @param userId 用户id
          * @return 包含服务器返回结果的被观察者对象
          */
         @FormUrlEncoded
         @POST("unbind")
-        Flowable<ServerResponse> unbind(@Field("username") String username, @Field("id") String id);
+        Flowable<ServerResponse> unbind(@Header("Authorization") String token, @Field("uid") int userId);
+
     }
 }

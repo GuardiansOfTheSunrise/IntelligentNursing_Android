@@ -44,9 +44,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DeviceManagementActivity">
+        <activity android:name=".activity.logined.DeviceManagementActivity">
         </activity>
-        <activity android:name=".activity.DeviceControlActivity">
+        <activity android:name=".activity.logined.DeviceControlActivity">
         </activity>
 
         <service
@@ -66,7 +66,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".activity.GeographyFenceActivity">
+        <activity android:name=".activity.logined.GeographyFenceActivity">
         </activity>
         <activity android:name=".activity.LoginActivity">
         </activity>

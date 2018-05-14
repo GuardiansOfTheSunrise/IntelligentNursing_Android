@@ -1,15 +1,12 @@
 package com.gots.intelligentnursing.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 
-import com.gots.intelligentnursing.MyApplication;
+import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.TitleCenterToolbar;
 
 import android.support.v7.app.AlertDialog;
@@ -19,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.entity.DataEvent;
@@ -32,6 +28,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Activity的基类
  * @author zhqy
@@ -39,6 +38,8 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 
 public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAppCompatActivity {
+
+    private static final Pattern PATTERN_LOGINED_ACTIVITY = Pattern.compile("com.gots.intelligentnursing.activity.logined.*");
 
     private TitleCenterToolbar mToolbar;
 
@@ -48,7 +49,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     private View mProgressBarView;
 
-    private UpushBroadcastReceiver mUpushBroadcastReceiver;
+    private TextView mProgressBarHintTextView;
 
     private void initToolbarView() {
         mToolbar = findViewById(R.id.toolbar_base);
@@ -85,8 +86,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
         relativeLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         mProgressBarView.setLayoutParams(relativeLayoutParams);
         mTopLayout.addView(mProgressBarView);
-        TextView hintTextView = findViewById(R.id.tv_base_progress_bar_hint);
-        hintTextView.setText(getProgressBarHintText());
+        mProgressBarHintTextView = findViewById(R.id.tv_base_progress_bar_hint);
         mProgressBarView.setVisibility(View.GONE);
     }
 
@@ -100,7 +100,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
             super.setContentView(R.layout.activity_base_no_toolbar);
             initContentViewWithoutToolbar(layoutResID);
         }
-        if (getProgressBarHintText() != null) {
+        if (isDisplayProgressBar()) {
             initProgressBarView();
         }
     }
@@ -121,14 +121,25 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        registerUpushBroadcastReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-        unregisterUpushBroadcastReceiver();
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        String activityClassName = intent.getComponent().getClassName();
+        Matcher matcher = PATTERN_LOGINED_ACTIVITY.matcher(activityClassName);
+        if (matcher.matches()) {
+            if (UserContainer.getUser().getUserInfo() == null) {
+                LoginActivity.actionStart(this, activityClassName);
+                return;
+            }
+        }
+        super.startActivity(intent);
     }
 
     @Override
@@ -160,6 +171,17 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     }
 
     /**
+     * 重写isDisplayProgressBar()
+     * 可以通过该方法设置ProgressBar的提示语
+     * @param hint ProgressBar的提示语
+     */
+    public void setProgressBarHint(String hint) {
+        if (isDisplayProgressBar()) {
+            mProgressBarHintTextView.setText(hint);
+        }
+    }
+
+    /**
      * 子类重写getProgressBarHintText()方法后
      * 调用该方法显示ProgressBar
      * 不重写getProgressBarHintText()该方法不起作用
@@ -187,6 +209,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      */
     protected abstract P createPresenter();
 
+
     /**
      * 子类Activity重写该方法可以设置是否显示Toolbar
      * @return 默认返回true表示显示Toolbar，如不需要Toolbar，则重写该方法返回false
@@ -204,6 +227,16 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     }
 
     /**
+     * 子类Activity重写该方法可以实例化居中的ProgressBar提示框
+     * 通过mProgressBarView.setVisibility(View.VISIBLE)来显示
+     * 默认返回false，此时不实例化ProgressBar
+     * @return 是否实例化ProgressBar
+     */
+    protected boolean isDisplayProgressBar() {
+        return false;
+    }
+
+    /**
      * 子类Activity重写该方法可以设置是否显示返回按钮样式
      * @return 默认返回使用灰色箭头样式
      * 如需改变样式，则重写该方法返回图片资源id，如R.drawable.menu
@@ -213,29 +246,6 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      */
     protected int getHomeAsUpIndicator() {
         return R.drawable.ic_arrow_back;
-    }
-
-    /**
-     * 子类Activity重写该方法可以实例化居中的ProgressBar提示框
-     * 通过mProgressBarView.setVisibility(View.VISIBLE)来显示
-     * 默认返回null，此时不实例化ProgressBar，不可调用mProgressBarView
-     * 重写该方法返回提示语，如无需提示语则返回""即可
-     * @return ProgressBar的提示语
-     */
-    protected String getProgressBarHintText() {
-        return null;
-    }
-
-    class UpushBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Alert Testing");
-            builder.setMessage("Get U-Push Notification");
-            builder.setCancelable(false);
-            builder.setPositiveButton("OK", null);
-            //builder.show();
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -249,16 +259,5 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
         builder.show();
     }
 
-    private void registerUpushBroadcastReceiver() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.gots.intelligentnursing.NOTIFICATION_GET");
-        mUpushBroadcastReceiver = new UpushBroadcastReceiver();
-        registerReceiver(mUpushBroadcastReceiver, intentFilter);
-    }
 
-    private void unregisterUpushBroadcastReceiver() {
-        if (mUpushBroadcastReceiver != null) {
-            unregisterReceiver(mUpushBroadcastReceiver);
-        }
-    }
 }

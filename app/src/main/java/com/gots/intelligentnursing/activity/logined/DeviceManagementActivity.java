@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.activity;
+package com.gots.intelligentnursing.activity.logined;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.activity.BaseActivity;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.presenter.activity.DeviceManagementPresenter;
 import com.gots.intelligentnursing.view.activity.IDeviceManagementView;
@@ -45,14 +46,14 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
         Button deleteButton = findViewById(R.id.bt_device_management_delete);
         deleteButton.setOnClickListener(v -> mPresenter.onDeleteButtonClicked());
 
-        setLayoutDisplay(UserContainer.getUser().getBindingDeviceId() != null);
+        setLayoutDisplay(UserContainer.getUser().getUserInfo().getDeviceInfo() != null);
     }
 
     private void setLayoutDisplay(boolean isBinding) {
         if (isBinding) {
             mIsBindingLayout.setVisibility(View.VISIBLE);
             mNotBindingLayout.setVisibility(View.GONE);
-            mDeviceIdTextView.setText(UserContainer.getUser().getBindingDeviceId());
+            mDeviceIdTextView.setText(UserContainer.getUser().getUserInfo().getDeviceInfo().getId());
         } else {
             mIsBindingLayout.setVisibility(View.GONE);
             mNotBindingLayout.setVisibility(View.VISIBLE);

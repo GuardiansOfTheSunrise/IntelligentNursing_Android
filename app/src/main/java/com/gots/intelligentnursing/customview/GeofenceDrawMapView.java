@@ -361,7 +361,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
                 mDrawResultListener.onStart();
             }
             new Thread(() -> {
-                for (int i = 0;i <mOverflowPointCache.size();i++) {
+                for (int i = 0; i < mOverflowPointCache.size(); i++) {
                     mIsConvertFinish = false;
 
                     mPointPosition = mOverflowPointCache.keyAt(i);

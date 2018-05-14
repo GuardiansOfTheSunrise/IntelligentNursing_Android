@@ -54,6 +54,9 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
 
     @Override
     public void onGetDeviceLocationSuccess(LocationData data) {
+        // 删除原先的标记物
+        mBaiduMap.clear();
+
         LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
 
         //构建Marker图标
@@ -68,8 +71,7 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         //在地图上添加Marker，并显示
         mBaiduMap.addOverlay(option);
 
-        // 删除标记物
-        // mBaiduMap.clear();
+
     }
 
     private void initMapView(View view) {
@@ -84,7 +86,6 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         SDKInitializer.initialize(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.fragment_page_map, container, false);
         initMapView(view);
-        mPresenter.initData();
         return view;
     }
 
@@ -93,6 +94,17 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         super.onDestroy();
         mMapView.onDestroy();
         mBaiduMap.setMyLocationEnabled(false);
+    }
+
+    /**
+     * 当Fragment显示时更新位置数据
+     */
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            mPresenter.refreshData();
+        }
     }
 
     @Override

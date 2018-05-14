@@ -5,8 +5,10 @@ import com.google.gson.Gson;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
+import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.entity.User;
 import com.gots.intelligentnursing.view.activity.IGeographyFenceView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -35,12 +37,15 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
      * @return 重心经纬度
      */
     public LatLng getCenterOfFence() {
-        List<LocationData> fenceLocationDataList = UserContainer.getUser().getFencePointDataList();
+        List<LocationData> fenceLocationDataList = UserContainer.getUser().getUserInfo().getFenceInfo().getFencePointDataList();
+        if (fenceLocationDataList.size() == 0) {
+            return null;
+        }
         LocationData vertex = fenceLocationDataList.get(0);
         double sumOfLatitude = 0;
         double sumOfLongitude = 0;
         double sumOfArea = 0;
-        for (int i = 0;i < fenceLocationDataList.size() - 2;i++) {
+        for (int i = 0; i < fenceLocationDataList.size() - 2; i++) {
             LocationData pointSecond = fenceLocationDataList.get(i + 1);
             LocationData pointThird = fenceLocationDataList.get(i + 2);
             double area = ((pointSecond.getLatitude() - vertex.getLatitude()) *
@@ -55,13 +60,14 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
     }
 
     public void onFenceDrawSuccess(List<LocationData> fenceLocationDataList) {
+        User user = UserContainer.getUser();
         Gson gson = new Gson();
-        Map<String, Object> map = new HashMap<>();
-        map.put("uid", UserContainer.getUser().getId());
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("uid", user.getUserInfo().getId());
         map.put("points", fenceLocationDataList);
         String json = gson.toJson(map);
         RetrofitHelper.getInstance().user()
-                .fenceDrawing(RequestBody.create(MediaType.parse("application/json;charset=UTF-8"),json))
+                .fenceDrawing(user.getToken(), RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), json))
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -32,12 +32,12 @@ public class QrCodeResultParser {
             StringBuilder builder = new StringBuilder();
 
             // 对参数进行解析
-            for(int i = 0;i < paramCharArray.length;i++) {
-                if (paramCharArray[i] == '=') {
+            for (char aParamCharArray : paramCharArray) {
+                if (aParamCharArray == '=') {
                     // 表示该参数的key结束
                     key = builder.toString();
                     builder.setLength(0);
-                } else if(key != null && paramCharArray[i] == '&') {
+                } else if (key != null && aParamCharArray == '&') {
                     // 当读取到键时
                     // &被认为是值的结尾
                     value = builder.toString();
@@ -45,7 +45,7 @@ public class QrCodeResultParser {
                     builder.setLength(0);
                     key = null;
                 } else {
-                    builder.append(paramCharArray[i]);
+                    builder.append(aParamCharArray);
                 }
             }
             if (key != null) {

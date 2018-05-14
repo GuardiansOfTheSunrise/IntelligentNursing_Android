@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.adapter.MainFragmentPagerAdapter;
@@ -25,6 +26,8 @@ import java.util.List;
  */
 
 public class MainActivity extends BaseActivity<MainPresenter> implements IMainView {
+
+    private static final String HINT_ON_LOGIN_SUCCESS = "，欢迎您";
 
     private static final String TOOLBAR_HOME = "智护";
     private static final String TOOLBAR_NURSING = "我的看护";
@@ -133,6 +136,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         initRadioView();
         initViewPager();
         mHomeRadioButton.setChecked(true);
+        mPresenter.attemptToLoginFromCache();
+    }
+
+    @Override
+    public void onLoginSuccess(String username) {
+        Toast.makeText(this, username + HINT_ON_LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onException(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.gots.intelligentnursing.activity;
+package com.gots.intelligentnursing.activity.logined;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.activity.BaseActivity;
 import com.gots.intelligentnursing.adapter.SimpleListItemOneAdapter;
 import com.gots.intelligentnursing.presenter.activity.DeviceControlPresenter;
 import com.gots.intelligentnursing.view.activity.IDeviceControlView;
@@ -48,6 +49,7 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_control);
         setToolbarTitle(TOOLBAR_TITLE);
+        setProgressBarHint(HINT_ON_CONNECTING);
         initView();
         mPresenter.connectDevice();
     }
@@ -64,8 +66,8 @@ public class DeviceControlActivity extends BaseActivity<DeviceControlPresenter> 
     }
 
     @Override
-    protected String getProgressBarHintText() {
-        return HINT_ON_CONNECTING;
+    protected boolean isDisplayProgressBar() {
+        return true;
     }
 
     @Override
