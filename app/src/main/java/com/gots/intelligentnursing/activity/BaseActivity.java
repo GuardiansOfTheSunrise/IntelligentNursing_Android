@@ -1,11 +1,18 @@
 package com.gots.intelligentnursing.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+
+import com.gots.intelligentnursing.MyApplication;
 import com.gots.intelligentnursing.customview.TitleCenterToolbar;
 
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,8 +22,15 @@ import android.widget.TextView;
 
 
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
+import com.gots.intelligentnursing.tools.LogUtil;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
+import com.umeng.message.PushAgent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Activity的基类
@@ -33,6 +47,8 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     private RelativeLayout mTopLayout;
 
     private View mProgressBarView;
+
+    private UpushBroadcastReceiver mUpushBroadcastReceiver;
 
     private void initToolbarView() {
         mToolbar = findViewById(R.id.toolbar_base);
@@ -98,6 +114,21 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         mPresenter = createPresenter();
+        PushAgent.getInstance(this).onAppStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+        registerUpushBroadcastReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+        unregisterUpushBroadcastReceiver();
     }
 
     @Override
@@ -193,5 +224,41 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      */
     protected String getProgressBarHintText() {
         return null;
+    }
+
+    class UpushBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Alert Testing");
+            builder.setMessage("Get U-Push Notification");
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", null);
+            //builder.show();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onUserEvent (DataEvent event) {
+        LogUtil.i("MyApplication","onUserEvent");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Alert by EventBus");
+        builder.setMessage("Get U-Push Notification");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", null);
+        builder.show();
+    }
+
+    private void registerUpushBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.gots.intelligentnursing.NOTIFICATION_GET");
+        mUpushBroadcastReceiver = new UpushBroadcastReceiver();
+        registerReceiver(mUpushBroadcastReceiver, intentFilter);
+    }
+
+    private void unregisterUpushBroadcastReceiver() {
+        if (mUpushBroadcastReceiver != null) {
+            unregisterReceiver(mUpushBroadcastReceiver);
+        }
     }
 }
