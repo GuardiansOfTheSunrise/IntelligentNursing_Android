@@ -1,5 +1,6 @@
 package com.gots.intelligentnursing.entity;
 
+import com.gots.intelligentnursing.exception.AuthorizationException;
 import com.gots.intelligentnursing.exception.ServerException;
 
 /**
@@ -12,7 +13,8 @@ import com.gots.intelligentnursing.exception.ServerException;
 
 public class ServerResponse<T> {
 
-    public static final int CODE_SUCCESS = 0;
+    private static final int CODE_SUCCESS = 0;
+    private static final int CODE_AUTHORIZATION_ERROR = 401;
 
     private int code;
     private String msg;
@@ -42,8 +44,10 @@ public class ServerResponse<T> {
         this.data = data;
     }
 
-    public void checkCode() throws ServerException {
-        if (code != CODE_SUCCESS) {
+    public void checkCode() throws ServerException, AuthorizationException {
+        if (code == CODE_AUTHORIZATION_ERROR) {
+            throw new AuthorizationException();
+        } else if (code != CODE_SUCCESS) {
             throw new ServerException(msg);
         }
     }

@@ -47,7 +47,8 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
                     .flatMap(userOperate::getUserInfo)
                     .doOnNext(ServerResponse::checkCode)
                     .map(ServerResponse::getData)
-                    .doOnNext(this::createListWhileFencesNull) // TODO: 2018/5/11 根据服务器数据格式决定
+                    // TODO: 2018/5/11 根据服务器数据格式决定
+                    .doOnNext(this::createListWhileFencesNull)
                     .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
@@ -72,10 +73,6 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
     }
 
     private void onException(String msg) {
-        if (ServerRequestExceptionHandler.HINT_AUTHORIZATION_ERROR.equals(msg)) {
-            FileCacheManager fileCacheManager = FileCacheManager.getInstance(getActivity());
-            fileCacheManager.clearUsernameAndPassword();
-        }
         if (getView() != null) {
             getView().onException(msg);
         }
