@@ -4,8 +4,6 @@ import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.entity.DataEvent;
@@ -13,10 +11,10 @@ import com.gots.intelligentnursing.tools.LogUtil;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
+import com.umeng.message.UTrack;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.UmengNotificationClickHandler;
 import com.umeng.message.entity.UMessage;
-import com.umeng.message.inapp.InAppMessageManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -27,11 +25,12 @@ import org.greenrobot.eventbus.EventBus;
 public class MyApplication extends Application {
 
     private final String ACTION_UPUSH_GET_NOTIFICATION = "UmengMessageHandler.getNotification";
+    //private final String alias_type
 
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.i("MyApplication", "onCreate");
+        LogUtil.i("U-Push", "MyApplication_onCreate");
         UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, "a0d6bf722b1b5857caa03af96580c1b6");
         initUpush();
     }
@@ -41,10 +40,8 @@ public class MyApplication extends Application {
         UmengMessageHandler messageHandler = new UmengMessageHandler() {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
-                LogUtil.i("MyApplication", "getNotification");
+                LogUtil.i("U-Push", "getNotification");
                 EventBus.getDefault().post(new DataEvent<>(0, ACTION_UPUSH_GET_NOTIFICATION));
-                Intent intent = new Intent("com.gots.intelligentnursing.NOTIFICATION_GET");
-                sendBroadcast(intent);
                 return super.getNotification(context, uMessage);
             }
         };
@@ -82,12 +79,12 @@ public class MyApplication extends Application {
         mPushAgent.register(new IUmengRegisterCallback() {
             @Override
             public void onSuccess(String deviceToken) {
-                LogUtil.i("MyApplication", "device token: " + deviceToken);
+                LogUtil.i("U-Push", "device token: " + deviceToken);
             }
 
             @Override
             public void onFailure(String s, String s1) {
-                LogUtil.i("MyApplication", "failed");
+                LogUtil.i("U-Push", "failed");
             }
         });
     }

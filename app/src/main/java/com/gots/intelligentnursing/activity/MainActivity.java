@@ -15,7 +15,10 @@ import com.gots.intelligentnursing.fragment.MapPageFragment;
 import com.gots.intelligentnursing.fragment.MinePageFragment;
 import com.gots.intelligentnursing.fragment.NursingPageFragment;
 import com.gots.intelligentnursing.presenter.activity.MainPresenter;
+import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.IMainView;
+import com.umeng.message.PushAgent;
+import com.umeng.message.UTrack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +140,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         initViewPager();
         mHomeRadioButton.setChecked(true);
         mPresenter.attemptToLoginFromCache();
+        PushAgent.getInstance(getApplicationContext()).addAlias("testid", "ALIAS_TYPE_CUSTOMIZED", new UTrack.ICallBack() {
+            @Override
+            public void onMessage(boolean b, String s) {
+                LogUtil.i("U-Push", "addAlias");
+            }
+        });
     }
 
     @Override
