@@ -5,7 +5,6 @@ import com.gots.intelligentnursing.business.IServerConnection;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.view.activity.ILoginView;
@@ -23,43 +22,46 @@ import io.reactivex.schedulers.Schedulers;
 
 public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
 
+    private static final String HINT_ON_INPUT_ERROR = "用户名/密码为空";
+
     public LoginPresenter(ILoginView view) {
         super(view);
     }
 
     public void onLoginButtonClicked(String username, String password) {
-        IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
+        if ("".equals(username) || "".equals(password)) {
+            onException(HINT_ON_INPUT_ERROR);
+        } else {
+            IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
 
-        userOperate.login(username, password)
-                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnNext(ServerResponse::checkCode)
-                .map(ServerResponse::getData)
-                .doOnNext(token -> {
-                    UserContainer.getUser().setToken(token);
-                    FileCacheManager.getInstance(getActivity()).saveUsernameAndPassword(username, password);
-                })
-                .map(token -> UserContainer.getUser().getToken())
-                .flatMap(userOperate::getUserInfo)
-                .doOnNext(ServerResponse::checkCode)
-                .map(ServerResponse::getData)
-                // TODO: 2018/5/11 根据服务器数据格式决定
-                .doOnNext(this::createListWhileFencesNull)
-                .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        userInfo -> onLoginSuccess(userInfo.getUsername()),
-                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
-                );
+            userOperate.login(username, password)
+                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io())
+                    .doOnNext(ServerResponse::checkSuccess)
+                    .map(ServerResponse::getData)
+                    .doOnNext(token -> {
+                        UserContainer.getUser().setToken(token);
+                        FileCacheManager.getInstance(getActivity()).saveUsernameAndPassword(username, password);
+                    })
+                    .map(token -> UserContainer.getUser().getToken())
+                    .flatMap(userOperate::getUserInfo)
+                    .doOnNext(ServerResponse::checkSuccess)
+                    .map(ServerResponse::getData)
+                    .doOnNext(this::createListWhileFencesNull)
+                    .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            userInfo -> onLoginSuccess(userInfo.getUsername()),
+                            throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                    );
 
+        }
     }
 
     private void createListWhileFencesNull(UserInfo userInfo) {
-        if (userInfo.getFenceInfo() == null) {
-            FenceInfo fenceInfo = new FenceInfo();
-            fenceInfo.setFencePointDataList(new ArrayList<>());
-            userInfo.setFenceInfo(fenceInfo);
+        if (userInfo.getLocationDataList() == null) {
+            userInfo.setLocationDataList(new ArrayList<>());
         }
     }
 

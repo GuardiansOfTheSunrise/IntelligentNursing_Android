@@ -87,6 +87,9 @@ public class FileCacheManager {
         if (sFileCacheManager == null) {
             synchronized (FileCacheManager.class) {
                 if (sFileCacheManager == null) {
+                    if (context == null) {
+                        throw new IllegalArgumentException();
+                    }
                     sFileCacheManager = new FileCacheManager(context);
                 }
             }

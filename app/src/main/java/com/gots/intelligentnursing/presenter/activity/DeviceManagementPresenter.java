@@ -7,6 +7,7 @@ import android.content.Intent;
 import com.gots.intelligentnursing.activity.logined.DeviceControlActivity;
 import com.gots.intelligentnursing.business.QrCodeResultParser;
 import com.gots.intelligentnursing.business.RetrofitHelper;
+import com.gots.intelligentnursing.business.RetryWhenAuthorizationExceptionFunction;
 import com.gots.intelligentnursing.entity.DeviceInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.User;
@@ -18,6 +19,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.xys.libzxing.zxing.activity.CaptureActivity;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -78,12 +80,14 @@ public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceMana
 
     public void onDeleteButtonClicked() {
         User user = UserContainer.getUser();
-        RetrofitHelper.getInstance().device()
-                .unbind(user.getToken(), user.getUserInfo().getId())
+        Flowable.just(0)
+                .flatMap(i -> RetrofitHelper.getInstance().device().unbind(user.getToken(), user.getUserInfo().getId()))
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkAuthorization)
+                .retryWhen(new RetryWhenAuthorizationExceptionFunction())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(ServerResponse::checkCode)
+                .doOnNext(ServerResponse::checkSuccess)
                 .doOnNext(resp -> UserContainer.getUser().getUserInfo().setDeviceInfo(null))
                 .subscribe(
                         r -> onUnbindSuccess(),
@@ -113,11 +117,13 @@ public class DeviceManagementPresenter extends BaseActivityPresenter<IDeviceMana
 
     private void bindDevice(String deviceId) {
         User user = UserContainer.getUser();
-        RetrofitHelper.getInstance().device()
-                .bind(user.getToken(), user.getUserInfo().getId(), deviceId)
+        Flowable.just(0)
+                .flatMap(i -> RetrofitHelper.getInstance().device().bind(user.getToken(), user.getUserInfo().getId(), deviceId))
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
-                .doOnNext(ServerResponse::checkCode)
+                .doOnNext(ServerResponse::checkAuthorization)
+                .retryWhen(new RetryWhenAuthorizationExceptionFunction())
+                .doOnNext(ServerResponse::checkSuccess)
                 .map(ServerResponse::getData)
                 .doOnNext(pwd -> {
                     DeviceInfo deviceInfo = new DeviceInfo(deviceId, pwd);

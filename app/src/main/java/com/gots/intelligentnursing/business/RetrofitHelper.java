@@ -22,7 +22,8 @@ public class RetrofitHelper {
 
     private static final String BASE_URL = "http://120.78.149.248:8080/";
 
-    private Retrofit mRetrofit;
+    private IUserOperate mUserOperate;
+    private IDeviceOperate mDeviceOperate;
 
     private OkHttpClient initOkHttpClient() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
@@ -41,20 +42,23 @@ public class RetrofitHelper {
     }
 
     private RetrofitHelper() {
-        mRetrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(initOkHttpClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
+
+        mUserOperate = retrofit.create(IUserOperate.class);
+        mDeviceOperate = retrofit.create(IDeviceOperate.class);
     }
 
     public IUserOperate user() {
-        return mRetrofit.create(IUserOperate.class);
+        return mUserOperate;
     }
 
     public IDeviceOperate device() {
-        return mRetrofit.create(IDeviceOperate.class);
+        return mDeviceOperate;
     }
 
     public static RetrofitHelper getInstance() {

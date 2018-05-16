@@ -391,7 +391,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
                         mWaitConfirm = true;
 
                         if (mDrawResultListener != null) {
-                            mDrawResultListener.onSuccess(mValidLocationDataList);
+                            mDrawResultListener.onSuccess(mDrawingLocationDataList);
                         }
                     } else {
                         LogUtil.i(TAG, "Covert failure.");

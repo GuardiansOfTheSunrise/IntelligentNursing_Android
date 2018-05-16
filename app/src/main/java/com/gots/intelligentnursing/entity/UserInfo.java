@@ -17,6 +17,8 @@ public class UserInfo {
     @SerializedName("userName")
     private String mUsername;
 
+    private String mPassword;
+
     @SerializedName("tel")
     private String mTelephone;
 
@@ -26,13 +28,14 @@ public class UserInfo {
     @SerializedName("addr")
     private String mAddress;
 
-    @SerializedName("remarks")
+    @SerializedName("remark")
     private String mRemarks;
 
     @SerializedName("equipment")
     private DeviceInfo mDeviceInfo;
 
-    private FenceInfo mFenceInfo;
+    @SerializedName("fence")
+    private List<LocationData> mLocationDataList;
 
     public int getId() {
         return mId;
@@ -48,6 +51,14 @@ public class UserInfo {
 
     public void setUsername(String username) {
         mUsername = username;
+    }
+
+    public String getPassword() {
+        return mPassword;
+    }
+
+    public void setPassword(String password) {
+        mPassword = password;
     }
 
     public String getTelephone() {
@@ -90,11 +101,11 @@ public class UserInfo {
         mDeviceInfo = deviceInfo;
     }
 
-    public FenceInfo getFenceInfo() {
-        return mFenceInfo;
+    public List<LocationData> getLocationDataList() {
+        return mLocationDataList;
     }
 
-    public void setFenceInfo(FenceInfo fenceInfo) {
-        mFenceInfo = fenceInfo;
+    public void setLocationDataList(List<LocationData> locationDataList) {
+        mLocationDataList = locationDataList;
     }
 }

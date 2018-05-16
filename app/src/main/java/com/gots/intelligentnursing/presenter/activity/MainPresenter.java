@@ -5,9 +5,9 @@ import com.gots.intelligentnursing.business.IServerConnection;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
+import com.gots.intelligentnursing.exception.ServerException;
 import com.gots.intelligentnursing.view.activity.IMainView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -34,35 +34,34 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
         if (map != null) {
             String username = map.get(FileCacheManager.KEY_USERNAME);
             String password = map.get(FileCacheManager.KEY_PASSWORD);
+
             IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
 
             userOperate.login(username, password)
                     .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
-                    .doOnNext(ServerResponse::checkCode)
+                    .doOnNext(ServerResponse::checkSuccess)
                     .map(ServerResponse::getData)
                     .doOnNext(token -> UserContainer.getUser().setToken(token))
                     .map(token -> UserContainer.getUser().getToken())
                     .flatMap(userOperate::getUserInfo)
-                    .doOnNext(ServerResponse::checkCode)
+                    .doOnNext(ServerResponse::checkSuccess)
                     .map(ServerResponse::getData)
-                    // TODO: 2018/5/11 根据服务器数据格式决定
                     .doOnNext(this::createListWhileFencesNull)
                     .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             userInfo -> onLoginSuccess(userInfo.getUsername()),
-                            throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                            throwable -> onException(throwable, ServerRequestExceptionHandler.handle(throwable))
                     );
+
         }
     }
 
     private void createListWhileFencesNull(UserInfo userInfo) {
-        if (userInfo.getFenceInfo() == null) {
-            FenceInfo fenceInfo = new FenceInfo();
-            fenceInfo.setFencePointDataList(new ArrayList<>());
-            userInfo.setFenceInfo(fenceInfo);
+        if (userInfo.getLocationDataList() == null) {
+            userInfo.setLocationDataList(new ArrayList<>());
         }
     }
 
@@ -72,7 +71,10 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
         }
     }
 
-    private void onException(String msg) {
+    private void onException(Throwable throwable, String msg) {
+        if (throwable instanceof ServerException) {
+            FileCacheManager.getInstance(getActivity()).clearUsernameAndPassword();
+        }
         if (getView() != null) {
             getView().onException(msg);
         }
