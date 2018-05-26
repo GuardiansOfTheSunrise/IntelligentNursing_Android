@@ -1,6 +1,7 @@
 package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.entity.SinaUserInfo;
 import com.gots.intelligentnursing.entity.UserInfo;
 
 import io.reactivex.Flowable;
@@ -12,6 +13,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 /**
  * @author zhqy
@@ -76,6 +78,17 @@ public interface IServerConnection {
         @FormUrlEncoded
         @POST("unbind")
         Flowable<ServerResponse> unbind(@Header("Authorization") String token, @Field("uid") int userId);
+    }
 
+
+    interface IThirdPartyOperate {
+        /**
+         * 新浪授权后获取用户信息接口
+         * @param token 授权成功获取到的token
+         * @param uid 授权成功获取到的uid
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("https://api.weibo.com/2/users/show.json")
+        Flowable<SinaUserInfo> getUserInfoFromSina(@Query("access_token") String token, @Query("uid") long uid);
     }
 }

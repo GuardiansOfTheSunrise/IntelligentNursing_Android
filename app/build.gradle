@@ -10,10 +10,19 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        config {
+            storeFile file('in.jks')
+            storePassword '123456'
+            keyAlias 'gots'
+            keyPassword '123456'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -48,5 +57,7 @@ dependencies {
     implementation files('libs/BaiduLBS_Android.jar')
     compile 'com.umeng.sdk:common:1.5.0'
     compile 'com.umeng.sdk:utdid:1.1.5.3'
+    compile 'com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar'
     compile project(':push')
+    implementation files('libs/open_sdk_r5990_lite.jar')
 }
