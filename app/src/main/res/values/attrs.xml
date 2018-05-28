@@ -5,4 +5,11 @@
         <attr name="textSize" format="dimension"/>
         <attr name="textColor" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="RipplingFilletedButton">
+        <attr name="buttonText" format="string"/>
+        <attr name="buttonTextSize" format="dimension"/>
+        <attr name="buttonTextColor" format="color"/>
+        <attr name="buttonBackgroundColor" format="color"/>
+    </declare-styleable>
 </resources>
