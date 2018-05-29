@@ -1,5 +1,6 @@
 package com.gots.intelligentnursing.entity;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -39,5 +40,11 @@ public class User {
     public void init() {
         mToken = null;
         mUserInfo = null;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

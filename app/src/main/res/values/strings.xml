@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IntelligentNursing</string>
+    <string name="app_name">智护</string>
 
     <string name="login_forget_password"><u>忘记密码？</u></string>
     <string name="login_register"><u>注册</u></string>

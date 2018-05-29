@@ -25,4 +25,10 @@ public interface IMapPageView extends IFragmentView {
      * @param data 设备位置数据
      */
     void onGetDeviceLocationSuccess(LocationData data);
+
+    /**
+     * 将地图移动至一个点
+     * @param data 需要移动至的点
+     */
+    void moveTo(LocationData data);
 }

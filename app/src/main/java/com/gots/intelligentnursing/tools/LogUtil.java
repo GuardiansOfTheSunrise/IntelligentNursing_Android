@@ -48,4 +48,16 @@ public class LogUtil {
             Log.e(tag, msg);
         }
     }
+
+    public static void logExceptionStackTrace(String tag, Exception e) {
+        if (level <= LEVEL_ERROR) {
+            StringBuilder sb = new StringBuilder();
+            StackTraceElement[] stackArray = e.getStackTrace();
+            for (StackTraceElement element : stackArray) {
+                sb.append(element.toString()).append("\n");
+            }
+            Log.e(tag, sb.toString());
+        }
+
+    }
 }

@@ -1,20 +1,19 @@
 package com.gots.intelligentnursing.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.presenter.activity.LoginPresenter;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.ILoginView;
-
 /**
  * @author zhqy
  * @date 2018/5/10
@@ -22,7 +21,12 @@ import com.gots.intelligentnursing.view.activity.ILoginView;
 
 public class LoginActivity extends BaseActivity<LoginPresenter> implements ILoginView {
 
+    private static final String TAG = "LoginActivity";
+
     private String mActionActivityName;
+
+    public static final int CODE_TPL_QQ = 0;
+    public static final int CODE_TPL_SINA = 1;
 
     private static final String HINT_ON_LOGIN_SUCCESS = "，欢迎您";
     private static final String HINT_ON_LOGINING = "登录中，请稍候...";
@@ -47,6 +51,17 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
         });
     }
 
+    private void initThirdPartyLoginImageView() {
+        ImageView qqLoginImageView = findViewById(R.id.iv_login_tpl_qq);
+        qqLoginImageView.setTag(CODE_TPL_QQ);
+        View.OnClickListener onTplImageViewClickListener = v -> mPresenter.onTplImageViewClicked((Integer) v.getTag());
+        qqLoginImageView.setOnClickListener(onTplImageViewClickListener);
+
+        ImageView sinaLoginImageView = findViewById(R.id.iv_login_tpl_sina);
+        sinaLoginImageView.setTag(CODE_TPL_SINA);
+        sinaLoginImageView.setOnClickListener(onTplImageViewClickListener);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +73,25 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
 
         initEditText();
         initLoginButton();
+        initThirdPartyLoginImageView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mPresenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onLoginSuccess(String username) {
         dismissProgressBar();
-        // TODO: 2018/5/11 测试用代码
-        Gson gson = new Gson();
-        LogUtil.i("LoginActivity", gson.toJson(UserContainer.getUser()));
+        LogUtil.i(TAG, UserContainer.getUser().toString());
         Toast.makeText(this, username + HINT_ON_LOGIN_SUCCESS, Toast.LENGTH_SHORT).show();
         finish();
         if (mActionActivityName != null) {

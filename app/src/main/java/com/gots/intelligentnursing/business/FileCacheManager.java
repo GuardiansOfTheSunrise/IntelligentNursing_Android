@@ -47,7 +47,7 @@ public class FileCacheManager {
             editor.apply();
         } catch (Exception e) {
             LogUtil.e(TAG, e.toString());
-            LogUtil.e(TAG, e.getStackTrace().toString());
+            LogUtil.logExceptionStackTrace(TAG, e);
         }
     }
 
@@ -66,7 +66,7 @@ public class FileCacheManager {
                 LogUtil.i(TAG,  "The password after decrypt is : " + password);
             } catch (Exception e) {
                 LogUtil.e(TAG, e.toString());
-                LogUtil.e(TAG, e.getStackTrace().toString());
+                LogUtil.logExceptionStackTrace(TAG, e);
             }
             Map<String, String> map = new HashMap<>(2);
             map.put(KEY_USERNAME, username);

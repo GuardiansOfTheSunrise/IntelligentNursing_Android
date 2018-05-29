@@ -45,11 +45,6 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
                 .longitude(data.getLongitude())
                 .build();
         mBaiduMap.setMyLocationData(myLocationData);
-
-        // 将地图移动至我的位置
-        LatLng ll = new LatLng(data.getLatitude(), data.getLongitude());
-        MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
-        mBaiduMap.animateMapStatus(update);
     }
 
     @Override
@@ -60,8 +55,7 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
 
         //构建Marker图标
-        BitmapDescriptor bitmap = BitmapDescriptorFactory
-                .fromResource(R.drawable.ic_person);
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.ic_person);
 
         //构建MarkerOption，用于在地图上添加Marker
         OverlayOptions option = new MarkerOptions()
@@ -70,12 +64,22 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
 
         //在地图上添加Marker，并显示
         mBaiduMap.addOverlay(option);
+    }
 
-
+    @Override
+    public void moveTo(LocationData data) {
+        // 将地图移动至我的位置
+        LatLng ll = new LatLng(data.getLatitude(), data.getLongitude());
+        MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
+        mBaiduMap.animateMapStatus(update);
     }
 
     private void initMapView(View view) {
         mMapView = view.findViewById(R.id.map_view_page_map);
+        mMapView.setButtonMenuTexts(mPresenter.getMenuTexts());
+        mMapView.setOnMenuItemClickListener(index -> {
+            mPresenter.onMenuButtonClick(index);
+        });
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         mBaiduMap.setMyLocationEnabled(true);
