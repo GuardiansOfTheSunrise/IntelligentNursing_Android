@@ -3,9 +3,9 @@ package com.gots.intelligentnursing.presenter.activity;
 import com.baidu.mapapi.model.LatLng;
 import com.google.gson.Gson;
 import com.gots.intelligentnursing.business.RetrofitHelper;
+import com.gots.intelligentnursing.business.RetryWhenAuthorizationExceptionFunction;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.entity.FenceInfo;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.User;
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
@@ -37,7 +38,7 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
      * @return 重心经纬度
      */
     public LatLng getCenterOfFence() {
-        List<LocationData> fenceLocationDataList = UserContainer.getUser().getUserInfo().getFenceInfo().getFencePointDataList();
+        List<LocationData> fenceLocationDataList = UserContainer.getUser().getUserInfo().getLocationDataList();
         if (fenceLocationDataList.size() == 0) {
             return null;
         }
@@ -59,6 +60,8 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
         return new LatLng(sumOfLatitude / sumOfArea / 3.0, sumOfLongitude / sumOfArea / 3.0);
     }
 
+
+
     public void onFenceDrawSuccess(List<LocationData> fenceLocationDataList) {
         User user = UserContainer.getUser();
         Gson gson = new Gson();
@@ -66,12 +69,15 @@ public class GeographyFencePresenter extends BaseActivityPresenter<IGeographyFen
         map.put("uid", user.getUserInfo().getId());
         map.put("points", fenceLocationDataList);
         String json = gson.toJson(map);
-        RetrofitHelper.getInstance().user()
-                .fenceDrawing(user.getToken(), RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), json))
+        Flowable.just(0)
+                .flatMap(i -> RetrofitHelper.getInstance().user().fenceDrawing(
+                        user.getToken(), RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), json)))
                 .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkAuthorization)
+                .retryWhen(new RetryWhenAuthorizationExceptionFunction())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(ServerResponse::checkCode)
+                .doOnNext(ServerResponse::checkSuccess)
                 .subscribe(
                         r -> onSubmitFenceSuccess(),
                         throwable -> onException(ServerRequestExceptionHandler.handle(throwable))

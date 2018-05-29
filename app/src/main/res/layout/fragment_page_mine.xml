@@ -7,8 +7,14 @@
 
     <Button
         android:id="@+id/bt_page_mine_device_management"
-        android:text="设备管理"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="设备管理"/>
+
+    <Button
+        android:id="@+id/bt_page_mine_logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="退出登录"/>
 
 </LinearLayout>

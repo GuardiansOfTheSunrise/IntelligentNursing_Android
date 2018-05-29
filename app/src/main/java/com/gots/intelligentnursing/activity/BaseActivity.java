@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 
+import com.gots.intelligentnursing.business.ActivityCollector;
+import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.customview.TitleCenterToolbar;
 
@@ -50,8 +52,6 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     private View mProgressBarView;
 
     private TextView mProgressBarHintTextView;
-
-    private final String ACTION_UPUSH_GET_NOTIFICATION = "UmengMessageHandler.getNotification";
 
     private void initToolbarView() {
         mToolbar = findViewById(R.id.toolbar_base);
@@ -118,6 +118,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
         }
         mPresenter = createPresenter();
         PushAgent.getInstance(this).onAppStart();
+        ActivityCollector.add(this);
     }
 
     @Override
@@ -149,6 +150,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.detachView();
+        ActivityCollector.remove(this);
     }
 
     @Override
@@ -252,15 +254,19 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserEvent (DataEvent event) {
-        if (event.getAction().equals(ACTION_UPUSH_GET_NOTIFICATION)) {
-            LogUtil.i("MyApplication", "onUserEvent");
+    public void onDataEvent (DataEvent event) {
+        String action = event.getAction();
+        if (action.equals(EventPoster.ACTION_UPUSH_GET_NOTIFICATION)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Alert by EventBus");
             builder.setMessage("Get U-Push Notification");
             builder.setCancelable(false);
             builder.setPositiveButton("OK", null);
             builder.show();
+        } else if (action.equals(EventPoster.ACTION_AUTO_LOGIN_FAILURE)) {
+            ActivityCollector.finishLoginedActivity();
+            String currentActivityClassName = getClass().getName();
+            LoginActivity.actionStart(this, currentActivityClassName);
         }
     }
 }

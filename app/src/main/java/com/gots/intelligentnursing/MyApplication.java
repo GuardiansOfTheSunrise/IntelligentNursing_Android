@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.umeng.commonsdk.UMConfigure;
@@ -18,14 +19,13 @@ import com.umeng.message.entity.UMessage;
 
 import org.greenrobot.eventbus.EventBus;
 
+import static com.gots.intelligentnursing.business.EventPoster.ACTION_UPUSH_GET_NOTIFICATION;
+
 /**
  * @author Accumulei
  * @date 2018/5/3.
  */
 public class MyApplication extends Application {
-
-    private final String ACTION_UPUSH_GET_NOTIFICATION = "UmengMessageHandler.getNotification";
-    //private final String alias_type
 
     @Override
     public void onCreate() {
@@ -41,7 +41,7 @@ public class MyApplication extends Application {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
                 LogUtil.i("U-Push", "getNotification");
-                EventBus.getDefault().post(new DataEvent<>(0, ACTION_UPUSH_GET_NOTIFICATION));
+                EventPoster.post(new DataEvent<>(ACTION_UPUSH_GET_NOTIFICATION));
                 return super.getNotification(context, uMessage);
             }
         };

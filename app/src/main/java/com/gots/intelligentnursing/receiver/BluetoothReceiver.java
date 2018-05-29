@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.exception.BluetoothException;
 import com.gots.intelligentnursing.business.BluetoothPairer;
@@ -13,6 +14,8 @@ import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.tools.LogUtil;
 
 import org.greenrobot.eventbus.EventBus;
+
+import static com.gots.intelligentnursing.business.EventPoster.ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE;
 
 /**
  * @author zhqy
@@ -30,8 +33,6 @@ public class BluetoothReceiver extends BroadcastReceiver {
     private static final String TAG = "BluetoothReceiver";
     private static final String DEVICE_NAME = "ZhiHu-W1";
 
-    public static final String ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE = "BluetoothReceiver.onReceive";
-
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
@@ -45,7 +46,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
                         BluetoothPairer.createBond(device.getClass(), device);
                     } catch (BluetoothException e) {
                         e.printStackTrace();
-                        EventBus.getDefault().post(
+                        EventPoster.post(
                                 new DataEvent<>(CODE_ERROR, e.getMessage(), ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
                     }
                 } else if(device.getBondState() == BluetoothDevice.BOND_BONDED) {

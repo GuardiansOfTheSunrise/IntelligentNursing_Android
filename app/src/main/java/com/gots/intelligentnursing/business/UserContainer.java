@@ -1,12 +1,9 @@
 package com.gots.intelligentnursing.business;
 
-import com.gots.intelligentnursing.entity.FenceInfo;
-import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.User;
 import com.gots.intelligentnursing.entity.UserInfo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 登录的用户信息容器
@@ -19,8 +16,27 @@ public class UserContainer {
 
     private User mUser;
 
+    private void testTokenInvalidatePasswordCorrectUser() {
+        mUser.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YW5nIiwiZXhwIjoxNTI2NDM5MjIzLCJpYXQiOjE1MjY0MzkxMjN9.5keExI8MoGkWMKhfvTMengzi-jSeduYil9agyt9xw_hAa7BUlrjaHxtaizFwjkHRtcm11Q_TNkq3-f3rjSHBnw");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername("yang");
+        userInfo.setPassword("yang");
+        userInfo.setLocationDataList(new ArrayList<>());
+        mUser.setUserInfo(userInfo);
+    }
+
+    private void testTokenInvalidatePasswordErrorUser() {
+        mUser.setToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ5YW5nIiwiZXhwIjoxNTI2NDM5MjIzLCJpYXQiOjE1MjY0MzkxMjN9.5keExI8MoGkWMKhfvTMengzi-jSeduYil9agyt9xw_hAa7BUlrjaHxtaizFwjkHRtcm11Q_TNkq3-f3rjSHBnw");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername("yang");
+        userInfo.setPassword("yang1");
+        userInfo.setLocationDataList(new ArrayList<>());
+        mUser.setUserInfo(userInfo);
+    }
+
     private UserContainer(){
         mUser = new User();
+        //testTokenInvalidatePasswordCorrectUser();
     }
 
     public static void setUser(User user) {

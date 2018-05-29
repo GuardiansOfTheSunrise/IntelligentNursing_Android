@@ -261,17 +261,19 @@ public class GeofenceDrawMapView extends RelativeLayout {
         mCanvasView.deleteLastPath();
         // 起点一定在cache中
         // 第2个点一定在list中
-        if (mOverflowPointCache.keyAt(mOverflowPointCache.size() - 1) == mPointCount - 1) {
-            // 如果在cache中，则一定在末尾，且末尾的元素的key应等于点的数量减一
-            mOverflowPointCache.removeAt(mOverflowPointCache.size() - 1);
-        } else {
-            // 如果在list中，也一定在末尾
-            mDrawingLocationDataList.remove(mDrawingLocationDataList.size() - 1);
-        }
-        mPointCount--;
-        if (mPointCount == 1) {
-            mOverflowPointCache.clear();
+        if (mOverflowPointCache.size() > 0) {
+            if (mOverflowPointCache.keyAt(mOverflowPointCache.size() - 1) == mPointCount - 1) {
+                // 如果在cache中，则一定在末尾，且末尾的元素的key应等于点的数量减一
+                mOverflowPointCache.removeAt(mOverflowPointCache.size() - 1);
+            } else {
+                // 如果在list中，也一定在末尾
+                mDrawingLocationDataList.remove(mDrawingLocationDataList.size() - 1);
+            }
             mPointCount--;
+            if (mPointCount == 1) {
+                mOverflowPointCache.clear();
+                mPointCount--;
+            }
         }
     }
 
@@ -391,7 +393,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
                         mWaitConfirm = true;
 
                         if (mDrawResultListener != null) {
-                            mDrawResultListener.onSuccess(mValidLocationDataList);
+                            mDrawResultListener.onSuccess(mDrawingLocationDataList);
                         }
                     } else {
                         LogUtil.i(TAG, "Covert failure.");

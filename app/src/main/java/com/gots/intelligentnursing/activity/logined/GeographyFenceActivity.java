@@ -49,7 +49,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
 
     private void initMapView() {
         mMapView = findViewById(R.id.geofence_draw_map_view_geography_fence);
-        mMapView.setLocationDataList(UserContainer.getUser().getUserInfo().getFenceInfo().getFencePointDataList());
+        mMapView.setLocationDataList(UserContainer.getUser().getUserInfo().getLocationDataList());
         mMapView.setDrawResultListener(new GeofenceDrawMapView.DrawResultListener() {
             @Override
             public void onStart() {
@@ -67,7 +67,7 @@ public class GeographyFenceActivity extends BaseActivity<GeographyFencePresenter
             @Override
             public void onFailure() {
                 Toast.makeText(GeographyFenceActivity.this, HINT_ON_DRAW_FAILURE, Toast.LENGTH_SHORT).show();
-                showProgressBar();
+                dismissProgressBar();
                 mDrawingState = STATE_NORMAL;
                 invalidateOptionsMenu();
             }

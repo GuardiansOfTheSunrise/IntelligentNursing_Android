@@ -13,15 +13,19 @@ import java.util.List;
 
 public class User {
 
-    private String token;
+    private String mToken;
     private UserInfo mUserInfo;
 
     public String getToken() {
-        return token;
+        return mToken;
     }
 
     public void setToken(String token) {
-        this.token = "Bearer " + token;
+        if (token == null) {
+            mToken = null;
+        } else {
+            mToken = "Bearer " + token;
+        }
     }
 
     public UserInfo getUserInfo() {
@@ -30,5 +34,10 @@ public class User {
 
     public void setUserInfo(UserInfo userInfo) {
         mUserInfo = userInfo;
+    }
+
+    public void init() {
+        mToken = null;
+        mUserInfo = null;
     }
 }

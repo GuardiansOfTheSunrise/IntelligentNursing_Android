@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.presenter.fragment.NursingPagePresenter;
@@ -20,7 +21,7 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_nursing, container, false);
-        Button fenceSettingButton = view.findViewById(R.id.bt_page_nursing_fence_setting);
+        ImageView fenceSettingButton = view.findViewById(R.id.bt_page_nursing_fence_setting);
         fenceSettingButton.setOnClickListener(v -> mPresenter.onFenceSettingButtonClicked());
         return view;
     }

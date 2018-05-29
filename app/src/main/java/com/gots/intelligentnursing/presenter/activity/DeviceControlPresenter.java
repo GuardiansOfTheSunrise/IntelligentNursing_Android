@@ -3,6 +3,7 @@ package com.gots.intelligentnursing.presenter.activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 
+import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.exception.BluetoothException;
 import com.gots.intelligentnursing.business.BluetoothConnector;
 import com.gots.intelligentnursing.receiver.BluetoothReceiver;
@@ -76,8 +77,8 @@ public class DeviceControlPresenter extends BaseActivityPresenter<IDeviceControl
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void eventHandler(DataEvent<BluetoothDevice> event) {
-        if (BluetoothReceiver.ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE.equals(event.getAction())) {
+    public void onDataEvent(DataEvent<BluetoothDevice> event) {
+        if (EventPoster.ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE.equals(event.getAction())) {
             if (event.getCode() == BluetoothReceiver.CODE_BOND_SUCCESS) {
                 Flowable.just(event.getData())
                         .observeOn(Schedulers.io())

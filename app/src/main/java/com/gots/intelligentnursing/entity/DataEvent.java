@@ -7,64 +7,68 @@ package com.gots.intelligentnursing.entity;
 
 public class DataEvent<T> {
 
-    private int code;
-    private String msg;
-    private T data;
-    private String action;
+    private int mCode;
+    private String mMsg;
+    private T mData;
+    private String mAction;
+
+    public DataEvent(String action) {
+        mAction = action;
+    }
 
     public DataEvent(int code, String action) {
-        this.code = code;
-        this.action = action;
+        mCode = code;
+        mAction = action;
     }
 
     public DataEvent(int code, String msg, String action) {
-        this.code = code;
-        this.msg = msg;
-        this.action = action;
+        mCode = code;
+        mMsg = msg;
+        mAction = action;
     }
 
     public DataEvent(int code, T data, String action) {
-        this.code = code;
-        this.data = data;
-        this.action = action;
+        mCode = code;
+        mData = data;
+        mAction = action;
     }
 
     public DataEvent(int code, String msg, T data, String action) {
-        this.code = code;
-        this.msg = msg;
-        this.data = data;
-        this.action = action;
+        mCode = code;
+        mMsg = msg;
+        mData = data;
+        mAction = action;
     }
 
     public int getCode() {
-        return code;
+        return mCode;
     }
 
     public void setCode(int code) {
-        this.code = code;
+        mCode = code;
     }
 
     public String getMsg() {
-        return msg;
+        return mMsg;
     }
 
     public void setMsg(String msg) {
-        this.msg = msg;
+        mMsg = msg;
     }
 
     public T getData() {
-        return data;
+        return mData;
     }
 
     public void setData(T data) {
-        this.data = data;
+        mData = data;
     }
 
     public String getAction() {
-        return action;
+        return mAction;
     }
 
     public void setAction(String action) {
-        this.action = action;
+        mAction = action;
     }
 }
