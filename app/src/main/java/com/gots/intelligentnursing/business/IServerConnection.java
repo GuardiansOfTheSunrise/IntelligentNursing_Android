@@ -21,6 +21,8 @@ import retrofit2.http.Query;
  */
 
 public interface IServerConnection {
+
+    String TOKEN_HEADER_KEY = "Authorization";
     /**
      * 用户相关操作
      */
@@ -41,7 +43,7 @@ public interface IServerConnection {
          * @return 包含服务器返回结果的被观察者对象
          */
         @GET("user")
-        Flowable<ServerResponse<UserInfo>> getUserInfo(@Header("Authorization") String token);
+        Flowable<ServerResponse<UserInfo>> getUserInfo(@Header(TOKEN_HEADER_KEY) String token);
 
         /**
          * 用户设置围栏接口
@@ -51,7 +53,7 @@ public interface IServerConnection {
          */
         @Headers({"Content-type:application/json;charset=UTF-8"})
         @POST("fence/addfence")
-        Flowable<ServerResponse> fenceDrawing(@Header("Authorization") String token, @Body RequestBody jsonBody);
+        Flowable<ServerResponse> fenceDrawing(@Header(TOKEN_HEADER_KEY) String token, @Body RequestBody jsonBody);
     }
 
     /**
@@ -67,8 +69,9 @@ public interface IServerConnection {
          */
         @FormUrlEncoded
         @POST("equipment/bind")
-        Flowable<ServerResponse<String>> bind(@Header("Authorization") String token, @Field("uid") int userId, @Field("eid") String equipId);
+        Flowable<ServerResponse<String>> bind(@Header(TOKEN_HEADER_KEY) String token, @Field("uid") int userId, @Field("eid") String equipId);
 
+        // TODO: 2018/5/29 接口尚未与服务器连通
         /**
          * 用户解除设备绑定接口
          * @param token 登录返回的token
@@ -76,8 +79,17 @@ public interface IServerConnection {
          * @return 包含服务器返回结果的被观察者对象
          */
         @FormUrlEncoded
-        @POST("unbind")
-        Flowable<ServerResponse> unbind(@Header("Authorization") String token, @Field("uid") int userId);
+        @POST("equipment/unbind")
+        Flowable<ServerResponse> unbind(@Header(TOKEN_HEADER_KEY) String token, @Field("uid") int userId);
+
+        /**
+         * 获取绑定设备位置接口
+         * @param token 登录返回的token
+         * @param deviceId 设备id
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("location/getLocation")
+        Flowable<ServerResponse> getDeviceLocation(@Header(TOKEN_HEADER_KEY) String token, @Query("eid") String deviceId);
     }
 
 
