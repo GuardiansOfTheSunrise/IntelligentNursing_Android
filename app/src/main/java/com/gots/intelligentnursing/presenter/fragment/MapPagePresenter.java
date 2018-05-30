@@ -255,12 +255,16 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     }
 
     private void routePlanning() {
-        if (mLastLocationData == null) {
-            onException(HINT_ON_PLANNING_LACK_MINE_LOCATION);
-        } else if (mLastDeviceData == null) {
-            onException(HINT_ON_PLANNING_LACK_DEICE_LOCATION);
+        if (UserContainer.getUser().getUserInfo() == null) {
+            LoginActivity.actionStart(getActivity(), null);
         } else {
-            mRoutePlanningHelper.planning(mLastLocationData, mLastDeviceData);
+            if (mLastLocationData == null) {
+                onException(HINT_ON_PLANNING_LACK_MINE_LOCATION);
+            } else if (mLastDeviceData == null) {
+                onException(HINT_ON_PLANNING_LACK_DEICE_LOCATION);
+            } else {
+                mRoutePlanningHelper.planning(mLastLocationData, mLastDeviceData);
+            }
         }
     }
 
