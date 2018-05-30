@@ -13,15 +13,23 @@ import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.route.DrivingRouteLine;
+import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.gots.intelligentnursing.R;
+import com.gots.intelligentnursing.business.DrivingRouteOverlay;
+import com.gots.intelligentnursing.business.OverlayManager;
+import com.gots.intelligentnursing.business.WalkingRouteOverlay;
 import com.gots.intelligentnursing.customview.SlidingLockMapView;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.presenter.fragment.MapPagePresenter;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
+
+import java.util.Arrays;
 
 /**
  * @author Accumulei
@@ -29,8 +37,19 @@ import com.gots.intelligentnursing.view.fragment.IMapPageView;
  */
 public class MapPageFragment extends BaseFragment<MapPagePresenter> implements IMapPageView {
 
+    private static final String[] BOTTOM_MENU_TEXT = {"移动至我的位置", "移动至设备位置", "创建路线规划"};
+    private static final String TEXT_ROUTE_CREATE = "创建路线规划";
+    private static final String TEXT_ROUTE_CLEAR = "清除路线规划";
+
+    private static final String HINT_ON_PLANNING_WALK_ROUTE = "根据您与老人的距离，给你推荐了步行的方案";
+    private static final String HINT_ON_PLANNING_DRIVE_ROUTE = "根据您与老人的距离，给你推荐了驾车的方案";
+
     private SlidingLockMapView mMapView;
     private BaiduMap mBaiduMap;
+    private OverlayManager mOverlayManager;
+
+    private Marker mDeviceMarker;
+
 
     @Override
     public void onException(String msg) {
@@ -50,7 +69,9 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
     @Override
     public void onGetDeviceLocationSuccess(LocationData data) {
         // 删除原先的标记物
-        mBaiduMap.clear();
+        if (mDeviceMarker != null) {
+            mDeviceMarker.remove();
+        }
 
         LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
 
@@ -63,7 +84,7 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
                 .icon(bitmap);
 
         //在地图上添加Marker，并显示
-        mBaiduMap.addOverlay(option);
+        mDeviceMarker = (Marker) mBaiduMap.addOverlay(option);
     }
 
     @Override
@@ -76,13 +97,48 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
 
     private void initMapView(View view) {
         mMapView = view.findViewById(R.id.map_view_page_map);
-        mMapView.setButtonMenuTexts(mPresenter.getMenuTexts());
+        mMapView.setButtonMenuTexts(Arrays.asList(BOTTOM_MENU_TEXT));
         mMapView.setOnMenuItemClickListener(index -> {
             mPresenter.onMenuButtonClick(index);
         });
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
         mBaiduMap.setMyLocationEnabled(true);
+
+        // 初始化路径规划器
+        mPresenter.setupRoutePlanningHelper();
+    }
+
+    @Override
+    public void onGetWalkRoutePlanningSuccess(WalkingRouteLine line) {
+        WalkingRouteOverlay walkingRouteOverlay = new WalkingRouteOverlay(mBaiduMap);
+        walkingRouteOverlay.setData(line);
+        mOverlayManager = walkingRouteOverlay;
+        mOverlayManager.addToMap();
+        mMapView.getButtonByIndex(BOTTOM_MENU_TEXT.length - 1)
+                .setButtonText(TEXT_ROUTE_CLEAR);
+        Toast.makeText(getActivity(), HINT_ON_PLANNING_WALK_ROUTE, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onGetDriveRoutePlanningSuccess(DrivingRouteLine line) {
+        DrivingRouteOverlay drivingRouteOverlay = new DrivingRouteOverlay(mBaiduMap);
+        drivingRouteOverlay.setData(line);
+        mOverlayManager = drivingRouteOverlay;
+        mOverlayManager.addToMap();
+        mMapView.getButtonByIndex(BOTTOM_MENU_TEXT.length - 1)
+                .setButtonText(TEXT_ROUTE_CLEAR);
+        Toast.makeText(getActivity(), HINT_ON_PLANNING_DRIVE_ROUTE, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void clearRoutePlanning() {
+        if (mOverlayManager != null) {
+            mOverlayManager.removeFromMap();
+            mOverlayManager = null;
+            mMapView.getButtonByIndex(BOTTOM_MENU_TEXT.length - 1)
+                    .setButtonText(TEXT_ROUTE_CREATE);
+        }
     }
 
     @Override
@@ -98,6 +154,7 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         super.onDestroy();
         mMapView.onDestroy();
         mBaiduMap.setMyLocationEnabled(false);
+        mPresenter.recycler();
     }
 
     /**

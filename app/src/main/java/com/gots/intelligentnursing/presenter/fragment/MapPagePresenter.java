@@ -7,14 +7,18 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.search.route.DrivingRouteLine;
+import com.baidu.mapapi.search.route.DrivingRouteResult;
+import com.baidu.mapapi.search.route.WalkingRouteLine;
+import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.gots.intelligentnursing.activity.LoginActivity;
+import com.gots.intelligentnursing.business.RetrofitHelper;
+import com.gots.intelligentnursing.business.RoutePlanningHelper;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.LocationData;
+import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,6 +36,8 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
 
     private static final String HINT_DENY_GRANT = "您拒绝了授权，该功能无法正常使用";
     private static final String HINT_LOCATION_ERROR = "定位错误，错误码:";
+    private static final String HINT_ON_PLANNING_LACK_MINE_LOCATION = "获取您的位置信息失败，无法为您规划路径";
+    private static final String HINT_ON_PLANNING_LACK_DEICE_LOCATION = "获取设备的位置信息失败，无法为您规划路径";
 
     /**
      * 两次刷新数据之间时间的最小间隔
@@ -45,8 +51,6 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
 
     private LocationClient mLocationClient;
 
-    private List<String> mBottomMenuTextList = new ArrayList<>();
-
     private LocationData mLastLocationData;
     private LocationData mLastDeviceData;
 
@@ -55,40 +59,29 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
      */
     private int mMoveTo = MOVE_TO_LOCATION;
 
+    private RoutePlanningHelper mRoutePlanningHelper;
+
+    /**
+     * 路径是否已经生成，false表示未生成
+     */
+    private boolean mRouteCreate = false;
+
     public MapPagePresenter(IMapPageView view) {
         super(view);
         mLocationClient = new LocationClient(getActivity().getApplicationContext());
-        initBottomMenuTextList();
         initLocationClient();
-    }
-
-    public List<String> getMenuTexts() {
-        return mBottomMenuTextList;
     }
 
     public void onMenuButtonClick(int index) {
         switch (index) {
             case 0:
-                if (mLastLocationData != null) {
-                    moveTo(mLastLocationData);
-                } else {
-                    mMoveTo = MOVE_TO_LOCATION;
-                    refreshData();
-                }
+                onMoveToMyLocationClick();
                 break;
             case 1:
-                if (UserContainer.getUser().getUserInfo() == null) {
-                    LoginActivity.actionStart(getActivity(), null);
-                } else {
-                    if (mLastDeviceData != null) {
-                        moveTo(mLastDeviceData);
-                    } else {
-                        mMoveTo = MOVE_TO_DEVICE;
-                        refreshData();
-                    }
-                }
+                onMoveToDeviceLocationClick();
                 break;
             case 2:
+                onCreateOrClearRouteClick();
                 break;
             default:
         }
@@ -112,11 +105,49 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     }
 
     /**
+     * 初始化路径规划器
+     * 调用此方法前需要调用SDKInitializer.initialize()
+     */
+    public void setupRoutePlanningHelper() {
+        mRoutePlanningHelper = new RoutePlanningHelper(new RoutePlanningHelper.OnPlanningResultListener() {
+            @Override
+            public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
+                if (drivingRouteResult != null && drivingRouteResult.getRouteLines() != null &&
+                        drivingRouteResult.getRouteLines().size() >= 1) {
+                    onGetDriveRoutePlanningSuccess(drivingRouteResult.getRouteLines().get(0));
+                }
+            }
+
+            @Override
+            public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
+                if (walkingRouteResult != null && walkingRouteResult.getRouteLines() != null &&
+                        walkingRouteResult.getRouteLines().size() >= 1) {
+                    onGetWalkRoutePlanningSuccess(walkingRouteResult.getRouteLines().get(0));
+                }
+
+            }
+        });
+    }
+
+    public void recycler() {
+        mRoutePlanningHelper.destroy();
+    }
+
+    /**
      * 从服务器获取绑定设备的定位数据
      */
     private void getDeviceLocation() {
-        if (UserContainer.getUser() != null) {
+        UserInfo userInfo = UserContainer.getUser().getUserInfo();
+        if (userInfo != null && userInfo.getDeviceInfo() != null) {
             // TODO: 2018/4/20 连接服务器获取设备位置数据
+            /*
+            RetrofitHelper.getInstance().device()
+                    .getDeviceLocation(UserContainer.getUser().getToken(), userInfo.getDeviceInfo().getId())
+            */
+            /*
+            double latitude = 35.944489;
+            double longitude = 120.185498;
+            */
             double latitude = 36.070257;
             double longitude = 120.317581;
             mLastDeviceData = new LocationData(latitude, longitude);
@@ -136,18 +167,6 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         mLocationClient.start();
     }
 
-    /**
-     * 初始化底部菜单栏数据
-     */
-    private void initBottomMenuTextList() {
-        mBottomMenuTextList.add("移动至我的位置");
-        mBottomMenuTextList.add("移动至设备位置");
-        mBottomMenuTextList.add("清除路线规划");
-    }
-
-    /**
-     * 初始化定位客户端
-     */
     private void initLocationClient() {
         LocationClientOption option = new LocationClientOption();
 
@@ -204,11 +223,47 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         mLocationClient.registerLocationListener(locationListener);
     }
 
-    /**
-     * 检查定位结果
-     * @param location 定位结果
-     * @throws Exception 定位出错时在RxJava的onError中处理
-     */
+    private void onMoveToMyLocationClick() {
+        if (mLastLocationData != null) {
+            moveTo(mLastLocationData);
+        } else {
+            mMoveTo = MOVE_TO_LOCATION;
+            refreshData();
+        }
+    }
+
+    private void onMoveToDeviceLocationClick() {
+        if (UserContainer.getUser().getUserInfo() == null) {
+            LoginActivity.actionStart(getActivity(), null);
+        } else {
+            if (mLastDeviceData != null) {
+                moveTo(mLastDeviceData);
+            } else {
+                mMoveTo = MOVE_TO_DEVICE;
+                refreshData();
+            }
+        }
+    }
+
+    private void onCreateOrClearRouteClick() {
+        if (!mRouteCreate) {
+            routePlanning();
+        } else {
+            clearRoutePlanning();
+        }
+        mRouteCreate = !mRouteCreate;
+    }
+
+    private void routePlanning() {
+        if (mLastLocationData == null) {
+            onException(HINT_ON_PLANNING_LACK_MINE_LOCATION);
+        } else if (mLastDeviceData == null) {
+            onException(HINT_ON_PLANNING_LACK_DEICE_LOCATION);
+        } else {
+            mRoutePlanningHelper.planning(mLastLocationData, mLastDeviceData);
+        }
+    }
+
     private void checkLocationType(BDLocation location) throws Exception {
         int type = location.getLocType();
         if (type != BDLocation.TypeGpsLocation && type != BDLocation.TypeOffLineLocation &&
@@ -238,6 +293,24 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     private void moveTo(LocationData data) {
         if (getView() != null) {
             getView().moveTo(data);
+        }
+    }
+
+    private void onGetWalkRoutePlanningSuccess(WalkingRouteLine line) {
+        if (getView() != null) {
+            getView().onGetWalkRoutePlanningSuccess(line);
+        }
+    }
+
+    private void onGetDriveRoutePlanningSuccess(DrivingRouteLine line) {
+        if (getView() != null) {
+            getView().onGetDriveRoutePlanningSuccess(line);
+        }
+    }
+
+    private void clearRoutePlanning() {
+        if (getView() != null) {
+            getView().clearRoutePlanning();
         }
     }
 }

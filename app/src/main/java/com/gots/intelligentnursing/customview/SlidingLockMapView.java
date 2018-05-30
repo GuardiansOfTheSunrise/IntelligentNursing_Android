@@ -209,6 +209,10 @@ public class SlidingLockMapView extends RelativeLayout {
         }
     }
 
+    public RipplingFilletedButton getButtonByIndex(int index) {
+        return (RipplingFilletedButton) mButtonCollectorLinearLayout.getChildAt(index);
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (mSlidingLock) {
