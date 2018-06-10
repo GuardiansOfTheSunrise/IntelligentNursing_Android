@@ -38,6 +38,7 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     private static final String HINT_LOCATION_ERROR = "定位错误，错误码:";
     private static final String HINT_ON_PLANNING_LACK_MINE_LOCATION = "获取您的位置信息失败，无法为您规划路径";
     private static final String HINT_ON_PLANNING_LACK_DEICE_LOCATION = "获取设备的位置信息失败，无法为您规划路径";
+    private static final String HINT_ON_DEVICE_NOT_BINDING = "请先绑定设备";
 
     /**
      * 两次刷新数据之间时间的最小间隔
@@ -156,6 +157,8 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
                 moveTo(mLastDeviceData);
                 mMoveTo = MOVE_TO_NONE;
             }
+        } else if (userInfo != null && userInfo.getDeviceInfo() == null) {
+            onException(HINT_ON_DEVICE_NOT_BINDING);
         }
     }
 

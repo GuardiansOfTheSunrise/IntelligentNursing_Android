@@ -77,12 +77,12 @@ public class DeviceControlPresenter extends BaseActivityPresenter<IDeviceControl
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDataEvent(DataEvent<BluetoothDevice> event) {
+    public void onDataEvent(DataEvent event) {
         if (EventPoster.ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE.equals(event.getAction())) {
             if (event.getCode() == BluetoothReceiver.CODE_BOND_SUCCESS) {
                 Flowable.just(event.getData())
                         .observeOn(Schedulers.io())
-                        .map(BluetoothConnector::new)
+                        .map(data -> new BluetoothConnector((BluetoothDevice) data))
                         .doOnNext(connector -> mConnector = connector)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(

@@ -4,33 +4,20 @@ import android.content.Intent;
 
 import com.gots.intelligentnursing.activity.LoginActivity;
 import com.gots.intelligentnursing.business.BaseLoginManager;
-import com.gots.intelligentnursing.business.FileCacheManager;
-import com.gots.intelligentnursing.business.IServerConnection;
+import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.business.OriginalLoginManager;
-import com.gots.intelligentnursing.business.RetrofitHelper;
-import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.SinaLoginManager;
 import com.gots.intelligentnursing.business.TencentLoginManager;
-import com.gots.intelligentnursing.business.UserContainer;
-import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.entity.UserInfo;
-import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.ILoginView;
-import com.sina.weibo.sdk.auth.WbAuthListener;
-import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
-import com.tencent.connect.common.Constants;
-import com.tencent.tauth.IUiListener;
-import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
-import com.trello.rxlifecycle2.android.ActivityEvent;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
+import java.util.Map;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author zhqy
@@ -49,6 +36,7 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
 
     public LoginPresenter(ILoginView view) {
         super(view);
+        EventBus.getDefault().register(this);
         BaseLoginManager.OnLoginReturnListener listener = new BaseLoginManager.OnLoginReturnListener() {
             @Override
             public void onSuccess(int channel, UserInfo userInfo) {
@@ -95,6 +83,7 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
         mSinaLoginManager.recycler();
         mTencentLoginManager.recycler();
         mOriginalLoginManager.recycler();
+        EventBus.getDefault().unregister(this);
     }
 
     private void onLoginSuccess(String username) {
@@ -109,4 +98,21 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
         }
     }
 
+    private void onLogging() {
+        if (getView() != null) {
+            getView().onLogging();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDataEvent (DataEvent event) {
+        String action = event.getAction();
+        if (EventPoster.ACTION_ON_REGISTER_SUCCESS.equals(action)) {
+            onLogging();
+            Map<String, String> uap = (Map<String, String>) event.getData();
+            String username = uap.get("username");
+            String password = uap.get("password");
+            mOriginalLoginManager.login(username, password);
+        }
+    }
 }

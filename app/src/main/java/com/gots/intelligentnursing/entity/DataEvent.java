@@ -5,39 +5,45 @@ package com.gots.intelligentnursing.entity;
  * @date 2018/4/17
  */
 
-public class DataEvent<T> {
+public class DataEvent {
 
+    private String mAction;
     private int mCode;
     private String mMsg;
-    private T mData;
-    private String mAction;
+    private Object mData;
+
 
     public DataEvent(String action) {
         mAction = action;
     }
 
-    public DataEvent(int code, String action) {
-        mCode = code;
+    public DataEvent(String action, Object data) {
         mAction = action;
+        mData = data;
     }
 
-    public DataEvent(int code, String msg, String action) {
+    public DataEvent(String action, int code) {
+        mAction = action;
+        mCode = code;
+    }
+
+    public DataEvent(String action, int code, String msg) {
+        mAction = action;
         mCode = code;
         mMsg = msg;
-        mAction = action;
     }
 
-    public DataEvent(int code, T data, String action) {
+    public DataEvent(String action, int code, Object data) {
+        mAction = action;
         mCode = code;
         mData = data;
-        mAction = action;
     }
 
-    public DataEvent(int code, String msg, T data, String action) {
+    public DataEvent(String action, int code, String msg, Object data) {
+        mAction = action;
         mCode = code;
         mMsg = msg;
         mData = data;
-        mAction = action;
     }
 
     public int getCode() {
@@ -56,11 +62,11 @@ public class DataEvent<T> {
         mMsg = msg;
     }
 
-    public T getData() {
+    public Object getData() {
         return mData;
     }
 
-    public void setData(T data) {
+    public void setData(Object data) {
         mData = data;
     }
 

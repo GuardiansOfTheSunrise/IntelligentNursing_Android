@@ -22,6 +22,11 @@ public class EventPoster {
     public static final String ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE = "BluetoothReceiver.onReceive";
 
     /**
+     * 注册成功时发出
+     */
+    public static final String ACTION_ON_REGISTER_SUCCESS = "RegisterPresenter.onRegisterSuccess";
+
+    /**
      * token失效后自动登录失败时发出
      */
     public static final String ACTION_AUTO_LOGIN_FAILURE = "RWAEF.doOnError";

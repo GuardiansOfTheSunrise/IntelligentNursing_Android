@@ -48,21 +48,16 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <com.andexert.library.RippleView
+        <com.gots.intelligentnursing.customview.RipplingFilletedButton
+            android:id="@+id/bt_login_login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:rv_color="#FFFFFF"
-            android:layout_marginTop="40dp">
-
-            <Button
-                android:id="@+id/bt_login_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
-                android:text="登   录"
-                android:background="@color/colorPrimary" />
-
-        </com.andexert.library.RippleView>
+            android:layout_height="45dp"
+            android:layout_marginTop="40dp"
+            app:rv_color="@color/bg_white"
+            app:buttonText="登   录"
+            app:buttonBackgroundColor="@color/colorPrimary"
+            app:buttonTextColor="@color/text_gray"
+            app:buttonTextSize="20sp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -40,18 +40,18 @@ public class BluetoothReceiver extends BroadcastReceiver {
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
             LogUtil.i(TAG, "receive ACTION_FOUND broadcast");
             if (device != null && DEVICE_NAME.equals(device.getName())) {
-                EventBus.getDefault().post(new DataEvent<>(CODE_FOUND, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+                EventBus.getDefault().post(new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_FOUND));
                 if (device.getBondState() == BluetoothDevice.BOND_NONE) {
                     try {
                         BluetoothPairer.createBond(device.getClass(), device);
                     } catch (BluetoothException e) {
                         e.printStackTrace();
                         EventPoster.post(
-                                new DataEvent<>(CODE_ERROR, e.getMessage(), ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+                                new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_ERROR, e.getMessage()));
                     }
                 } else if(device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     EventBus.getDefault().post(
-                            new DataEvent<>(CODE_BOND_SUCCESS, device, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+                            new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_BOND_SUCCESS, device));
                 }
             }
         } else if(BluetoothDevice.ACTION_PAIRING_REQUEST.equals(action)) {
@@ -63,19 +63,19 @@ public class BluetoothReceiver extends BroadcastReceiver {
                     BluetoothPairer.setPin(device.getClass(), device,
                             UserContainer.getUser().getUserInfo().getDeviceInfo().getBluetoothPassword());
                     EventBus.getDefault().post(
-                            new DataEvent<>(CODE_BOND_SUCCESS, device, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+                            new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_BOND_SUCCESS, device));
                 } catch (BluetoothException e) {
                     e.printStackTrace();
                     EventBus.getDefault().post(
-                            new DataEvent<>(CODE_ERROR, e.getMessage(), ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+                            new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_ERROR, e.getMessage()));
                 }
             }
         } else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
             LogUtil.i(TAG, "receive ACTION_DISCOVERY_STARTED broadcast");
-            EventBus.getDefault().post(new DataEvent<>(CODE_START, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+            EventBus.getDefault().post(new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_START));
         } else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
             LogUtil.i(TAG, "receive ACTION_DISCOVERY_FINISHED broadcast");
-            EventBus.getDefault().post(new DataEvent<>(CODE_FINISH, ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE));
+            EventBus.getDefault().post(new DataEvent(ACTION_BLUETOOTH_RECEIVER_ON_RECEIVE, CODE_FINISH));
         }
     }
 }

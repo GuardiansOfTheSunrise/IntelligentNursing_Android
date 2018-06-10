@@ -17,8 +17,6 @@ import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.UmengNotificationClickHandler;
 import com.umeng.message.entity.UMessage;
 
-import org.greenrobot.eventbus.EventBus;
-
 import static com.gots.intelligentnursing.business.EventPoster.ACTION_UPUSH_GET_NOTIFICATION;
 
 /**
@@ -41,7 +39,7 @@ public class MyApplication extends Application {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
                 LogUtil.i("U-Push", "getNotification");
-                EventPoster.post(new DataEvent<>(ACTION_UPUSH_GET_NOTIFICATION));
+                EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION));
                 return super.getNotification(context, uMessage);
             }
         };

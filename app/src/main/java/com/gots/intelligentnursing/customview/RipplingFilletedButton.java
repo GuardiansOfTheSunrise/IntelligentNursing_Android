@@ -21,6 +21,7 @@ import com.gots.intelligentnursing.R;
 public class RipplingFilletedButton extends RippleView {
 
     private Button mButton;
+    private int mBackgroundColor = Color.GRAY;
 
     private void initButton(Context context) {
         mButton = new Button(context);
@@ -38,9 +39,9 @@ public class RipplingFilletedButton extends RippleView {
         mButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
         int textColor = ta.getColor(R.styleable.RipplingFilletedButton_buttonTextColor, Color.BLACK);
         mButton.setTextColor(textColor);
-        int backgroundColor = ta.getColor(R.styleable.RipplingFilletedButton_buttonBackgroundColor, Color.GRAY);
+        mBackgroundColor = ta.getColor(R.styleable.RipplingFilletedButton_buttonBackgroundColor, Color.GRAY);
         GradientDrawable drawable = (GradientDrawable) mButton.getBackground();
-        drawable.setColor(backgroundColor);
+        drawable.setColor(mBackgroundColor);
         ta.recycle();
     }
 
@@ -76,6 +77,21 @@ public class RipplingFilletedButton extends RippleView {
         return mButton.getTag();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        mButton.setEnabled(enabled);
+        if (!enabled) {
+            GradientDrawable drawable = (GradientDrawable) mButton.getBackground();
+            drawable.setColor(Color.GRAY);
+            mButton.setTextColor(mBackgroundColor);
+        } else {
+            GradientDrawable drawable = (GradientDrawable) mButton.getBackground();
+            drawable.setColor(mBackgroundColor);
+            mButton.setTextColor(Color.GRAY);
+        }
+    }
+
     public void setButtonText(String text) {
         mButton.setText(text);
     }
@@ -93,6 +109,7 @@ public class RipplingFilletedButton extends RippleView {
     }
 
     public void setButtonBackgroundColor(int color) {
+        mBackgroundColor = color;
         GradientDrawable drawable = (GradientDrawable) mButton.getBackground();
         drawable.setColor(color);
     }

@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.UserContainer;
+import com.gots.intelligentnursing.customview.RipplingFilletedButton;
 import com.gots.intelligentnursing.presenter.activity.LoginPresenter;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.ILoginView;
@@ -42,12 +44,20 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
     }
 
     private void initLoginButton() {
-        Button loginButton = findViewById(R.id.bt_login_login);
+        RipplingFilletedButton loginButton = findViewById(R.id.bt_login_login);
         loginButton.setOnClickListener(v -> {
             showProgressBar();
             String username = mUsernameEditText.getText().toString();
             String password = mPasswordEditText.getText().toString();
             mPresenter.onLoginButtonClicked(username, password);
+        });
+    }
+
+    private void initTextView() {
+        TextView registerTextView = findViewById(R.id.tv_login_register);
+        registerTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -73,6 +83,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
 
         initEditText();
         initLoginButton();
+        initTextView();
         initThirdPartyLoginImageView();
     }
 
@@ -105,6 +116,11 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
     public void onException(String msg) {
         dismissProgressBar();
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLogging() {
+        showProgressBar();
     }
 
     @Override

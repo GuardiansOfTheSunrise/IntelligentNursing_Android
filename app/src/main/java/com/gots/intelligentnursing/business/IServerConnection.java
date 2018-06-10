@@ -38,6 +38,29 @@ public interface IServerConnection {
         Flowable<ServerResponse<String>> login(@Field("uname") String username, @Field("pwd") String password);
 
         /**
+         * 获取验证码接口
+         * @param username 用户名
+         * @param phone 手机号
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("getCode")
+        Flowable<ServerResponse> getVerify(@Field("uname") String username, @Field("phone") String phone);
+
+        /**
+         * 用户注册接口
+         * @param username 用户名
+         * @param password 密码
+         * @param phone 手机号
+         * @param verify 验证码
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("user/reg")
+        Flowable<ServerResponse> register(@Field("uname") String username, @Field("pwd") String password,
+                                          @Field("tel") String phone, @Field("code") String verify);
+
+        /**
          * 用户登录后获取用户信息
          * @param token 登录返回的token
          * @return 包含服务器返回结果的被观察者对象
