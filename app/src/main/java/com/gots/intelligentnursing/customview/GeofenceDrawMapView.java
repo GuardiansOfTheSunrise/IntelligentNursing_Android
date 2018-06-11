@@ -229,6 +229,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
 
     /**
      * 用于在地图上绘制围栏区域
+     *
      * @param locationDataList 用户的围栏数据列表
      */
     public void setLocationDataList(List<LocationData> locationDataList) {
@@ -280,6 +281,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
     /**
      * 完成绘制
      * 如果成功则在地图上转换成围栏区域
+     *
      * @return 完成结果，false表示未完成
      */
     public boolean completeDrawing() {
@@ -296,7 +298,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
     }
 
     /**
-     *  取消绘制
+     * 取消绘制
      */
     public void cancelDrawing() {
         mDrawingState = STATE_NORMAL;
@@ -377,7 +379,8 @@ public class GeofenceDrawMapView extends RelativeLayout {
                         mMapView.dispatchTouchEvent(upEvent);
                     });
                     // 等待转换结束标志
-                    while (!mIsConvertFinish) {}
+                    while (!mIsConvertFinish) {
+                    }
                     downEvent.recycle();
                     upEvent.recycle();
                 }
@@ -486,6 +489,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
         /**
          * 围栏设置成功回调
          * 同步回调
+         *
          * @param locationDataList 围栏点的经纬度数据列表
          */
         void onSuccess(List<LocationData> locationDataList);
