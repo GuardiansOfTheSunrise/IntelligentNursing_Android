@@ -17,7 +17,6 @@
         android:src="@drawable/diffuse_shadow_button"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:clickable="true"
         android:text="围栏设置"/>
 
 </FrameLayout>

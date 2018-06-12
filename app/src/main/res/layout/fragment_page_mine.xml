@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/page_mine_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_page_mine_device_management"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="设备管理"/>
-
-    <Button
-        android:id="@+id/bt_page_mine_logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="退出登录"/>
-
-</LinearLayout>
+</android.support.v7.widget.RecyclerView>
