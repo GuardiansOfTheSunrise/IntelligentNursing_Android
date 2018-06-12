@@ -1,10 +1,12 @@
 package com.gots.intelligentnursing.business;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.gots.intelligentnursing.entity.SinaUserInfo;
+import com.gots.intelligentnursing.activity.RegisterActivity;
+import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.exception.ServerException;
+import com.gots.intelligentnursing.presenter.activity.LoginPresenter;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.auth.AuthInfo;
@@ -29,7 +31,7 @@ public class SinaLoginManager extends BaseLoginManager {
     private static final String TAG = "SinaLoginManager";
 
     private static final String HINT_ON_CANCEL = "您放弃了登录";
-    private static final String HINT_ON_INTERFACE_ERROR = "新浪接口错误";
+    private static final String HINT_COMPLETING_INFO = "您的信息不完善，请先补全信息";
 
     private static final String APP_KEY = "1802881260";
     private static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
@@ -45,7 +47,7 @@ public class SinaLoginManager extends BaseLoginManager {
         mSsoHandler = null;
     }
 
-    public SinaLoginManager(RxAppCompatActivity activity, OnLoginReturnListener listener) {
+    public SinaLoginManager(RxAppCompatActivity activity, OnFailureListener listener) {
         super(listener);
         mActivity = activity;
         AuthInfo authInfo = new AuthInfo(mActivity, APP_KEY, REDIRECT_URL, SCOPE);
@@ -67,25 +69,23 @@ public class SinaLoginManager extends BaseLoginManager {
     private class SelfWbAuthListener implements WbAuthListener {
 
         @Override
-        public void onSuccess(final Oauth2AccessToken token) {
-            String accessToken = token.getToken();
-            long uid = Long.parseLong(token.getUid());
-            LogUtil.i(TAG, "Authorized success, token: " + accessToken +
-                    " phone: " + token.getPhoneNum() + "uid：" + uid);
-
-            RetrofitHelper.getInstance().thirdParty()
-                    .getUserInfoFromSina(accessToken, uid)
+        public void onSuccess(final Oauth2AccessToken sinaToken) {
+            String uid = sinaToken.getUid();
+            LogUtil.i(TAG, "Authorized success, token: " + sinaToken.getToken() +
+                    " phone: " + sinaToken.getPhoneNum() + "uid：" + sinaToken.getUid());
+            RetrofitHelper.getInstance().user()
+                    .sinaAuth(uid)
                     .compose(mActivity.bindUntilEvent(ActivityEvent.DESTROY))
                     .subscribeOn(Schedulers.io())
-                    .doOnNext(sinaUserInfo -> sinaUserInfo.log(TAG))
-                    .filter(sinaUserInfo -> !sinaUserInfo.isError())
+                    .doOnNext(ServerResponse::checkSuccess)
+                    .map(ServerResponse::getData)
+                    .doOnNext(token -> UserContainer.getUser().setToken(token))
                     .observeOn(AndroidSchedulers.mainThread())
-                    .switchIfEmpty(s -> mOnLoginReturnListener.onFailure(HINT_ON_INTERFACE_ERROR))
-                    .doOnNext(sinaUserInfo -> {
-                        Toast.makeText(mActivity, "uid:" + sinaUserInfo.getUid() + "\nurl:" +
-                                sinaUserInfo.getProfileImageUrl() + "\nname:" + sinaUserInfo.getName(), Toast.LENGTH_LONG).show();
-                    })
-                    .subscribe(sinaUserInfo -> mOnLoginReturnListener.onSuccess(CHANNEL_SINA, null));
+                    .subscribe(
+                            token -> LoginPresenter.notifyGetUserInfo(),
+                            throwable -> onAuthException(throwable, uid)
+                    );
+
         }
 
         @Override
@@ -99,6 +99,20 @@ public class SinaLoginManager extends BaseLoginManager {
                     "\n错误信息："  + errorMessage.getErrorCode();
             LogUtil.i(TAG, "Login error: " + msg);
             mOnLoginReturnListener.onFailure(msg);
+        }
+
+        /**
+         * 授权时异常处理
+         * 如果异常类型为ServerException说明该第三方帐号未补全信息
+         * 跳转到RegisterActivity补全信息
+         */
+        private void onAuthException(Throwable throwable, String openid) {
+            if (throwable instanceof ServerException) {
+                Toast.makeText(mActivity, HINT_COMPLETING_INFO, Toast.LENGTH_SHORT).show();
+                RegisterActivity.actionStart(mActivity, RegisterActivity.MODE_SINA_INFO, openid);
+            } else {
+                mOnLoginReturnListener.onFailure(ServerRequestExceptionHandler.handle(throwable));
+            }
         }
     }
 

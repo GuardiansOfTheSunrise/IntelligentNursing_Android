@@ -9,12 +9,14 @@ public interface IDeviceManagementView extends IActivityView {
 
     /**
      * presenter出现异常时的回调
+     *
      * @param msg 失败原因
      */
     void onException(String msg);
 
     /**
      * presenter绑定设备成功回调
+     *
      * @param id 设备id
      */
     void onBindSuccess(String id);

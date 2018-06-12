@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,7 +43,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
     }
 
     private void initLoginButton() {
-        RipplingFilletedButton loginButton = findViewById(R.id.bt_login_login);
+        RipplingFilletedButton loginButton = findViewById(R.id.bt_login_submit);
         loginButton.setOnClickListener(v -> {
             showProgressBar();
             String username = mUsernameEditText.getText().toString();
@@ -55,10 +54,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements ILogi
 
     private void initTextView() {
         TextView registerTextView = findViewById(R.id.tv_login_register);
-        registerTextView.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
-        });
+        registerTextView.setOnClickListener(v -> RegisterActivity.actionStart(this));
     }
 
     private void initThirdPartyLoginImageView() {

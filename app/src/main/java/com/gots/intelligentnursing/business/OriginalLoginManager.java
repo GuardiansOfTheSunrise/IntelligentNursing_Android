@@ -2,6 +2,7 @@ package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
+import com.gots.intelligentnursing.presenter.activity.LoginPresenter;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
@@ -19,7 +20,7 @@ public class OriginalLoginManager extends BaseLoginManager {
 
     private RxAppCompatActivity mActivity;
 
-    public OriginalLoginManager(RxAppCompatActivity activity, OnLoginReturnListener onLoginReturnListener) {
+    public OriginalLoginManager(RxAppCompatActivity activity, OnFailureListener onLoginReturnListener) {
         super(onLoginReturnListener);
         mActivity = activity;
     }
@@ -30,9 +31,8 @@ public class OriginalLoginManager extends BaseLoginManager {
     }
 
     public void login(String username, String password) {
-        IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
-
-        userOperate.login(username, password)
+        RetrofitHelper.getInstance().user()
+                .login(username, password)
                 .compose(mActivity.bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -42,22 +42,11 @@ public class OriginalLoginManager extends BaseLoginManager {
                     UserContainer.getUser().setToken(token);
                     FileCacheManager.getInstance(mActivity).saveUsernameAndPassword(username, password);
                 })
-                .map(token -> UserContainer.getUser().getToken())
-                .flatMap(userOperate::getUserInfo)
-                .doOnNext(ServerResponse::checkSuccess)
-                .map(ServerResponse::getData)
-                .doOnNext(this::createListWhileFencesNull)
-                .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        userInfo -> mOnLoginReturnListener.onSuccess(CHANNEL_ORIGINAL, userInfo),
+                        token -> LoginPresenter.notifyGetUserInfo(),
                         throwable -> mOnLoginReturnListener.onFailure(ServerRequestExceptionHandler.handle(throwable))
                 );
     }
 
-    private void createListWhileFencesNull(UserInfo userInfo) {
-        if (userInfo.getLocationDataList() == null) {
-            userInfo.setLocationDataList(new ArrayList<>());
-        }
-    }
 }

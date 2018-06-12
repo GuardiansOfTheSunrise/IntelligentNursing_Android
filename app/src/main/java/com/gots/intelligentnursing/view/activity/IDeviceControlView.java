@@ -10,8 +10,10 @@ public interface IDeviceControlView extends IActivityView {
      * 蓝牙连接成功时回调
      */
     void onConnectSuccess();
+
     /**
      * presenter出现异常时的回调
+     *
      * @param msg 失败原因
      */
     void onException(String msg);

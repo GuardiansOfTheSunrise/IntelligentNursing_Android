@@ -3,10 +3,12 @@ package com.gots.intelligentnursing.presenter.activity;
 import android.os.Handler;
 import android.os.Message;
 
+import com.gots.intelligentnursing.activity.RegisterActivity;
 import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.business.IServerConnection;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
+import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.business.VerificationCodeTimer;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.entity.ServerResponse;
@@ -14,11 +16,12 @@ import com.gots.intelligentnursing.view.activity.IRegisterView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.gots.intelligentnursing.business.EventPoster.ACTION_ON_GIVE_UP_COMPLETING_INFO;
 
 /**
  * @author zhqy
@@ -32,9 +35,12 @@ public class RegisterPresenter extends BaseActivityPresenter<IRegisterView> {
     public static final String KEY_CONFIRM = "confirm";
     public static final String KEY_PHONE = "phone";
     public static final String KEY_VERIFY = "verify";
+    public static final String KEY_OPENID = "openid";
 
     private static final String HINT_ON_INFO_LACK = "请将信息补全完整";
     private static final String HINT_ON_PASSWORD_NOT_EQUAL_TO_CONFIRM = "两次密码不一致";
+
+    private boolean mRegisterState = false;
 
     private Handler mTimeHandler = new TimerHandler(this);
 
@@ -50,11 +56,14 @@ public class RegisterPresenter extends BaseActivityPresenter<IRegisterView> {
         }
     }
 
-    public void recycler() {
+    public void onDestroy(int mode) {
         mTimeHandler.removeCallbacksAndMessages(null);
+        if (mode != RegisterActivity.MODE_REGISTER && !mRegisterState) {
+            EventPoster.post(new DataEvent(ACTION_ON_GIVE_UP_COMPLETING_INFO));
+        }
     }
 
-    public void register(Map<String, String> input) {
+    public void submit(Map<String, String> input, int mode) {
         String username = input.get(KEY_USERNAME);
         String password = input.get(KEY_PASSWORD);
         String confirm = input.get(KEY_CONFIRM);
@@ -66,18 +75,73 @@ public class RegisterPresenter extends BaseActivityPresenter<IRegisterView> {
         } else if (!password.equals(confirm)) {
             onException(HINT_ON_PASSWORD_NOT_EQUAL_TO_CONFIRM);
         } else {
-            IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
-            userOperate.register(username, password, phone, verify)
-                    .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io())
-                    .doOnNext(ServerResponse::checkSuccess)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            resp -> onRegisterSuccess(username, password),
-                            throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
-                    );
+            switch (mode) {
+                case RegisterActivity.MODE_REGISTER:
+                    register(username, password, phone, verify);
+                    break;
+                case RegisterActivity.MODE_TENCENT_INFO:
+                     String tencentOpenId = input.get(KEY_OPENID);
+                     completingTencentInfo(username, password, phone, verify, tencentOpenId);
+                    break;
+                case RegisterActivity.MODE_SINA_INFO:
+                    String sinaOpenId = input.get(KEY_OPENID);
+                    completingSinaInfo(username, password, phone, verify, sinaOpenId);
+                    break;
+                default:
+            }
+
         }
+    }
+
+    /**
+     * 注册负责完成信息提交并在成功后执行授权获取token
+     */
+    private void register(String username, String password, String phone, String verify) {
+        IServerConnection.IUserOperate userOperate = RetrofitHelper.getInstance().user();
+        userOperate.register(username, password, phone, verify)
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkSuccess)
+                .flatMap(resp -> userOperate.login(username, password))
+                .doOnNext(ServerResponse::checkSuccess)
+                .map(ServerResponse::getData)
+                .doOnNext(token -> UserContainer.getUser().setToken(token))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        token -> onRegisterSuccess(),
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                );
+    }
+
+    private void completingTencentInfo(String username, String password, String phone, String verify, String openid) {
+        RetrofitHelper.getInstance().user()
+                .tencentInfoCompleting(username, password, phone, verify, openid)
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkSuccess)
+                .map(ServerResponse::getData)
+                .doOnNext(token -> UserContainer.getUser().setToken(token))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        token -> onRegisterSuccess(),
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                );
+
+    }
+
+    private void completingSinaInfo(String username, String password, String phone, String verify, String openid) {
+        RetrofitHelper.getInstance().user()
+                .sinaInfoCompleting(username, password, phone, verify, openid)
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkSuccess)
+                .map(ServerResponse::getData)
+                .doOnNext(token -> UserContainer.getUser().setToken(token))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        token -> onRegisterSuccess(),
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                );
     }
 
     public void getVerify(String username, String phone) {
@@ -114,11 +178,9 @@ public class RegisterPresenter extends BaseActivityPresenter<IRegisterView> {
         }
     }
 
-    private void onRegisterSuccess(String username, String password) {
-        Map<String, String> uap = new HashMap<>(2);
-        uap.put("username", username);
-        uap.put("password", password);
-        EventPoster.post(new DataEvent(EventPoster.ACTION_ON_REGISTER_SUCCESS, uap));
+    private void onRegisterSuccess() {
+        LoginPresenter.notifyGetUserInfo();
+        mRegisterState = true;
         if (getView() != null) {
             getView().onRegisterSuccess();
         }

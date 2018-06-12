@@ -1,7 +1,5 @@
 package com.gots.intelligentnursing.business;
 
-import com.gots.intelligentnursing.entity.UserInfo;
-
 /**
  * @author zhqy
  * @date 2018/5/24
@@ -9,20 +7,24 @@ import com.gots.intelligentnursing.entity.UserInfo;
 
 public abstract class BaseLoginManager {
 
-    protected OnLoginReturnListener mOnLoginReturnListener;
+    protected OnFailureListener mOnLoginReturnListener;
 
-    public static final int CHANNEL_ORIGINAL = 0;
-    public static final int CHANNEL_TENCENT = 1;
-    public static final int CHANNEL_SINA = 2;
 
-    public interface OnLoginReturnListener {
-        void onSuccess(int channel, UserInfo userInfo);
+    public interface OnFailureListener {
+        /**
+         * 获取token失败时回调
+         *
+         * @param msg 失败原因
+         */
         void onFailure(String msg);
     }
 
-    public BaseLoginManager(OnLoginReturnListener onLoginReturnListener) {
+    public BaseLoginManager(OnFailureListener onLoginReturnListener) {
         mOnLoginReturnListener = onLoginReturnListener;
     }
 
+    /**
+     * 用于释放资源
+     */
     public abstract void recycler();
 }

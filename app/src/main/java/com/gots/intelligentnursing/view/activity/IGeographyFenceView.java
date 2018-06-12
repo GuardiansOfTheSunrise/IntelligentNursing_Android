@@ -13,6 +13,7 @@ public interface IGeographyFenceView extends IActivityView {
 
     /**
      * 出现异常回调
+     *
      * @param msg 异常原因
      */
     void onException(String msg);

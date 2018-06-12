@@ -1,19 +1,25 @@
 package com.gots.intelligentnursing.business;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
+import com.gots.intelligentnursing.activity.RegisterActivity;
+import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.exception.ServerException;
+import com.gots.intelligentnursing.presenter.activity.LoginPresenter;
 import com.gots.intelligentnursing.tools.LogUtil;
-import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author zhqy
@@ -29,27 +35,28 @@ public class TencentLoginManager extends BaseLoginManager {
 
     private static final String HINT_ON_CANCEL = "您放弃了登录";
     private static final String HINT_UNKONWN_EXCEPTION = "未知异常";
+    private static final String HINT_COMPLETING_INFO = "您的信息不完善，请先补全信息";
 
     private Tencent mTencent;
     private IUiListener mListener;
     private RxAppCompatActivity mActivity;
 
-    public TencentLoginManager(RxAppCompatActivity activity, OnLoginReturnListener listener) {
+    public TencentLoginManager(RxAppCompatActivity activity, OnFailureListener listener) {
         super(listener);
         mActivity = activity;
         mTencent = Tencent.createInstance(APP_ID, mActivity);
         mListener = new TencentListener();
     }
 
-    public void login(Activity from) {
-        mTencent.login(from, SCOPE, mListener);
+    public void login() {
+        mTencent.login(mActivity, SCOPE, mListener);
     }
 
     public void handleActivityResult(int requestCode, int resultCode, Intent data) {
         Tencent.onActivityResultData(requestCode, resultCode, data, mListener);
 
-        if(requestCode == Constants.REQUEST_API) {
-            if(resultCode == Constants.REQUEST_LOGIN) {
+        if (requestCode == Constants.REQUEST_API) {
+            if (resultCode == Constants.REQUEST_LOGIN) {
                 Tencent.handleResultData(data, mListener);
             }
         }
@@ -63,49 +70,29 @@ public class TencentLoginManager extends BaseLoginManager {
 
     private class TencentListener implements IUiListener {
 
-        private void handleOnAuthorizedComplete(String openid, String accessToken, String expiresIn) {
-            mTencent.setOpenId(openid);
-            mTencent.setAccessToken(accessToken, expiresIn);
-            UserInfo userInfo = new UserInfo(mActivity, mTencent.getQQToken());
-            userInfo.getUserInfo(this);
-        }
-
-        private void handleOnGetUserInfoComplete(JSONObject jsonObject) {
-            try {
-                String nickname = jsonObject.getString("nickname");
-                String headUrl = jsonObject.getString("figureurl_qq_2");
-                // TODO: 2018/5/25  
-                mOnLoginReturnListener.onSuccess(CHANNEL_TENCENT, null);
-            } catch (JSONException e) {
-                LogUtil.logExceptionStackTrace(TAG, e);
-                mOnLoginReturnListener.onFailure(e.getMessage());
-            }
-        }
-
         @Override
         public void onComplete(Object o) {
             JSONObject jo = (JSONObject) o;
-            String openid = null;
-            String accessToken = null;
-            String expiresIn = null;
+
             try {
-                openid = jo.getString("openid");
-                accessToken = jo.getString("access_token");
-                expiresIn = jo.getString("expires_in");
+                String openid = jo.getString("openid");
+                LogUtil.i(TAG, "Authorized success, openid: " + openid);
+                RetrofitHelper.getInstance().user()
+                        .tencentAuth(openid)
+                        .compose(mActivity.bindUntilEvent(ActivityEvent.DESTROY))
+                        .subscribeOn(Schedulers.io())
+                        .doOnNext(ServerResponse::checkSuccess)
+                        .map(ServerResponse::getData)
+                        .doOnNext(token -> UserContainer.getUser().setToken(token))
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                token -> LoginPresenter.notifyGetUserInfo(),
+                                throwable -> onAuthException(throwable, openid)
+                        );
             } catch (JSONException e) {
-                if (openid != null) {
-                    LogUtil.e(TAG, "Data lost.");
-                    LogUtil.logExceptionStackTrace(TAG, e);
-                    mOnLoginReturnListener.onFailure(HINT_UNKONWN_EXCEPTION);
-                    return;
-                } else {
-                    LogUtil.i(TAG, "Not authorized callback or data lost.");
-                }
-            }
-            if (openid != null && accessToken != null && expiresIn != null) {
-                handleOnAuthorizedComplete(openid, accessToken, expiresIn);
-            } else if (openid == null && accessToken == null && expiresIn == null) {
-                handleOnGetUserInfoComplete(jo);
+                LogUtil.e(TAG, "Can not get openid from JsonObject.");
+                LogUtil.logExceptionStackTrace(TAG, e);
+                mOnLoginReturnListener.onFailure(HINT_UNKONWN_EXCEPTION);
             }
         }
 
@@ -121,6 +108,21 @@ public class TencentLoginManager extends BaseLoginManager {
         @Override
         public void onCancel() {
             mOnLoginReturnListener.onFailure(HINT_ON_CANCEL);
+        }
+
+
+        /**
+         * 授权时异常处理
+         * 如果异常类型为ServerException说明该第三方帐号未补全信息
+         * 跳转到RegisterActivity补全信息
+         */
+        private void onAuthException(Throwable throwable, String openid) {
+            if (throwable instanceof ServerException) {
+                Toast.makeText(mActivity, HINT_COMPLETING_INFO, Toast.LENGTH_SHORT).show();
+                RegisterActivity.actionStart(mActivity, RegisterActivity.MODE_TENCENT_INFO, openid);
+            } else {
+                mOnLoginReturnListener.onFailure(ServerRequestExceptionHandler.handle(throwable));
+            }
         }
     }
 

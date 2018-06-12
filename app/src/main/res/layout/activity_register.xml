@@ -60,7 +60,6 @@
                 android:textSize="22sp"/>
         </android.support.design.widget.TextInputLayout>
 
-
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,12 +115,12 @@
         </LinearLayout>
 
         <com.gots.intelligentnursing.customview.RipplingFilletedButton
-            android:id="@+id/bt_register_register"
+            android:id="@+id/bt_register_submit"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:layout_margin="16dp"
             app:rv_color="@color/bg_white"
-            app:buttonText="注   册"
+            app:buttonText="提   交"
             app:buttonBackgroundColor="@color/colorPrimary"
             app:buttonTextColor="@color/text_gray"
             app:buttonTextSize="20sp"/>

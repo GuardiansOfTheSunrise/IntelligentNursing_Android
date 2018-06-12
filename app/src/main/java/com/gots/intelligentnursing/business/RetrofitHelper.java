@@ -24,7 +24,6 @@ public class RetrofitHelper {
 
     private IUserOperate mUserOperate;
     private IDeviceOperate mDeviceOperate;
-    private IThirdPartyOperate mThirdPartyOperate;
 
     private OkHttpClient initOkHttpClient() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> {
@@ -52,7 +51,6 @@ public class RetrofitHelper {
 
         mUserOperate = retrofit.create(IUserOperate.class);
         mDeviceOperate = retrofit.create(IDeviceOperate.class);
-        mThirdPartyOperate = retrofit.create(IThirdPartyOperate.class);
     }
 
     public IUserOperate user() {
@@ -61,10 +59,6 @@ public class RetrofitHelper {
 
     public IDeviceOperate device() {
         return mDeviceOperate;
-    }
-
-    public IThirdPartyOperate thirdParty() {
-        return mThirdPartyOperate;
     }
 
     public static RetrofitHelper getInstance() {
