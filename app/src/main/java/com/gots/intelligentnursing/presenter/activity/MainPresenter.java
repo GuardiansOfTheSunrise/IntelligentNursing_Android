@@ -4,6 +4,7 @@ import com.gots.intelligentnursing.business.FileCacheManager;
 import com.gots.intelligentnursing.business.IServerConnection;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
+import com.gots.intelligentnursing.business.SystemChecker;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
@@ -28,7 +29,16 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
         super(view);
     }
 
-    public void attemptToLoginFromCache() {
+    public void onActivityCreate() {
+        attemptToLoginFromCache();
+        systemCheck();
+    }
+
+    private void systemCheck() {
+        new Thread(new SystemChecker()).start();
+    }
+
+    private void attemptToLoginFromCache() {
         FileCacheManager fileCacheManager = FileCacheManager.getInstance(getActivity());
         Map<String, String> map = fileCacheManager.readUsernameAndPassword();
         if (map != null) {

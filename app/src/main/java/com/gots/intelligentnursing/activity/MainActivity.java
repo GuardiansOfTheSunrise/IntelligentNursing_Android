@@ -139,13 +139,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         initRadioView();
         initViewPager();
         mHomeRadioButton.setChecked(true);
-        mPresenter.attemptToLoginFromCache();
-        PushAgent.getInstance(getApplicationContext()).addAlias("testid", "ALIAS_TYPE_CUSTOMIZED", new UTrack.ICallBack() {
-            @Override
-            public void onMessage(boolean b, String s) {
-                LogUtil.i("U-Push", "addAlias");
-            }
-        });
+        mPresenter.onActivityCreate();
+        PushAgent.getInstance(getApplicationContext()).addAlias("testid", "ALIAS_TYPE_CUSTOMIZED",
+                (b, s) -> LogUtil.i("U-Push", "addAlias"));
     }
 
     @Override

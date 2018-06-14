@@ -49,7 +49,7 @@ public class LogUtil {
         }
     }
 
-    public static void logExceptionStackTrace(String tag, Exception e) {
+    public static void logExceptionStackTrace(String tag, Throwable e) {
         if (level <= LEVEL_ERROR) {
             StringBuilder sb = new StringBuilder();
             StackTraceElement[] stackArray = e.getStackTrace();

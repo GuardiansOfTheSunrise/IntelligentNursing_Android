@@ -35,7 +35,6 @@ public class OriginalLoginManager extends BaseLoginManager {
                 .login(username, password)
                 .compose(mActivity.bindUntilEvent(ActivityEvent.DESTROY))
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
                 .doOnNext(ServerResponse::checkSuccess)
                 .map(ServerResponse::getData)
                 .doOnNext(token -> {

@@ -2,6 +2,7 @@ package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
+import com.gots.intelligentnursing.entity.VersionInfo;
 
 import io.reactivex.Flowable;
 import okhttp3.RequestBody;
@@ -173,5 +174,28 @@ public interface IServerConnection {
          */
         @GET("location/getLocation")
         Flowable<ServerResponse> getDeviceLocation(@Header(TOKEN_HEADER_KEY) String token, @Query("eid") String deviceId);
+    }
+
+    /**
+     * 应用相关操作
+     */
+    interface ISystemOperate {
+        /**
+         * 将崩溃日志上传至服务器
+         *
+         * @param log 崩溃日志
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("exception")
+        Flowable<ServerResponse> uploadExceptionLog(@Field("text") String log);
+
+        /**
+         * 检查更新
+         *
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("checkUpdate")
+        Flowable<ServerResponse<VersionInfo>> checkUpdate();
     }
 }

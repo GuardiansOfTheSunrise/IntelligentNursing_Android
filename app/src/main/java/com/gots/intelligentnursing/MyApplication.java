@@ -3,16 +3,15 @@ package com.gots.intelligentnursing;
 import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Toast;
 
+import com.gots.intelligentnursing.business.CrashHandler;
 import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
-import com.umeng.message.UTrack;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.UmengNotificationClickHandler;
 import com.umeng.message.entity.UMessage;
@@ -25,20 +24,23 @@ import static com.gots.intelligentnursing.business.EventPoster.ACTION_UPUSH_GET_
  */
 public class MyApplication extends Application {
 
+    private static final String TAG = "MyApplication";
+
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtil.i("U-Push", "MyApplication_onCreate");
+        new CrashHandler().init(getApplicationContext());
         UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, "a0d6bf722b1b5857caa03af96580c1b6");
         initUpush();
     }
+
 
     private void initUpush() {
         PushAgent mPushAgent = PushAgent.getInstance(this);
         UmengMessageHandler messageHandler = new UmengMessageHandler() {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
-                LogUtil.i("U-Push", "getNotification");
+                LogUtil.i(TAG, "getNotification");
                 EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION));
                 return super.getNotification(context, uMessage);
             }
@@ -77,12 +79,12 @@ public class MyApplication extends Application {
         mPushAgent.register(new IUmengRegisterCallback() {
             @Override
             public void onSuccess(String deviceToken) {
-                LogUtil.i("U-Push", "device token: " + deviceToken);
+                LogUtil.i(TAG, "Push agent register success, device token: " + deviceToken);
             }
 
             @Override
             public void onFailure(String s, String s1) {
-                LogUtil.i("U-Push", "failed");
+                LogUtil.i(TAG, "Push agent register failed");
             }
         });
     }
