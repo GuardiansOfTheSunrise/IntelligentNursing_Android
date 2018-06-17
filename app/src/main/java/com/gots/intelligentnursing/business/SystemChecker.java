@@ -20,6 +20,7 @@ public class SystemChecker implements Runnable {
 
     @Override
     public void run() {
+        LogUtil.i(TAG, "SystemChecker run.");
         checkCrashLog();
         checkUpdate();
     }
@@ -29,9 +30,11 @@ public class SystemChecker implements Runnable {
         List<LogFile> logFiles = manager.getLogFiles();
         ISystemOperate systemOperate = RetrofitHelper.getInstance().system();
         if (logFiles != null) {
+            LogUtil.i(TAG, logFiles.size() + " crash log file was found.");
             for (LogFile file : logFiles) {
                 String log = file.getContent();
                 if (log != null) {
+                    LogUtil.i(TAG, "Log file content is not null, upload to server.");
                     systemOperate.uploadExceptionLog(log)
                             .subscribeOn(Schedulers.io())
                             .doOnNext(ServerResponse::checkSuccess)
