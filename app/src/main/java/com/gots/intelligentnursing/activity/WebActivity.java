@@ -24,6 +24,7 @@ public class WebActivity extends BaseActivity<BaseActivityPresenter> implements 
     private static final String KEY_URL = "url";
     private static final String HINT_ON_LOADING = "网页加载中，请稍候...";
     private static final int PROGRESS_FINISH = 100;
+    private static final int MAX_TITLE_LENGTH = 10;
 
     private WebView mWebView;
 
@@ -51,6 +52,9 @@ public class WebActivity extends BaseActivity<BaseActivityPresenter> implements 
 
             @Override
             public void onReceivedTitle(WebView view, String title) {
+                if (title.length() >= MAX_TITLE_LENGTH) {
+                    title = title.substring(0, MAX_TITLE_LENGTH) + "...";
+                }
                 setToolbarTitle(title);
             }
         });
