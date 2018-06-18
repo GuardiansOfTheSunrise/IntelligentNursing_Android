@@ -1,20 +1,16 @@
 package com.gots.intelligentnursing.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.ToxicBakery.viewpager.transforms.ZoomInTransformer;
 import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.gots.intelligentnursing.R;
-import com.gots.intelligentnursing.activity.LoginActivity;
+import com.gots.intelligentnursing.activity.WebActivity;
 import com.gots.intelligentnursing.business.NewsCBViewHolder;
 import com.gots.intelligentnursing.business.PictureCBViewHolder;
 import com.gots.intelligentnursing.entity.NewsInfo;
@@ -29,6 +25,8 @@ import java.util.List;
  * @date 2018/4/12.
  */
 public class HomePageFragment extends BaseFragment<HomePagePresenter> implements IHomePageView {
+
+    private List<NewsInfo> mNewsInfoList;
 
     private ConvenientBanner mPictureConvenientBanner;
     private ConvenientBanner mNewsConvenientBanner;
@@ -51,11 +49,14 @@ public class HomePageFragment extends BaseFragment<HomePagePresenter> implements
 
     @Override
     public void onGetNewsSuccess(List<NewsInfo> newsInfoList) {
+        mNewsInfoList = newsInfoList;
         List<String> titleList = new ArrayList<>(newsInfoList.size());
         for (NewsInfo newsInfo : newsInfoList) {
             titleList.add(newsInfo.getTitle());
         }
-        mNewsConvenientBanner.setPages(NewsCBViewHolder::new, titleList);
+        mNewsConvenientBanner.setPages(NewsCBViewHolder::new, titleList)
+                .setOnItemClickListener(position ->
+                    WebActivity.actionStart(getActivity(), mNewsInfoList.get(position).getUrl()));
     }
 
     @Override

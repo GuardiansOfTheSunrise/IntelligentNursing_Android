@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/item_main_scan_qrcode"
+        android:id="@+id/menu_main_scan_qrcode"
         android:icon="@drawable/ic_scan_qrcode_white"
         android:title="扫描二维码"
         app:showAsAction="always">
