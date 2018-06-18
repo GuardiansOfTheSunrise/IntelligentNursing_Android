@@ -9,8 +9,10 @@ import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.exception.ServerException;
+import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.IMainView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.umeng.message.PushAgent;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -76,6 +78,9 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
     }
 
     private void onLoginSuccess(String username) {
+        PushAgent.getInstance(getActivity().getApplicationContext())
+                .addAlias(String.valueOf(UserContainer.getUser().getUserInfo().getId()),"ALIAS_TYPE_CUSTOMIZED",
+                        (b, s) -> LogUtil.i("MainPresenter", "addAlias"));
         if (getView() != null) {
             getView().onLoginSuccess(username);
         }

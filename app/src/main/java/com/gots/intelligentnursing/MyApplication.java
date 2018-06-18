@@ -41,6 +41,9 @@ public class MyApplication extends Application {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
                 LogUtil.i(TAG, "getNotification");
+                LogUtil.i(TAG, "text: "+uMessage.text);
+                LogUtil.i(TAG, "title: "+uMessage.title);
+                LogUtil.i(TAG, "alias: "+uMessage.alias);
                 EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION));
                 return super.getNotification(context, uMessage);
             }

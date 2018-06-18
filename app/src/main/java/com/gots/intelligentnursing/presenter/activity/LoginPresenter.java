@@ -14,8 +14,10 @@ import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
+import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.ILoginView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
+import com.umeng.message.PushAgent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -91,6 +93,8 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
         if (getView() != null) {
             getView().onLoginSuccess(username);
         }
+        PushAgent.getInstance(getActivity().getApplicationContext())
+                .addAlias(String.valueOf(UserContainer.getUser().getUserInfo().getId()), "ALIAS_TYPE_CUSTOMIZED", (b, s) -> LogUtil.i("LoginPresenter", "addAlias"));
     }
 
     private void onException(String msg) {

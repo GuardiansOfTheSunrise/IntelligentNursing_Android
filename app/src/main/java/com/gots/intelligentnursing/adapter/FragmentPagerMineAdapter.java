@@ -9,12 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gots.intelligentnursing.R;
-import com.gots.intelligentnursing.activity.logined.DeviceManagementActivity;
 import com.gots.intelligentnursing.entity.MineItem;
-import com.gots.intelligentnursing.presenter.fragment.MinePagePresenter;
-import com.gots.intelligentnursing.view.fragment.IMinePageView;
 
-import java.net.Inet4Address;
 import java.util.List;
 
 /**
@@ -45,13 +41,13 @@ public class FragmentPagerMineAdapter extends RecyclerView.Adapter<RecyclerView.
         View view;
         switch (viewType) {
             case TYPE_MINE_LIST_HEADER:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mine_list_header, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_header, parent, false);
                 return new MineHeaderViewHolder(view);
             case TYPE_MINE_LIST_ITEM:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mine_list_item, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_list, parent, false);
                 return new MineItemViewHolder(view);
             case TYPE_MINE_LIST_SPACE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mine_list_space, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_space, parent, false);
                 return new MineSpaceViewHolder(view);
             default:
         }

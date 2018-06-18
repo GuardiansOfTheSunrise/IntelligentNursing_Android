@@ -40,7 +40,6 @@ public class MinePagePresenter extends BaseFragmentPresenter<IMinePageView> {
                 break;
                 default:
         }
-
     }
 
     private void onLogoutSuccess() {

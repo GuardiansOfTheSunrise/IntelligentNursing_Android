@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="6ATQj9xwBYYoqoxxvXANyLR6RUlZOj2N"/>
+            android:value="PPcPipNYDqjGUhWndhshCq5yKSvc8Pqz"/>
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5ae87975b27b0a3d78000371"/>
@@ -85,6 +85,10 @@
         </receiver>
 
         <activity android:name=".activity.RegisterActivity">
+        </activity>
+        <activity android:name=".activity.MessgeCardActivity">
+        </activity>
+        <activity android:name=".activity.logined.MyNotificationActivity">
         </activity>
     </application>
 

@@ -1,8 +1,12 @@
 package com.gots.intelligentnursing.activity;
 
+import android.Manifest;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -15,10 +19,9 @@ import com.gots.intelligentnursing.fragment.MapPageFragment;
 import com.gots.intelligentnursing.fragment.MinePageFragment;
 import com.gots.intelligentnursing.fragment.NursingPageFragment;
 import com.gots.intelligentnursing.presenter.activity.MainPresenter;
-import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.activity.IMainView;
-import com.umeng.message.PushAgent;
-import com.umeng.message.UTrack;
+import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.xys.libzxing.zxing.activity.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
     private static final String TOOLBAR_NURSING = "我的看护";
     private static final String TOOLBAR_MAP = "地图";
     private static final String TOOLBAR_MINE = "我的";
+
+    private static final String HINT_DENY_GRANT = "您拒绝了授权，该功能无法正常使用";
+    private static final int REQUEST_CAPTURE = 0;
 
     public static final int PAGE_ONE = 0;
     public static final int PAGE_TWO = 1;
@@ -140,8 +146,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         initViewPager();
         mHomeRadioButton.setChecked(true);
         mPresenter.onActivityCreate();
-        PushAgent.getInstance(getApplicationContext()).addAlias("testid", "ALIAS_TYPE_CUSTOMIZED",
-                (b, s) -> LogUtil.i("U-Push", "addAlias"));
     }
 
     @Override
@@ -164,5 +168,32 @@ public class MainActivity extends BaseActivity<MainPresenter> implements IMainVi
         return new MainPresenter(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new RxPermissions(this)
+                .request(Manifest.permission.CAMERA, Manifest.permission.INTERNET)
+                .filter(granted -> granted)
+                .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
+                .subscribe(granted -> startActivityForResult(new Intent(this, CaptureActivity.class), REQUEST_CAPTURE));
+        return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CAPTURE) {
+            String result = data.getExtras().getString("result");
+            if (result.equals(result)) {
+                Intent intent = new Intent(MainActivity.this, MessgeCardActivity.class);
+                intent.putExtra("message_card_uri", result);
+                startActivity(intent);
+            }
+        }
+    }
 }
