@@ -12,6 +12,6 @@
         android:adjustViewBounds="true"
         android:cropToPadding="false"
         android:scaleType="fitCenter"
-        android:src="@drawable/mine_list_header"/>
+        android:src="@drawable/bg_mine_list_header"/>
 
 </LinearLayout>

@@ -1,8 +1,11 @@
 package com.gots.intelligentnursing.business;
 
+import com.gots.intelligentnursing.entity.NewsInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.entity.VersionInfo;
+
+import java.util.List;
 
 import io.reactivex.Flowable;
 import okhttp3.RequestBody;
@@ -189,6 +192,14 @@ public interface IServerConnection {
         @FormUrlEncoded
         @POST("exception")
         Flowable<ServerResponse> uploadExceptionLog(@Field("text") String log);
+
+        /**
+         * 获取新闻信息
+         *
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("news")
+        Flowable<ServerResponse<List<NewsInfo>>> getNewsData();
 
         /**
          * 检查更新
