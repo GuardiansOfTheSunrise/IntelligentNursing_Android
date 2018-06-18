@@ -41,13 +41,13 @@ public class FragmentPagerMineAdapter extends RecyclerView.Adapter<RecyclerView.
         View view;
         switch (viewType) {
             case TYPE_MINE_LIST_HEADER:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_header, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_list_header, parent, false);
                 return new MineHeaderViewHolder(view);
             case TYPE_MINE_LIST_ITEM:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_list, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_list_item, parent, false);
                 return new MineItemViewHolder(view);
             case TYPE_MINE_LIST_SPACE:
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_space, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mine_list_space, parent, false);
                 return new MineSpaceViewHolder(view);
             default:
         }
@@ -66,7 +66,7 @@ public class FragmentPagerMineAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             });
         } else if (holder instanceof MineHeaderViewHolder) {
-            ((MineHeaderViewHolder) holder).mineImage.setImageResource(R.drawable.mine_list_header);
+            ((MineHeaderViewHolder) holder).mineImage.setImageResource(R.drawable.bg_mine_list_header);
         }
     }
 

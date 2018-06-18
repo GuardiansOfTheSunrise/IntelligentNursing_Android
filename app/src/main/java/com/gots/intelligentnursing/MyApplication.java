@@ -3,6 +3,7 @@ package com.gots.intelligentnursing;
 import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 import android.widget.Toast;
 
 import com.gots.intelligentnursing.business.CrashHandler;
@@ -22,7 +23,7 @@ import static com.gots.intelligentnursing.business.EventPoster.ACTION_UPUSH_GET_
  * @author Accumulei
  * @date 2018/5/3.
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static final String TAG = "MyApplication";
 
