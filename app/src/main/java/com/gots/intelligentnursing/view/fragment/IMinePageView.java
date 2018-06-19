@@ -11,10 +11,4 @@ public interface IMinePageView extends IFragmentView {
      * 登出成功回调
      */
     void onLogoutSuccess();
-
-    /**
-     * presenter错误回调
-     * @param msg 错误信息
-     */
-    void onException(String msg);
 }

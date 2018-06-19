@@ -17,11 +17,4 @@ public interface ILoginView extends IActivityView {
      * 正在登录回调
      */
     void onLogging();
-
-    /**
-     * 出现异常回调
-     *
-     * @param msg 异常原因
-     */
-    void onException(String msg);
 }

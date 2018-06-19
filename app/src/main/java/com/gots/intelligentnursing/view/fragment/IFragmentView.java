@@ -7,5 +7,10 @@ package com.gots.intelligentnursing.view.fragment;
  */
 
 public interface IFragmentView {
-
+    /**
+     * 出现异常回调
+     *
+     * @param msg 异常原因
+     */
+    void onException(String msg);
 }

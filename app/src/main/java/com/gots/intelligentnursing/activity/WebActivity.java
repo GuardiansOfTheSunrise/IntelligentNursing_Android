@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
@@ -60,6 +61,11 @@ public class WebActivity extends BaseActivity<BaseActivityPresenter> implements 
         });
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.loadUrl(getIntent().getStringExtra(KEY_URL));
+    }
+
+    @Override
+    public void onException(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
