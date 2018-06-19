@@ -27,7 +27,9 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_nursing, container, false);
         ImageView fenceSettingButton = view.findViewById(R.id.bt_page_nursing_fence_setting);
-        fenceSettingButton.setOnClickListener(v -> mPresenter.onFenceSettingButtonClicked());
+        fenceSettingButton.setOnClickListener(v -> mPresenter.onFenceSettingButtonClick());
+        ImageView elderInfoButton = view.findViewById(R.id.bt_page_nursing_elder_info);
+        elderInfoButton.setOnClickListener(v -> mPresenter.onElderInfoButtonClick());
         mLineChartPager = view.findViewById(R.id.line_chart_pager_page_nursing);
         mPresenter.getChartData();
         return view;

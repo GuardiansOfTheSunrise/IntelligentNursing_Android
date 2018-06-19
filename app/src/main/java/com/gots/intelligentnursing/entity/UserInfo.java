@@ -25,6 +25,12 @@ public class UserInfo {
     @SerializedName("age")
     private int mAge;
 
+    @SerializedName("height")
+    private String mHeight;
+
+    @SerializedName("weight")
+    private String mWeight;
+
     @SerializedName("addr")
     private String mAddress;
 
@@ -67,6 +73,22 @@ public class UserInfo {
 
     public void setTelephone(String telephone) {
         mTelephone = telephone;
+    }
+
+    public String getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(String height) {
+        mHeight = height;
+    }
+
+    public String getWeight() {
+        return mWeight;
+    }
+
+    public void setWeight(String weight) {
+        mWeight = weight;
     }
 
     public int getAge() {

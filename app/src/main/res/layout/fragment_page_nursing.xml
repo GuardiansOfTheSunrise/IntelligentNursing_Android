@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/bg_nursing_pager_card"/>
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_nursing_pager_card"
+    android:orientation="vertical">
 
     <com.gots.intelligentnursing.customview.LineChartPager
         android:id="@+id/line_chart_pager_page_nursing"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"/>
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="20dp"/>
 
     <ImageView
         android:id="@+id/bt_page_nursing_fence_setting"
         android:layout_width="180dp"
         android:layout_height="80dp"
-        android:src="@drawable/bt_diffuse_shadow"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="400dp"
-        android:text="围栏设置"/>
+        android:src="@drawable/bt_diffuse_shadow"/>
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/bt_page_nursing_elder_info"
+        android:layout_width="180dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/bt_diffuse_shadow"/>
+
+</LinearLayout>
 
 

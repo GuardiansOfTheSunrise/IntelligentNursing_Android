@@ -1,5 +1,6 @@
 package com.gots.intelligentnursing.presenter.fragment;
 
+import com.gots.intelligentnursing.activity.logined.ElderInfoActivity;
 import com.gots.intelligentnursing.activity.logined.GeographyFenceActivity;
 import com.gots.intelligentnursing.customview.LineChartPager;
 import com.gots.intelligentnursing.view.fragment.INursingPageView;
@@ -18,8 +19,12 @@ public class NursingPagePresenter extends BaseFragmentPresenter<INursingPageView
         super(view);
     }
 
-    public void onFenceSettingButtonClicked() {
+    public void onFenceSettingButtonClick() {
         GeographyFenceActivity.actionStart(getActivity());
+    }
+
+    public void onElderInfoButtonClick() {
+        ElderInfoActivity.actionStart(getActivity());
     }
 
     public void getChartData() {

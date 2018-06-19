@@ -21,5 +21,8 @@ public class MyNotificationActivity extends BaseActivity<MyNotificationPresenter
         return new MyNotificationPresenter(this);
     }
 
+    @Override
+    public void onException(String msg) {
 
+    }
 }

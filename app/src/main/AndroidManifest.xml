@@ -90,6 +90,8 @@
         </activity>
         <activity android:name=".activity.logined.MyNotificationActivity">
         </activity>
+        <activity android:name=".activity.logined.ElderInfoActivity">
+        </activity>
     </application>
 
 </manifest>
