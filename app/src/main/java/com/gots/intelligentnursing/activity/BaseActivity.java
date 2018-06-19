@@ -254,9 +254,9 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDataEvent (DataEvent event) {
-        String action = event.getAction();
-        if (action.equals(EventPoster.ACTION_UPUSH_GET_NOTIFICATION)) {
+            public void onDataEvent (DataEvent event) {
+                String action = event.getAction();
+                if (action.equals(EventPoster.ACTION_UPUSH_GET_NOTIFICATION)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Alert by EventBus");
             builder.setMessage("Get U-Push Notification");

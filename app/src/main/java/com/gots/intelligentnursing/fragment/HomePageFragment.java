@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ToxicBakery.viewpager.transforms.ZoomInTransformer;
@@ -15,6 +16,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.activity.LoginActivity;
+import com.gots.intelligentnursing.activity.logined.MyNotificationActivity;
 import com.gots.intelligentnursing.business.NewsCBViewHolder;
 import com.gots.intelligentnursing.business.PictureCBViewHolder;
 import com.gots.intelligentnursing.entity.NewsInfo;
@@ -36,6 +38,13 @@ public class HomePageFragment extends BaseFragment<HomePagePresenter> implements
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.fragment_page_home, container, false);
+        ImageView imageView = view.findViewById(R.id.iv_page_home_demo);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         mPictureConvenientBanner = view.findViewById(R.id.convenient_banner_page_home_picture);
         mNewsConvenientBanner = view.findViewById(R.id.convenient_banner_page_home_news);
         mPictureConvenientBanner.setScrollDuration(1500);

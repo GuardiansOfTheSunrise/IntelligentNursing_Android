@@ -19,11 +19,13 @@
 
     <ImageView
         android:id="@+id/bt_page_nursing_fence_setting"
-        android:layout_width="180dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/bt_diffuse_shadow"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="400dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:focusable="true"
         android:text="围栏设置"/>
 
 </FrameLayout>

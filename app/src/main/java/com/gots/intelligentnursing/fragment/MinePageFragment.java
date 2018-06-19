@@ -48,7 +48,7 @@ public class MinePageFragment extends BaseFragment<MinePagePresenter> implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_mine, container, false);
         initMineItem();
-        RecyclerView recyclerView = view.findViewById(R.id.page_mine_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_page_mine);
         //RecyclerView.ItemDecoration
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         FragmentPagerMineAdapter adapter = new FragmentPagerMineAdapter(mMineItemList);

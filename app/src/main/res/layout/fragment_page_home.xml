@@ -40,8 +40,12 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/iv_page_home_demo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
         android:src="@drawable/main_page_demo"/>
 
 </LinearLayout>
