@@ -212,6 +212,7 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 data -> {
+                                    UserContainer.getUser().setLocation(data);
                                     mLastLocationData = data;
                                     onLocationSuccess(data);
                                     if (mMoveTo == MOVE_TO_LOCATION) {

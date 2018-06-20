@@ -92,6 +92,8 @@
         </activity>
         <activity android:name=".activity.logined.ElderInfoActivity">
         </activity>
+        <activity android:name=".activity.PublicFenceActivity">
+        </activity>
     </application>
 
 </manifest>
