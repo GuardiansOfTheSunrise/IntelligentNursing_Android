@@ -1,14 +1,16 @@
 package com.gots.intelligentnursing;
 
-import android.app.Application;
 import android.app.Notification;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 import android.widget.Toast;
 
+import com.gots.intelligentnursing.adapter.MyNotificationAdapter;
 import com.gots.intelligentnursing.business.CrashHandler;
 import com.gots.intelligentnursing.business.EventPoster;
+import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.DataEvent;
+import com.gots.intelligentnursing.entity.NotificationData;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
@@ -16,6 +18,8 @@ import com.umeng.message.PushAgent;
 import com.umeng.message.UmengMessageHandler;
 import com.umeng.message.UmengNotificationClickHandler;
 import com.umeng.message.entity.UMessage;
+
+import java.util.ArrayList;
 
 import static com.gots.intelligentnursing.business.EventPoster.ACTION_UPUSH_GET_NOTIFICATION;
 
@@ -46,6 +50,10 @@ public class MyApplication extends MultiDexApplication {
                 LogUtil.i(TAG, "title: "+uMessage.title);
                 LogUtil.i(TAG, "alias: "+uMessage.alias);
                 EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION));
+                NotificationData notificationData = new NotificationData(uMessage.text,0);
+                UserContainer.getUser().getUserInfo().addNotificationDataList(notificationData);
+
+
                 return super.getNotification(context, uMessage);
             }
         };

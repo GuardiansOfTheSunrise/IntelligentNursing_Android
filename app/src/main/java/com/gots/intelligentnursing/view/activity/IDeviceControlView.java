@@ -11,10 +11,4 @@ public interface IDeviceControlView extends IActivityView {
      */
     void onConnectSuccess();
 
-    /**
-     * presenter出现异常时的回调
-     *
-     * @param msg 失败原因
-     */
-    void onException(String msg);
 }

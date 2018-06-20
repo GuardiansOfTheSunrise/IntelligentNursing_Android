@@ -7,15 +7,23 @@ import java.util.Date;
  * @author Accumulei
  * @date 2018/6/17.
  */
-public class MyNotification {
+public class NotificationData {
 
     private int imageId;
+    private String date;
     private Date mDate;
     private String event;
     private String status;
+    private int type;
 
-    public MyNotification(int imageId, String event, String status) {
+    public NotificationData(String event, int type) {
+        this.event = event;
+        this.type = type;
+    }
+
+    public NotificationData(int imageId,String date,String event, String status) {
         this.imageId = imageId;
+        this.date = date;
         this.event = event;
         this.status = status;
     }

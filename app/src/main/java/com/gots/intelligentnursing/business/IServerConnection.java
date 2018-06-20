@@ -67,6 +67,27 @@ public interface IServerConnection {
         Flowable<ServerResponse> register(@Field("uname") String username, @Field("pwd") String password,
                                           @Field("tel") String phone, @Field("code") String verify);
 
+
+        /**
+         * 老人信息补全接口
+         *
+         * @param token   登录后返回的token
+         * @param age     老人年龄
+         * @param height  老人身高
+         * @param weight  老人体重
+         * @param address 地址
+         * @param phone   联系方式
+         * @param remarks 备注
+         * @param uid     用户id
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("updateUserInfo")
+        Flowable<ServerResponse> elderInfoComplete(@Header(TOKEN_HEADER_KEY) String token, @Field("age") int age,
+                                                   @Field("weight") String height, @Field("height") String weight,
+                                                   @Field("addr") String address, @Field("phone") String phone,
+                                                   @Field("remark") String remarks, @Field("uid") int uid);
+
         /**
          * qq登录
          *

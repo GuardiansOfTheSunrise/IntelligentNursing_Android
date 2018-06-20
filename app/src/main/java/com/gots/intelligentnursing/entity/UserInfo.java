@@ -1,7 +1,9 @@
 package com.gots.intelligentnursing.entity;
 
 import com.google.gson.annotations.SerializedName;
+import com.gots.intelligentnursing.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +27,12 @@ public class UserInfo {
     @SerializedName("age")
     private int mAge;
 
+    @SerializedName("height")
+    private String mHeight;
+
+    @SerializedName("weight")
+    private String mWeight;
+
     @SerializedName("addr")
     private String mAddress;
 
@@ -36,6 +44,8 @@ public class UserInfo {
 
     @SerializedName("fence")
     private List<LocationData> mLocationDataList;
+
+    private List<NotificationData> mNotificationDataList = new ArrayList<>();
 
     public int getId() {
         return mId;
@@ -67,6 +77,22 @@ public class UserInfo {
 
     public void setTelephone(String telephone) {
         mTelephone = telephone;
+    }
+
+    public String getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(String height) {
+        mHeight = height;
+    }
+
+    public String getWeight() {
+        return mWeight;
+    }
+
+    public void setWeight(String weight) {
+        mWeight = weight;
     }
 
     public int getAge() {
@@ -107,5 +133,22 @@ public class UserInfo {
 
     public void setLocationDataList(List<LocationData> locationDataList) {
         mLocationDataList = locationDataList;
+    }
+
+    public List<NotificationData> getNotificationDataList() {
+        return mNotificationDataList;
+    }
+
+    public void setNotificationDataList() {
+        //List<NotificationData> notificationDataList= new ArrayList<>();
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月15日","s老人发生了跌倒","0"));
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月16日","s老人走出了电子围栏","0"));
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月17日","s老人发生了跌倒","0"));
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月18日","s老人心率异常","0"));
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月20日","s老人走出了电子围栏","0"));
+    }
+
+    public void addNotificationDataList(NotificationData notificationData) {
+        mNotificationDataList.add(notificationData);
     }
 }

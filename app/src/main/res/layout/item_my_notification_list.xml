@@ -1,32 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iv_my_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_page_mine_item_about"/>
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal">
-
+        android:layout_marginLeft="5dp"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_page_mine_item"
+            android:id="@+id/tv_my_notification_event"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="设备管理"
-            android:textSize="20sp"/>
+            android:text="您的老人发生了跌倒"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tv_my_notification_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2018年6月6日 星期三 06:06"
+            android:textSize="10sp"/>
 
     </LinearLayout>
+
 </LinearLayout>
 
 

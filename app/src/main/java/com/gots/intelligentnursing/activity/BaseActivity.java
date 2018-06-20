@@ -16,13 +16,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
-import com.gots.intelligentnursing.tools.LogUtil;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.message.PushAgent;
 
@@ -50,7 +50,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     private RelativeLayout mTopLayout;
 
     private View mProgressBarView;
-
+    private ProgressBar mProgressBar;
     private TextView mProgressBarHintTextView;
 
     private void initToolbarView() {
@@ -89,6 +89,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
         relativeLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
         mProgressBarView.setLayoutParams(relativeLayoutParams);
         mTopLayout.addView(mProgressBarView);
+        mProgressBar = findViewById(R.id.pb_base_progress_bar);
         mProgressBarHintTextView = findViewById(R.id.tv_base_progress_bar_hint);
         mProgressBarView.setVisibility(View.GONE);
     }
@@ -205,6 +206,17 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     public void dismissProgressBar() {
         if (mProgressBarView != null) {
             mProgressBarView.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 子类重写getProgressBarHintText()方法后
+     * 调用该方法设置ProgressBar进度
+     * @param progress 进度
+     */
+    public void setProgressBarProgress(int progress) {
+        if (mProgressBar != null) {
+            mProgressBar.setProgress(progress);
         }
     }
 

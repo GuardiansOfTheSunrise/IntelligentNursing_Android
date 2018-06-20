@@ -12,13 +12,6 @@ import java.util.List;
 public interface IHomePageView extends IFragmentView {
 
     /**
-     * 出现异常回调
-     *
-     * @param msg 异常原因
-     */
-    void onException(String msg);
-
-    /**
      * 获取新闻数据成功回调
      *
      * @param newsInfoList 新闻数据列表

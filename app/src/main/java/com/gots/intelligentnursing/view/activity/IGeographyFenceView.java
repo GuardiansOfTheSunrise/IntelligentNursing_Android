@@ -11,10 +11,4 @@ public interface IGeographyFenceView extends IActivityView {
      */
     void onFenceDrawingSuccess();
 
-    /**
-     * 出现异常回调
-     *
-     * @param msg 异常原因
-     */
-    void onException(String msg);
 }

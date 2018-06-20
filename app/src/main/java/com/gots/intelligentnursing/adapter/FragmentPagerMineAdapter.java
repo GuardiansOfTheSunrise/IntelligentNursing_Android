@@ -27,7 +27,6 @@ public class FragmentPagerMineAdapter extends RecyclerView.Adapter<RecyclerView.
 
     private OnItemClickListener mOnItemClickListener;
 
-
     public FragmentPagerMineAdapter(List<MineItem> mineItemList) {
         mMineItemList = mineItemList;
     }

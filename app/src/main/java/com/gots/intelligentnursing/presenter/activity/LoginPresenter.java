@@ -109,10 +109,11 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
         }
     }
 
-    private void createListWhileFencesNull(UserInfo userInfo) {
+    private void createListWhileNull(UserInfo userInfo) {
         if (userInfo.getLocationDataList() == null) {
             userInfo.setLocationDataList(new ArrayList<>());
         }
+        userInfo.setNotificationDataList();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -125,7 +126,7 @@ public class LoginPresenter extends BaseActivityPresenter<ILoginView> {
                     .subscribeOn(Schedulers.io())
                     .doOnNext(ServerResponse::checkSuccess)
                     .map(ServerResponse::getData)
-                    .doOnNext(this::createListWhileFencesNull)
+                    .doOnNext(this::createListWhileNull)
                     .doOnNext(userInfo -> UserContainer.getUser().setUserInfo(userInfo))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(

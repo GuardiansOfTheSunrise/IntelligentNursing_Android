@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gots.intelligentnursing.R;
+
 import java.util.List;
 
 /**
@@ -47,7 +49,7 @@ public class SimpleListItemOneAdapter extends RecyclerView.Adapter<SimpleListIte
                 return true;
             } else if(event.getAction() == MotionEvent.ACTION_UP) {
                 v.performClick();
-                holder.mView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                holder.mView.setBackgroundColor(Color.argb(0x05, 0x00, 0x21, 0x7f));
             }
             return false;
         });

@@ -14,6 +14,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -57,8 +61,9 @@ public class DeviceControlPresenter extends BaseActivityPresenter<IDeviceControl
     public void onItemClicked(int position) {
         switch (position) {
             case POSITION_SET_TIME:
-                // TODO: 2018/4/16 通过对话框设置时间
-                sendInstruction("$00#230415%");
+                String time = new SimpleDateFormat("HHmmss", Locale.CHINA).format(new Date());
+                String command = "$00#" + time + "%";
+                sendInstruction(command);
                 break;
             case POSITION_FIND_DEVICE:
                 sendInstruction("$10#%");
