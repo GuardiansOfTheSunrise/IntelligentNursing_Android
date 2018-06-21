@@ -17,6 +17,8 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
@@ -30,6 +32,7 @@ import com.gots.intelligentnursing.presenter.fragment.MapPagePresenter;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Accumulei
@@ -141,11 +144,33 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         }
     }
 
+    private void initHeatMap() {
+        List<List<LatLng>> regionList = mPresenter.getHeatMapDataList();
+        OverlayOptions outerRegion = new PolygonOptions()
+                .points(regionList.get(0))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x6FFFFF00);
+        mBaiduMap.addOverlay(outerRegion);
+
+        OverlayOptions midRegion = new PolygonOptions()
+                .points(regionList.get(1))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x6FFF7F00);
+        mBaiduMap.addOverlay(midRegion);
+
+        OverlayOptions innerRegion = new PolygonOptions()
+                .points(regionList.get(2))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x6FFF0000);
+        mBaiduMap.addOverlay(innerRegion);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         SDKInitializer.initialize(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.fragment_page_map, container, false);
         initMapView(view);
+        initHeatMap();
         return view;
     }
 
