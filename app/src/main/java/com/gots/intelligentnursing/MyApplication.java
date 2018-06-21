@@ -11,6 +11,7 @@ import com.gots.intelligentnursing.business.EventPoster;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.DataEvent;
 import com.gots.intelligentnursing.entity.NotificationData;
+import com.gots.intelligentnursing.entity.User;
 import com.gots.intelligentnursing.tools.LogUtil;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.message.IUmengRegisterCallback;
@@ -46,13 +47,14 @@ public class MyApplication extends MultiDexApplication {
             @Override
             public Notification getNotification(Context context, UMessage uMessage) {
                 LogUtil.i(TAG, "getNotification");
-                LogUtil.i(TAG, "text: "+uMessage.text);
-                LogUtil.i(TAG, "title: "+uMessage.title);
-                LogUtil.i(TAG, "alias: "+uMessage.alias);
-                EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION));
-                NotificationData notificationData = new NotificationData(uMessage.text,0);
-                UserContainer.getUser().getUserInfo().addNotificationDataList(notificationData);
+                LogUtil.i(TAG, "text: " + uMessage.text);
+                LogUtil.i(TAG, "title: " + uMessage.title);
+                EventPoster.post(new DataEvent(ACTION_UPUSH_GET_NOTIFICATION, 0, uMessage.title, uMessage.text));
 
+                UserContainer.getUser().getUserInfo().addNotificationDataList(new NotificationData(uMessage.title, 0));
+                UserContainer.getUser().getUserInfo().addNotificationDataList(new NotificationData());
+                int size = UserContainer.getUser().getUserInfo().getNotificationDataList().size();
+                LogUtil.i(TAG, "size of nlist: " + String.valueOf(size));
 
                 return super.getNotification(context, uMessage);
             }

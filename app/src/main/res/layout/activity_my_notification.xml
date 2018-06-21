@@ -9,23 +9,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/bg_gray"
         android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_my_notification_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="以下是您的历史通知记录："
+            android:textSize="12sp"/>
 
         <ImageView
             android:id="@+id/iv_my_notification"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="19dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="245dp"
+            android:src="@drawable/ic_my_notification_logo"/>
 
-        <TextView
-            android:id="@+id/tv_my_notification_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2018."/>
 
-        <TextView
-            android:id="@+id/tv_my_notification_event"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

@@ -140,12 +140,17 @@ public class UserInfo {
     }
 
     public void setNotificationDataList() {
-        //List<NotificationData> notificationDataList= new ArrayList<>();
-        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月15日","s老人发生了跌倒","0"));
-        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月16日","s老人走出了电子围栏","0"));
-        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月17日","s老人发生了跌倒","0"));
-        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月18日","s老人心率异常","0"));
-        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年6月20日","s老人走出了电子围栏","0"));
+        NotificationData separator = new NotificationData();
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年06月15日 星期五 20:06","您的老人发生了跌倒","0"));
+        mNotificationDataList.add(separator);
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年06月16日 星期六 07:20","您的老人走出了电子围栏","0"));
+        mNotificationDataList.add(separator);
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年06月17日 星期日 19:56","您的老人发生了跌倒","0"));
+        mNotificationDataList.add(separator);
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年06月18日 星期一 22:40","你的老人有心率异常","0"));
+        mNotificationDataList.add(separator);
+        mNotificationDataList.add(new NotificationData(R.drawable.ic_page_mine_item_about,"2018年06月20日 星期三 18:30","你的老人走出了电子围栏","0"));
+        mNotificationDataList.add(separator);
     }
 
     public void addNotificationDataList(NotificationData notificationData) {

@@ -21,11 +21,27 @@ public class NotificationData {
         this.type = type;
     }
 
-    public NotificationData(int imageId,String date,String event, String status) {
+    public NotificationData(int imageId, String date, String event, String status) {
         this.imageId = imageId;
         this.date = date;
         this.event = event;
         this.status = status;
+    }
+
+    public NotificationData() {
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getStatus() {
+
+        return status;
+    }
+
+    public int getType() {
+        return type;
     }
 
     public int getImageId() {
@@ -36,8 +52,8 @@ public class NotificationData {
         this.imageId = imageId;
     }
 
-    public Date getDate() {
-        return mDate;
+    public String getDate() {
+        return date;
     }
 
     public void setDate(Date date) {

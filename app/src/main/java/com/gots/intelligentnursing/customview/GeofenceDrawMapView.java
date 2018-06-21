@@ -84,7 +84,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
      * 用于标识是否是转换缓存点
      * 如果是缓存点则把经纬度插入到mPointPosition指定的位置
      */
-    private boolean mIsCachetPoint = false;
+    private boolean mIsCachePoint = false;
 
     /**
      * 在缓存点转换时
@@ -130,7 +130,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
     private void getLocationOnMapClicked(LatLng latLng) {
         // 转换第一个点
         // 当执行完成绘制后，才开始转换第一个点
-        if (mIsCachetPoint) {
+        if (mIsCachePoint) {
             mDrawingLocationDataList.add(mPointPosition, new LocationData(latLng.latitude, latLng.longitude));
             mIsConvertFinish = true;
         } else {
@@ -242,7 +242,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
      */
     public void startDrawing() {
         mDrawingState = STATE_DRAWING;
-        mIsCachetPoint = false;
+        mIsCachePoint = false;
         mWaitConfirm = false;
         mCanvasView.clearAllPath();
         mPointCount = 0;
@@ -360,7 +360,7 @@ public class GeofenceDrawMapView extends RelativeLayout {
             LogUtil.i(TAG, "The size of location list add the size of cache list is equal to point count.");
             // 如果相等，表明没有丢失点，将起点进行转换
             // 设置标志位，用于在点击回调中将起始点插入到起始位置
-            mIsCachetPoint = true;
+            mIsCachePoint = true;
             if (mDrawResultListener != null) {
                 mDrawResultListener.onStart();
             }

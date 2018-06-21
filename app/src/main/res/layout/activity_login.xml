@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:src="@drawable/ic_launcher_foreground"
+            android:src="@drawable/ic_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>

@@ -1,10 +1,15 @@
 package com.gots.intelligentnursing.presenter.fragment;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
+
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.entity.NewsInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
+import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.fragment.IHomePageView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -20,6 +25,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class HomePagePresenter extends BaseFragmentPresenter<IHomePageView> {
+
+    private static final int ELDER_STATE_NORMAL = 0;
+    private static final int ELDER_STATE_ABNORMAL = 1;
+    public static int elderState = ELDER_STATE_NORMAL;
+
+    private static final String TAG = "HomePagePresenter";
 
     public HomePagePresenter(IHomePageView view) {
         super(view);
@@ -45,9 +56,9 @@ public class HomePagePresenter extends BaseFragmentPresenter<IHomePageView> {
     }
 
     private void onException(String msg) {
-       if (getView() != null) {
-           getView().onException(msg);
-       }
+        if (getView() != null) {
+            getView().onException(msg);
+        }
     }
 
     private void onGetNewsSuccess(List<NewsInfo> newsInfoList) {
@@ -60,5 +71,8 @@ public class HomePagePresenter extends BaseFragmentPresenter<IHomePageView> {
         if (getView() != null) {
             getView().onGetPictureSuccess(pictureResList);
         }
+    }
+
+    public void onMyNursingButtonClicked() {
     }
 }

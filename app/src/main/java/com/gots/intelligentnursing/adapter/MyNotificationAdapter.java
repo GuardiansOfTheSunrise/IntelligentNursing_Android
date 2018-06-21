@@ -10,7 +10,10 @@ import android.widget.TextView;
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.entity.NotificationData;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Accumulei
@@ -45,7 +48,19 @@ public class MyNotificationAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof NotificationItemViewHolder) {
-
+            if (position < 10) {
+                NotificationData notificationData = mNotificationList.get(position);
+                ((NotificationItemViewHolder) holder).notificationListImage.setImageResource(notificationData.getImageId());
+                ((NotificationItemViewHolder) holder).notificationListEvent.setText(notificationData.getEvent());
+                ((NotificationItemViewHolder) holder).notificationListDate.setText(notificationData.getDate());
+            } else {
+                NotificationData notificationData = mNotificationList.get(position);
+                ((NotificationItemViewHolder) holder).notificationListImage.setImageResource(R.drawable.ic_page_mine_item_about);
+                ((NotificationItemViewHolder) holder).notificationListEvent.setText(notificationData.getEvent());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日 EEEE HH:mm", Locale.CHINA);
+                Date date = new Date(System.currentTimeMillis());
+                ((NotificationItemViewHolder) holder).notificationListDate.setText(simpleDateFormat.format(date));
+            }
         }
     }
 
@@ -60,7 +75,7 @@ public class MyNotificationAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mNotificationList.size()-1;
     }
 
     public void addItem(int positon) {
@@ -71,10 +86,16 @@ public class MyNotificationAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private static class NotificationItemViewHolder extends RecyclerView.ViewHolder {
 
         ImageView notificationListImage;
-        TextView notificationListItem;
+        TextView notificationListDate;
+        TextView notificationListEvent;
+        View notificationItemView;
 
         NotificationItemViewHolder(View itemView) {
             super(itemView);
+            notificationItemView = itemView;
+            notificationListImage = itemView.findViewById(R.id.iv_my_notification);
+            notificationListDate = itemView.findViewById(R.id.tv_my_notification_date);
+            notificationListEvent = itemView.findViewById(R.id.tv_my_notification_event);
         }
     }
 

@@ -103,7 +103,7 @@ public class MainPresenter extends BaseActivityPresenter<IMainView> {
         if (userInfo.getLocationDataList() == null) {
             userInfo.setLocationDataList(new ArrayList<>());
         }
-        userInfo.setNotificationDataList(new ArrayList<>());
+        userInfo.setNotificationDataList();
     }
 
     private void onLoginSuccess(String username) {

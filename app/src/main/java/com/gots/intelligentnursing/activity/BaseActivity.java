@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.entity.DataEvent;
+import com.gots.intelligentnursing.fragment.HomePageFragment;
 import com.gots.intelligentnursing.presenter.activity.BaseActivityPresenter;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 import com.umeng.message.PushAgent;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
 
 /**
  * Activity的基类
+ *
  * @author zhqy
  * @date 2018/3/30
  */
@@ -167,6 +169,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     /**
      * 设置Toolbar的title
+     *
      * @param title 需要设置的title
      */
     public void setToolbarTitle(String title) {
@@ -179,6 +182,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     /**
      * 重写isDisplayProgressBar()
      * 可以通过该方法设置ProgressBar的提示语
+     *
      * @param hint ProgressBar的提示语
      */
     public void setProgressBarHint(String hint) {
@@ -212,6 +216,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     /**
      * 子类重写getProgressBarHintText()方法后
      * 调用该方法设置ProgressBar进度
+     *
      * @param progress 进度
      */
     public void setProgressBarProgress(int progress) {
@@ -222,6 +227,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     /**
      * 用于创建Activity所对应的Presenter，在onCreate()中会被调用
+     *
      * @return 返回该Activity所对应的Presenter
      */
     protected abstract P createPresenter();
@@ -229,6 +235,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     /**
      * 子类Activity重写该方法可以设置是否显示Toolbar
+     *
      * @return 默认返回true表示显示Toolbar，如不需要Toolbar，则重写该方法返回false
      */
     protected boolean isDisplayToolbar() {
@@ -237,6 +244,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     /**
      * 子类Activity重写该方法可以设置是否显示Toolbar的返回按钮
+     *
      * @return 默认返回true表示显示返回按钮，如不需要返回按钮，则重写该方法返回false
      */
     protected boolean isDisplayBackButton() {
@@ -247,6 +255,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
      * 子类Activity重写该方法可以实例化居中的ProgressBar提示框
      * 通过mProgressBarView.setVisibility(View.VISIBLE)来显示
      * 默认返回false，此时不实例化ProgressBar
+     *
      * @return 是否实例化ProgressBar
      */
     protected boolean isDisplayProgressBar() {
@@ -255,6 +264,7 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
 
     /**
      * 子类Activity重写该方法可以设置是否显示返回按钮样式
+     *
      * @return 默认返回使用灰色箭头样式
      * 如需改变样式，则重写该方法返回图片资源id，如R.drawable.menu
      * 注意，当需要改变样式并做出非默认响应时
@@ -266,12 +276,12 @@ public abstract class BaseActivity<P extends BaseActivityPresenter> extends RxAp
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-            public void onDataEvent (DataEvent event) {
-                String action = event.getAction();
-                if (action.equals(EventPoster.ACTION_UPUSH_GET_NOTIFICATION)) {
+    public void onDataEvent(DataEvent event) {
+        String action = event.getAction();
+        if (action.equals(EventPoster.ACTION_UPUSH_GET_NOTIFICATION)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Alert by EventBus");
-            builder.setMessage("Get U-Push Notification");
+            builder.setTitle(event.getMsg());
+            builder.setMessage(String.valueOf(event.getData()));
             builder.setCancelable(false);
             builder.setPositiveButton("OK", null);
             builder.show();

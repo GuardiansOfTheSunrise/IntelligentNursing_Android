@@ -1,5 +1,7 @@
 package com.gots.intelligentnursing.activity.logined;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,17 +25,24 @@ import java.util.List;
 
 public class MyNotificationActivity extends BaseActivity<MyNotificationPresenter> implements IActivityView {
 
-    public List<NotificationData> mNotificationList = UserContainer.getUser().getUserInfo().getNotificationDataList();
     private static final String TAG = "MyNotificationActivity";
+    private static final String TOOLBAR_TITLE = "我的通知";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        List<NotificationData> mNotificationList = UserContainer.getUser().getUserInfo().getNotificationDataList();
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_my_notification);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        MyNotificationAdapter adapter = new MyNotificationAdapter(mNotificationList);
+        recyclerView.setAdapter(adapter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_notification);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_my_notification);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        MyNotificationAdapter adapter = new MyNotificationAdapter(mNotificationList);
-        recyclerView.setAdapter(adapter);
+        setToolbarTitle(TOOLBAR_TITLE);
     }
 
 
@@ -44,6 +53,10 @@ public class MyNotificationActivity extends BaseActivity<MyNotificationPresenter
 
     @Override
     public void onException(String msg) {
+    }
 
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, MyNotificationActivity.class);
+        context.startActivity(intent);
     }
 }
