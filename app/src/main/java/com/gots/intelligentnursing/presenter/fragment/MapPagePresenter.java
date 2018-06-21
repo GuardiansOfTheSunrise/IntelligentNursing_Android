@@ -7,18 +7,21 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.gots.intelligentnursing.activity.LoginActivity;
-import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.RoutePlanningHelper;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.LocationData;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -134,6 +137,45 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         mRoutePlanningHelper.destroy();
     }
 
+    public List<List<LatLng>> getHeatMapDataList() {
+        List<List<LatLng>> regionList = new ArrayList<>();
+        List<LatLng> outerRegion = new ArrayList<>();
+        // 校医院
+        outerRegion.add(new LatLng(35.946995, 120.176978));
+        // 西北门
+        outerRegion.add(new LatLng(35.950211, 120.177224));
+        // 北门
+        outerRegion.add(new LatLng(35.952347, 120.182004));
+        // 东门
+        outerRegion.add(new LatLng(35.947338, 120.189154));
+        // 南门
+        outerRegion.add(new LatLng(35.944489, 120.185498));
+        regionList.add(outerRegion);
+
+        List<LatLng> midRegion = new ArrayList<>();
+        // 多媒体学习中心
+        midRegion.add(new LatLng(35.949614, 120.182174));
+        // 图书馆
+        midRegion.add(new LatLng(35.948564, 120.18093));
+        // 9号楼
+        midRegion.add(new LatLng(35.946349, 120.181231));
+        // 南门
+        midRegion.add(new LatLng(35.944489, 120.185498));
+        // 东门
+        midRegion.add(new LatLng(35.947338, 120.189154));
+        regionList.add(midRegion);
+
+        List<LatLng> innerRegion = new ArrayList<>();
+        // 图书馆
+        innerRegion.add(new LatLng(35.948564, 120.18093));
+        // 南教楼
+        innerRegion.add(new LatLng(35.947164, 120.18429));
+        // 文理楼
+        innerRegion.add(new LatLng(35.945789, 120.185236));
+        regionList.add(innerRegion);
+        return regionList;
+    }
+
     /**
      * 从服务器获取绑定设备的定位数据
      */
@@ -142,15 +184,19 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         if (userInfo != null && userInfo.getDeviceInfo() != null) {
             // TODO: 2018/4/20 连接服务器获取设备位置数据
             /*
-            RetrofitHelper.getInstance().device()
-                    .getDeviceLocation(UserContainer.getUser().getToken(), userInfo.getDeviceInfo().getId())
-            */
-            /*
-            double latitude = 35.944489;
-            double longitude = 120.185498;
-            */
+            // 火车站
             double latitude = 36.070257;
             double longitude = 120.317581;
+            */
+            /*
+            // 多媒体学习中心
+            double latitude = 35.949614;
+            double longitude = 120.182174;
+             */
+            // 特种实验楼
+            double latitude = 35.945494;
+            double longitude = 120.182715;
+
             mLastDeviceData = new LocationData(latitude, longitude);
             onGetDeviceLocationSuccess(mLastDeviceData);
             if (mMoveTo == MOVE_TO_DEVICE) {
