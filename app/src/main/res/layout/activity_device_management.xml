@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/rl_device_management_not_binding"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="16dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -41,22 +41,66 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/tv_device_management_id"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:background="@color/bg_gray"
+            android:orientation="horizontal">
 
-        <Button
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="设备"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tv_device_management_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="abcdefabcdef"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="已成功绑定"
+                android:textSize="12sp"/>
+
+            <ImageView
+                android:id="@+id/iv_my_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="19dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="228dp"
+                android:src="@drawable/ic_page_mine_item_manage"/>
+
+        </LinearLayout>
+
+        <ImageView
             android:id="@+id/bt_device_management_connect"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="连接设备"/>
+            android:layout_marginTop="200dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/bt_device_management_connect"
+            android:layout_gravity="center"/>
 
-        <Button
+        <ImageView
             android:id="@+id/bt_device_management_delete"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="删除设备"/>
+            android:layout_marginTop="100dp"
+            android:background="?attr/selectableItemBackground"
+            android:src="@drawable/bt_device_management_delete"
+            android:layout_gravity="center"/>
+
 
     </LinearLayout>
 

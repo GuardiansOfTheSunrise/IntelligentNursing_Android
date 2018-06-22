@@ -28,9 +28,9 @@
 
         <ImageView
             android:id="@+id/iv_page_mine_item"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="5dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/ic_page_mine_item_manage"/>
 
         <TextView

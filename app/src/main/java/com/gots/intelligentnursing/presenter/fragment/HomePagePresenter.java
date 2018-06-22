@@ -1,15 +1,10 @@
 package com.gots.intelligentnursing.presenter.fragment;
 
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
-import android.widget.Toast;
-
 import com.gots.intelligentnursing.R;
 import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.entity.NewsInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
-import com.gots.intelligentnursing.tools.LogUtil;
 import com.gots.intelligentnursing.view.fragment.IHomePageView;
 import com.trello.rxlifecycle2.android.ActivityEvent;
 
@@ -50,8 +45,8 @@ public class HomePagePresenter extends BaseFragmentPresenter<IHomePageView> {
 
     public void getPictureData() {
         List<Integer> pictureResList = new ArrayList<>();
-        pictureResList.add(R.drawable.bg_mine_list_header);
-        pictureResList.add(R.drawable.bg_mine_list_header);
+        pictureResList.add(R.drawable.bg_home_page_convenient_banner);
+        pictureResList.add(R.drawable.bg_home_page_convenient_banner1);
         onGetPictureSuccess(pictureResList);
     }
 

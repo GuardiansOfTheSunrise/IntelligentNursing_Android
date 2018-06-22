@@ -38,12 +38,12 @@ public class MinePagePresenter extends BaseFragmentPresenter<IMinePageView> {
         mineItemList.add(blank);
 
         mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_manage, "设备管理"));
-        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_quit,"设置"));
+        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_settings,"设置"));
         mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_update,"检查更新"));
         mineItemList.add(blank);
 
-        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_manage, "帮助"));
-        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_quit, "意见建议"));
+        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_help, "帮助"));
+        mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_comment, "意见建议"));
         mineItemList.add(new MineItem(R.drawable.ic_page_mine_item_about,"关于"));
         mineItemList.add(blank);
 

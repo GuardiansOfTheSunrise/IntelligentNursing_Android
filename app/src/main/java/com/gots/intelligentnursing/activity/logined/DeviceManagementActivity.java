@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,10 +41,10 @@ public class DeviceManagementActivity extends BaseActivity<DeviceManagementPrese
         FloatingActionButton addDeviceButton = findViewById(R.id.fab_device_management_add);
         addDeviceButton.setOnClickListener(v -> mPresenter.onAddDeviceButtonClicked());
 
-        Button connectButton = findViewById(R.id.bt_device_management_connect);
+        ImageView connectButton = findViewById(R.id.bt_device_management_connect);
         connectButton.setOnClickListener(v ->mPresenter.onConnectButtonClicked());
 
-        Button deleteButton = findViewById(R.id.bt_device_management_delete);
+        ImageView deleteButton = findViewById(R.id.bt_device_management_delete);
         deleteButton.setOnClickListener(v -> mPresenter.onDeleteButtonClicked());
 
         setLayoutDisplay(UserContainer.getUser().getUserInfo().getDeviceInfo() != null);
