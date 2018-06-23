@@ -13,18 +13,24 @@ import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.gots.intelligentnursing.activity.LoginActivity;
+import com.gots.intelligentnursing.business.RetrofitHelper;
 import com.gots.intelligentnursing.business.RoutePlanningHelper;
+import com.gots.intelligentnursing.business.ServerRequestExceptionHandler;
 import com.gots.intelligentnursing.business.UserContainer;
 import com.gots.intelligentnursing.entity.LocationData;
+import com.gots.intelligentnursing.entity.SeekHelpInfo;
+import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 import com.tbruyelle.rxpermissions2.RxPermissions;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author zhqy
@@ -92,23 +98,6 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     }
 
     /**
-     * 刷新手机与设备的位置数据
-     */
-    public void refreshData() {
-        if (SystemClock.uptimeMillis() - mLastRefreshDataTime > THRESHOLD_REFRESH_DATA_INTERVAL_MS) {
-            getDeviceLocation();
-
-            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE};
-            new RxPermissions(getActivity()).request(permissions)
-                    .filter(granted -> granted)
-                    .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
-                    .subscribe(granted -> startLocation());
-        }
-    }
-
-    /**
      * 初始化路径规划器
      * 调用此方法前需要调用SDKInitializer.initialize()
      */
@@ -137,43 +126,80 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
         mRoutePlanningHelper.destroy();
     }
 
-    public List<List<LatLng>> getHeatMapDataList() {
-        List<List<LatLng>> regionList = new ArrayList<>();
-        List<LatLng> outerRegion = new ArrayList<>();
-        // 校医院
-        outerRegion.add(new LatLng(35.946995, 120.176978));
-        // 西北门
-        outerRegion.add(new LatLng(35.950211, 120.177224));
-        // 北门
-        outerRegion.add(new LatLng(35.952347, 120.182004));
-        // 东门
-        outerRegion.add(new LatLng(35.947338, 120.189154));
-        // 南门
-        outerRegion.add(new LatLng(35.944489, 120.185498));
-        regionList.add(outerRegion);
+    /**
+     * 刷新手机与设备的位置数据
+     */
+    public void refreshData() {
+        if (SystemClock.uptimeMillis() - mLastRefreshDataTime > THRESHOLD_REFRESH_DATA_INTERVAL_MS) {
+            mLastRefreshDataTime = SystemClock.uptimeMillis();
+            getDeviceLocation();
+            getHeatMapDataList();
+            getSeekHelpDataList();
 
-        List<LatLng> midRegion = new ArrayList<>();
-        // 多媒体学习中心
-        midRegion.add(new LatLng(35.949614, 120.182174));
-        // 图书馆
-        midRegion.add(new LatLng(35.948564, 120.18093));
-        // 9号楼
-        midRegion.add(new LatLng(35.946349, 120.181231));
-        // 南门
-        midRegion.add(new LatLng(35.944489, 120.185498));
-        // 东门
-        midRegion.add(new LatLng(35.947338, 120.189154));
-        regionList.add(midRegion);
+            String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            new RxPermissions(getActivity()).request(permissions)
+                    .filter(granted -> granted)
+                    .switchIfEmpty(observer -> onException(HINT_DENY_GRANT))
+                    .subscribe(granted -> startLocation());
+        }
+    }
 
-        List<LatLng> innerRegion = new ArrayList<>();
-        // 图书馆
-        innerRegion.add(new LatLng(35.948564, 120.18093));
-        // 南教楼
-        innerRegion.add(new LatLng(35.947164, 120.18429));
-        // 文理楼
-        innerRegion.add(new LatLng(35.945789, 120.185236));
-        regionList.add(innerRegion);
-        return regionList;
+    private void getSeekHelpDataList() {
+        RetrofitHelper.getInstance().user()
+                .getSeekHelpInfoList()
+                .compose(getActivity().bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribeOn(Schedulers.io())
+                .doOnNext(ServerResponse::checkSuccess)
+                .map(ServerResponse::getData)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        this::onGetSeekHelpInfoDataSuccess,
+                        throwable -> onException(ServerRequestExceptionHandler.handle(throwable))
+                );
+    }
+
+    private void getHeatMapDataList() {
+        UserInfo userInfo = UserContainer.getUser().getUserInfo();
+        if (userInfo != null && userInfo.getDeviceInfo() != null) {
+            List<List<LatLng>> regionList = new ArrayList<>();
+            List<LatLng> outerRegion = new ArrayList<>();
+            // 校医院
+            outerRegion.add(new LatLng(35.946995, 120.176978));
+            // 西北门
+            outerRegion.add(new LatLng(35.950211, 120.177224));
+            // 北门
+            outerRegion.add(new LatLng(35.952347, 120.182004));
+            // 东门
+            outerRegion.add(new LatLng(35.947338, 120.189154));
+            // 南门
+            outerRegion.add(new LatLng(35.944489, 120.185498));
+            regionList.add(outerRegion);
+
+            List<LatLng> midRegion = new ArrayList<>();
+            // 多媒体学习中心
+            midRegion.add(new LatLng(35.949614, 120.182174));
+            // 图书馆
+            midRegion.add(new LatLng(35.948564, 120.18093));
+            // 9号楼
+            midRegion.add(new LatLng(35.946349, 120.181231));
+            // 南门
+            midRegion.add(new LatLng(35.944489, 120.185498));
+            // 东门
+            midRegion.add(new LatLng(35.947338, 120.189154));
+            regionList.add(midRegion);
+
+            List<LatLng> innerRegion = new ArrayList<>();
+            // 图书馆
+            innerRegion.add(new LatLng(35.948564, 120.18093));
+            // 南教楼
+            innerRegion.add(new LatLng(35.947164, 120.18429));
+            // 文理楼
+            innerRegion.add(new LatLng(35.945789, 120.185236));
+            regionList.add(innerRegion);
+            onGetHeatMapDataSuccess(regionList);
+        }
     }
 
     /**
@@ -188,23 +214,20 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
             double latitude = 36.070257;
             double longitude = 120.317581;
             */
-            /*
             // 多媒体学习中心
             double latitude = 35.949614;
             double longitude = 120.182174;
-             */
+            /*
             // 特种实验楼
             double latitude = 35.945494;
             double longitude = 120.182715;
-
+            */
             mLastDeviceData = new LocationData(latitude, longitude);
             onGetDeviceLocationSuccess(mLastDeviceData);
             if (mMoveTo == MOVE_TO_DEVICE) {
                 moveTo(mLastDeviceData);
                 mMoveTo = MOVE_TO_NONE;
             }
-        } else if (userInfo != null && userInfo.getDeviceInfo() == null) {
-            onException(HINT_ON_DEVICE_NOT_BINDING);
         }
     }
 
@@ -212,7 +235,6 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
      * 启动手机定位，重回调中获取定位数据
      */
     private void startLocation() {
-        mLastRefreshDataTime = SystemClock.uptimeMillis();
         mLocationClient.start();
     }
 
@@ -266,7 +288,7 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
                                         mMoveTo = MOVE_TO_NONE;
                                     }
                                 },
-                                throwable -> getView().onException(throwable.getMessage())
+                                throwable -> onException(throwable.getMessage())
                         );
             }
         };
@@ -278,19 +300,21 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
             moveTo(mLastLocationData);
         } else {
             mMoveTo = MOVE_TO_LOCATION;
-            refreshData();
+            startLocation();
         }
     }
 
     private void onMoveToDeviceLocationClick() {
         if (UserContainer.getUser().getUserInfo() == null) {
             LoginActivity.actionStart(getActivity(), null);
+        } else if (UserContainer.getUser().getUserInfo().getDeviceInfo() == null) {
+          onException(HINT_ON_DEVICE_NOT_BINDING);
         } else {
             if (mLastDeviceData != null) {
                 moveTo(mLastDeviceData);
             } else {
                 mMoveTo = MOVE_TO_DEVICE;
-                refreshData();
+                getDeviceLocation();
             }
         }
     }
@@ -335,6 +359,18 @@ public class MapPagePresenter extends BaseFragmentPresenter<IMapPageView> {
     private void onLocationSuccess(LocationData data) {
         if (getView() != null) {
             getView().onLocationSuccess(data);
+        }
+    }
+
+    private void onGetSeekHelpInfoDataSuccess(List<SeekHelpInfo> seekHelpInfoList) {
+        if (getView() != null) {
+            getView().onGetSeekHelpInfoDataSuccess(seekHelpInfoList);
+        }
+    }
+
+    private void onGetHeatMapDataSuccess(List<List<LatLng>> regionList) {
+        if (getView() != null) {
+            getView().onGetHeatMapDataSuccess(regionList);
         }
     }
 

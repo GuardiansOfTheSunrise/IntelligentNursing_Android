@@ -39,17 +39,17 @@ public class NursingPagePresenter extends BaseFragmentPresenter<INursingPageView
         for (int i = x1.length - 1; i >= 0; i--) {
             x1[i] = hour - 2 * (12 - i);
         }
-        float[] y1 = {85, 89, 93, 95, 98, 102, 96, 99, 94, 86, 92, 88};
-        lineChartDataList.add(new LineChartPager.LineChartData("近24h心率", x1, y1, 77, 108,
+        float[] y1 = {79, 83, 82, 85, 89, 92, 88, 90, 95, 91, 92, 87};
+        lineChartDataList.add(new LineChartPager.LineChartData("近24h心率", x1, y1, 77, 106,
                 (value, axis) -> String.valueOf((int) ((value + 24) % 24)), null));
 
         float[] x2 = new float[7];
-        float[] y2 = {88, 97, 95, 100, 91, 85, 92};
+        float[] y2 = {97, 95, 100, 91, 85, 92, 96};
         for (int  i = x2.length - 1; i >= 0; i--) {
             x2[i] = dayOfWeek - (6 - i);
         }
         String[] dayString = {"日", "一", "二", "三", "四", "五", "六"};
-        lineChartDataList.add(new LineChartPager.LineChartData("近7天心率", x2, y2, 77, 108,
+        lineChartDataList.add(new LineChartPager.LineChartData("近7天心率", x2, y2, 77, 106,
                 (value, axis) -> dayString[(int) (value + 7) % 7], null));
         onGetChartDataSuccess(lineChartDataList);
     }

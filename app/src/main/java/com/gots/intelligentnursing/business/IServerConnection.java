@@ -1,6 +1,7 @@
 package com.gots.intelligentnursing.business;
 
 import com.gots.intelligentnursing.entity.NewsInfo;
+import com.gots.intelligentnursing.entity.SeekHelpInfo;
 import com.gots.intelligentnursing.entity.ServerResponse;
 import com.gots.intelligentnursing.entity.UserInfo;
 import com.gots.intelligentnursing.entity.VersionInfo;
@@ -158,6 +159,25 @@ public interface IServerConnection {
         @Headers({"Content-type:application/json;charset=UTF-8"})
         @POST("fence/addfence")
         Flowable<ServerResponse> fenceDrawing(@Header(TOKEN_HEADER_KEY) String token, @Body RequestBody jsonBody);
+
+        /**
+         * 获取求救信息列表
+         *
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @GET("mock/allhelp")
+        Flowable<ServerResponse<List<SeekHelpInfo>>> getSeekHelpInfoList();
+
+        /**
+         * 解除一键求救预警
+         *
+         * @param token 登录返回的token
+         * @param id    预警id
+         * @return 包含服务器返回结果的被观察者对象
+         */
+        @FormUrlEncoded
+        @POST("mock/delethelp")
+        Flowable<ServerResponse> releaseWarning(@Header(TOKEN_HEADER_KEY) String token, @Field("id") int id);
     }
 
     /**
