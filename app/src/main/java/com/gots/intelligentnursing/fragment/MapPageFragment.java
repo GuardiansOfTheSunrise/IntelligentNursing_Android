@@ -13,9 +13,9 @@ import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.PolygonOptions;
 import com.baidu.mapapi.map.Stroke;
@@ -28,9 +28,11 @@ import com.gots.intelligentnursing.business.OverlayManager;
 import com.gots.intelligentnursing.business.WalkingRouteOverlay;
 import com.gots.intelligentnursing.customview.SlidingLockMapView;
 import com.gots.intelligentnursing.entity.LocationData;
+import com.gots.intelligentnursing.entity.SeekHelpInfo;
 import com.gots.intelligentnursing.presenter.fragment.MapPagePresenter;
 import com.gots.intelligentnursing.view.fragment.IMapPageView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,8 +53,9 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
     private BaiduMap mBaiduMap;
     private OverlayManager mOverlayManager;
 
-    private Marker mDeviceMarker;
-
+    private Overlay mDeviceOverlay;
+    private List<Overlay> mSeekHelpOverlayList;
+    private List<Overlay> mHeatMapOverlayList;
 
     @Override
     public void onException(String msg) {
@@ -72,8 +75,8 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
     @Override
     public void onGetDeviceLocationSuccess(LocationData data) {
         // 删除原先的标记物
-        if (mDeviceMarker != null) {
-            mDeviceMarker.remove();
+        if (mDeviceOverlay != null) {
+            mDeviceOverlay.remove();
         }
 
         LatLng point = new LatLng(data.getLatitude(), data.getLongitude());
@@ -87,7 +90,25 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
                 .icon(bitmap);
 
         //在地图上添加Marker，并显示
-        mDeviceMarker = (Marker) mBaiduMap.addOverlay(option);
+        mDeviceOverlay = mBaiduMap.addOverlay(option);
+    }
+
+    @Override
+    public void onGetSeekHelpInfoDataSuccess(List<SeekHelpInfo> seekHelpInfoList) {
+        if (mSeekHelpOverlayList != null && mSeekHelpOverlayList.size() > 0) {
+            for (Overlay overlay : mSeekHelpOverlayList) {
+                overlay.remove();
+            }
+        }
+        mSeekHelpOverlayList = new ArrayList<>();
+        for (SeekHelpInfo seekHelpInfo : seekHelpInfoList) {
+            LatLng point = new LatLng(seekHelpInfo.getLatitude(), seekHelpInfo.getLongitude());
+            BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_mark);
+            OverlayOptions option = new MarkerOptions()
+                    .position(point)
+                    .icon(bitmap);
+            mSeekHelpOverlayList.add(mBaiduMap.addOverlay(option));
+        }
     }
 
     @Override
@@ -135,6 +156,33 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
     }
 
     @Override
+    public void onGetHeatMapDataSuccess(List<List<LatLng>> regionList) {
+        if (mHeatMapOverlayList != null && mHeatMapOverlayList.size() > 0) {
+            for (Overlay overlay : mHeatMapOverlayList) {
+                overlay.remove();
+            }
+        }
+        mHeatMapOverlayList = new ArrayList<>();
+        OverlayOptions outerRegion = new PolygonOptions()
+                .points(regionList.get(0))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x5FFFFF00);
+        mHeatMapOverlayList.add(mBaiduMap.addOverlay(outerRegion));
+
+        OverlayOptions midRegion = new PolygonOptions()
+                .points(regionList.get(1))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x5FFF7F00);
+        mHeatMapOverlayList.add(mBaiduMap.addOverlay(midRegion));
+
+        OverlayOptions innerRegion = new PolygonOptions()
+                .points(regionList.get(2))
+                .stroke(new Stroke(0, 0x00FFFFFF))
+                .fillColor(0x5FFF0000);
+        mHeatMapOverlayList.add(mBaiduMap.addOverlay(innerRegion));
+    }
+
+    @Override
     public void clearRoutePlanning() {
         if (mOverlayManager != null) {
             mOverlayManager.removeFromMap();
@@ -144,33 +192,11 @@ public class MapPageFragment extends BaseFragment<MapPagePresenter> implements I
         }
     }
 
-    private void initHeatMap() {
-        List<List<LatLng>> regionList = mPresenter.getHeatMapDataList();
-        OverlayOptions outerRegion = new PolygonOptions()
-                .points(regionList.get(0))
-                .stroke(new Stroke(0, 0x00FFFFFF))
-                .fillColor(0x6FFFFF00);
-        mBaiduMap.addOverlay(outerRegion);
-
-        OverlayOptions midRegion = new PolygonOptions()
-                .points(regionList.get(1))
-                .stroke(new Stroke(0, 0x00FFFFFF))
-                .fillColor(0x6FFF7F00);
-        mBaiduMap.addOverlay(midRegion);
-
-        OverlayOptions innerRegion = new PolygonOptions()
-                .points(regionList.get(2))
-                .stroke(new Stroke(0, 0x00FFFFFF))
-                .fillColor(0x6FFF0000);
-        mBaiduMap.addOverlay(innerRegion);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         SDKInitializer.initialize(getActivity().getApplicationContext());
         View view = inflater.inflate(R.layout.fragment_page_map, container, false);
         initMapView(view);
-        initHeatMap();
         return view;
     }
 

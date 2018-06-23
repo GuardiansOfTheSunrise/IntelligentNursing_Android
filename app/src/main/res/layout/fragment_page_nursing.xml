@@ -14,6 +14,18 @@
         android:layout_marginRight="32dp"
         android:layout_marginTop="28dp"/>
 
+    <TextView
+        android:id="@+id/tv_page_nursing_hint"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:text="登录后才能看到心率分析图哦"
+        android:textSize="22sp"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

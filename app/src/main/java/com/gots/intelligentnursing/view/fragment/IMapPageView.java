@@ -1,8 +1,12 @@
 package com.gots.intelligentnursing.view.fragment;
 
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.gots.intelligentnursing.entity.LocationData;
+import com.gots.intelligentnursing.entity.SeekHelpInfo;
+
+import java.util.List;
 
 /**
  * @author zhqy
@@ -45,6 +49,20 @@ public interface IMapPageView extends IFragmentView {
      * @param line 驾驶路径
      */
     void onGetDriveRoutePlanningSuccess(DrivingRouteLine line);
+
+    /**
+     * 获取求救信息列表成功回调
+     *
+     * @param seekHelpInfoList 求救信息列表
+     */
+    void onGetSeekHelpInfoDataSuccess(List<SeekHelpInfo> seekHelpInfoList);
+
+    /**
+     * 获取热力图数据回调
+     *
+     * @param regionList 热力图区域数据
+     */
+    void onGetHeatMapDataSuccess(List<List<LatLng>> regionList);
 
     /**
      * 清除已规划的路径
