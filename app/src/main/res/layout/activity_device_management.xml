@@ -87,7 +87,7 @@
             android:id="@+id/bt_device_management_connect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="100dp"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/bt_device_management_connect"
             android:layout_gravity="center"/>
@@ -96,7 +96,7 @@
             android:id="@+id/bt_device_management_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
             android:background="?attr/selectableItemBackground"
             android:src="@drawable/bt_device_management_delete"
             android:layout_gravity="center"/>

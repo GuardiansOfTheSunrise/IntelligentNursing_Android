@@ -56,11 +56,8 @@ public class PublicFenceActivity extends BaseActivity<PublicFencePresenter> impl
     private String mFenceDescribe;
 
     private void showHintDialog() {
-        TextView textView = new TextView(this);
-        textView.setText(HINT_ON_ENTER);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
         new AlertDialog.Builder(this)
-                .setView(textView)
+                .setMessage(HINT_ON_ENTER)
                 .setPositiveButton("确定", null)
                 .show();
     }
@@ -68,12 +65,12 @@ public class PublicFenceActivity extends BaseActivity<PublicFencePresenter> impl
     private void initDescribeDialog() {
         mDialogEditText = new EditText(this);
         mDialogEditText.setHint(HINT_ON_DIALOG_EDIT_TEXT);
-        mDialogEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP,14);
+        mDialogEditText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         mDescribeDialog = new AlertDialog.Builder(this)
                 .setTitle(DIALOG_TITLE)
                 .setView(mDialogEditText)
                 .setPositiveButton("确定", (dialogInterface, i) -> onDialogButtonClick())
-                .setNegativeButton("取消",null)
+                .setNegativeButton("取消", null)
                 .setCancelable(false)
                 .create();
     }

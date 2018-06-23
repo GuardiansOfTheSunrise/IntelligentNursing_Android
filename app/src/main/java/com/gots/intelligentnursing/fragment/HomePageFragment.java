@@ -11,8 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.ToxicBakery.viewpager.transforms.DefaultTransformer;
+import com.ToxicBakery.viewpager.transforms.DepthPageTransformer;
 import com.ToxicBakery.viewpager.transforms.ZoomInTransformer;
 import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.gots.intelligentnursing.R;
 
 import com.gots.intelligentnursing.activity.LoginActivity;
@@ -136,7 +139,7 @@ public class HomePageFragment extends BaseFragment<HomePagePresenter> implements
     public void onGetPictureSuccess(List<Integer> pictureResList) {
         mPictureConvenientBanner.setPages(PictureCBViewHolder::new, pictureResList)
                 .setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused})
-                .setPageTransformer(new ZoomInTransformer());
+                .setPageTransformer(new DepthPageTransformer());
     }
 
     @Override

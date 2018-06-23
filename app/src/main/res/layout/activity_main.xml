@@ -15,25 +15,25 @@
         <RadioButton
             android:id="@+id/rb_main_home"
             style="@style/style_rb_main_pager"
-            android:drawableTop="@drawable/tab_menu_channel"
+            android:drawableTop="@drawable/rb_main_view_pager_home"
             android:text="首页" />
 
         <RadioButton
             android:id="@+id/rb_main_nursing"
             style="@style/style_rb_main_pager"
-            android:drawableTop="@drawable/tab_menu_message"
+            android:drawableTop="@drawable/rb_main_view_pager_nursing"
             android:text="看护" />
 
         <RadioButton
             android:id="@+id/rb_main_map"
             style="@style/style_rb_main_pager"
-            android:drawableTop="@drawable/tab_menu_better"
+            android:drawableTop="@drawable/rb_main_view_pager_map"
             android:text="地图" />
 
         <RadioButton
             android:id="@+id/rb_main_mine"
             style="@style/style_rb_main_pager"
-            android:drawableTop="@drawable/tab_menu_setting"
+            android:drawableTop="@drawable/rb_main_view_pager_mine"
             android:text="我的" />
 
     </RadioGroup>
