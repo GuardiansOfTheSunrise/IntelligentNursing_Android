@@ -26,4 +26,11 @@
         <item name="android:textSize">22sp</item>
     </style>
 
+    <style name="AppTheme.NoActionBarWithBackGround">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/bg_initial_page</item>
+    </style>
+
 </resources>

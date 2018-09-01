@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="PPcPipNYDqjGUhWndhshCq5yKSvc8Pqz"/>
+            android:value="6ATQj9xwBYYoqoxxvXANyLR6RUlZOj2N"/>
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5ae87975b27b0a3d78000371"/>
@@ -37,13 +37,7 @@
             android:name="UMENG_CHANNEL"
             android:value="Umeng"/>
 
-        <activity android:name=".activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
+        <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.logined.DeviceManagementActivity"/>
         <activity android:name=".activity.logined.DeviceControlActivity"/>
         <activity android:name=".activity.logined.GeographyFenceActivity"/>
@@ -93,6 +87,15 @@
         <activity android:name=".activity.logined.ElderInfoActivity">
         </activity>
         <activity android:name=".activity.PublicFenceActivity">
+        </activity>
+        <activity
+            android:name=".activity.LauncherActivity"
+            android:theme="@style/AppTheme.NoActionBarWithBackGround">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
     </application>
 

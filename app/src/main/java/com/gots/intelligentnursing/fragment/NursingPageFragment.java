@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,12 +25,13 @@ import java.util.List;
 public class NursingPageFragment extends BaseFragment<NursingPagePresenter> implements INursingPageView {
 
     private LineChartPager mLineChartPager;
+    private ViewStub mHintTextViewViewStub;
     private TextView mHintTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_nursing, container, false);
-        mHintTextView = view.findViewById(R.id.tv_page_nursing_hint);
+        mHintTextViewViewStub = view.findViewById(R.id.vs_page_nursing_no_login_hint);
         ImageView fenceSettingButton = view.findViewById(R.id.bt_page_nursing_fence_setting);
         fenceSettingButton.setOnClickListener(v -> mPresenter.onFenceSettingButtonClick());
         ImageView elderInfoButton = view.findViewById(R.id.bt_page_nursing_elder_info);
@@ -43,10 +45,16 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
     public void onResume() {
         super.onResume();
         if (UserContainer.getUser().getUserInfo() == null) {
-            mHintTextView.setVisibility(View.VISIBLE);
+            if (mHintTextView == null) {
+                mHintTextView = (TextView) mHintTextViewViewStub.inflate();
+            } else {
+                mHintTextView.setVisibility(View.VISIBLE);
+            }
             mLineChartPager.setVisibility(View.GONE);
         } else {
-            mHintTextView.setVisibility(View.GONE);
+            if (mHintTextView != null) {
+                mHintTextView.setVisibility(View.GONE);
+            }
             mLineChartPager.setVisibility(View.VISIBLE);
         }
     }
@@ -56,10 +64,16 @@ public class NursingPageFragment extends BaseFragment<NursingPagePresenter> impl
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             if (UserContainer.getUser().getUserInfo() == null) {
-                mHintTextView.setVisibility(View.VISIBLE);
+                if (mHintTextView == null) {
+                    mHintTextView = (TextView) mHintTextViewViewStub.inflate();
+                } else {
+                    mHintTextView.setVisibility(View.VISIBLE);
+                }
                 mLineChartPager.setVisibility(View.GONE);
             } else {
-                mHintTextView.setVisibility(View.GONE);
+                if (mHintTextView != null) {
+                    mHintTextView.setVisibility(View.GONE);
+                }
                 mLineChartPager.setVisibility(View.VISIBLE);
             }
         }
